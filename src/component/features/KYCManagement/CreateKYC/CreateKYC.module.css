@@ -1,0 +1,11 @@
+.createKYCForm {
+  margin-top: 0.5rem;
+}
+
+.cardCss {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 24px;
+}
+/* Add more custom styles as needed for spacing, error, etc. */

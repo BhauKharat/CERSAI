@@ -1,0 +1,97 @@
+.date-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  padding: 10px 12px;
+  /* max-width: 400px; */
+  /* max-width: 280px;  */
+  width: 100%; /* Remove max-width or make it larger */
+  background-color: #fff;
+}
+
+.custom-date-input {
+  flex: 1;
+  font-size: 1rem;
+  border: none;
+  outline: none;
+  padding: 10px;
+}
+
+.custom-date-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  right: 60px;
+  cursor: pointer;
+}
+
+.calendar-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  background-color: #0025a5;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+  pointer-events: none; /* optional */
+}
+
+.calendar-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.input-with-preview {
+  display: flex;
+  align-items: center;
+  /* gap: 12px; */
+}
+.preview-box {
+  align-items: flex-end;
+  align-content: flex-end;
+  margin-top: 8px;
+  max-width: 50px;
+  margin-left: 12px; /* add this line for gap */
+  position: relative; /* needed for positioning the tick */
+}
+
+.preview-img {
+  width: 100%;
+  height: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.input-with-preview.has-preview .custom-file-input {
+  flex-grow: 0.7; /* reduce width to 70% when preview is shown */
+  max-width: 70%;
+}
+.tick-icon {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: white; /* green circle */
+  color: #4caf50;
+  font-size: 12px;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  background-color: white !important;
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  box-shadow: 0 0 0px 1000px white inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.error-text {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+}

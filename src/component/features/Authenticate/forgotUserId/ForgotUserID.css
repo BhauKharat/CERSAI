@@ -1,0 +1,255 @@
+.forgot-user-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: url("../../../../assets/sign_up_bg.svg") center/cover no-repeat;
+  padding: 15px;
+}
+
+.forgot-user-card {
+  background: white;
+  padding: 40px 72px;
+  border-radius: 12px;
+  width: 520px;
+  max-width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.back-button {
+  position: absolute;
+  left: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.logo {
+  width: 150px;
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 0; /* Removed space below heading */
+}
+
+.info-text {
+  font-size: 14px;
+  font-weight: 400;
+  color: #000;
+  margin-top: 5px; /* Reduced space between heading and subtitle */
+  margin-bottom: 20px;
+}
+
+.input-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.input-group label {
+  font-weight: 400;
+  font-size: 14px;
+  color: #000;
+  display: block;
+  font-weight: 400;
+}
+
+.input-group input {
+  font-weight: 400;
+  width: 100%;
+  height: 45px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+  outline: none;
+  margin-top: 5px; /* Adjust this to control space between label and input */
+}
+
+.captcha-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.captcha-image {
+  background: #f8f9fa;
+  font-weight: bold;
+  font-size: 20px;
+  letter-spacing: 2px;
+  border-radius: 8px;
+  height: 45px; /* Match button height */
+  padding: 0 15px;
+  border: 1px solid #ddd;
+  flex: 1; /* Takes remaining space */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-width: 0; /* Allows flex item to shrink */
+  color: #333;
+  user-select: none; /* Prevent text selection */
+}
+
+.captcha-button {
+  border: 1px solid #ddd;
+  padding: 10px;
+  background: none;
+  cursor: pointer;
+  width: 45px; /* Fixed width for icons */
+  height: 45px; /* Fixed height for icons */
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0; /* Prevent buttons from shrinking */
+  justify-content: center;
+}
+
+.captcha-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.captcha-image-wrapper {
+  border: 1px solid #ddd;
+  padding: 5px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+}
+
+.captcha-button svg {
+  width: 24px;
+  height: 24px;
+}
+
+.input-group label {
+  font-weight: 400;
+  font-size: 14px;
+  color: #000;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.captcha-button:hover {
+  background: #f0f0f0;
+}
+
+/* .error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+  font-weight: 400;
+} */
+
+
+
+.submit-button {
+  background-color: #002cba;
+  color: white;
+  padding: 12px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 15px;
+  transition: background 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #002cba;
+}
+
+@media (max-width: 768px) {
+  .forgot-user-card {
+    width: 100%;
+    padding: 20px;
+  }
+  .error {
+    width: 100%;
+    font-size: 14px;
+    padding: 10px 15px;
+    margin: 0 0 15px 0; /* Consistent with form spacing */
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    width: 120px;
+  }
+
+  .submit-button {
+    font-size: 14px;
+  }
+  .error {
+    font-size: 13px;
+    padding: 8px 12px;
+    gap: 8px;
+    border-radius: 12px;
+    margin: 0 0 12px 0; /* Match form-group margin */
+  }
+}
+.error-message {
+  color: red;
+  font-size: 12px;
+  /* margin-top: 10px; */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-align: left; /* centers text inside the div */
+  display: block;
+  width: 100%; /* ensures it spans across container */
+}
+.error-message-main{
+  color: red;
+  font-size: 12px;
+  margin-top: 10px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-align: center; /* centers text inside the div */
+  display: block;
+  width: 100%; /* ensures it spans across container */
+}
+.error-message-nodal{
+  color: red;
+  font-size: 12px;
+  margin-top: 10px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-align: center; /* centers text inside the div */
+  display: block;
+  width: 100%; /* ensures it spans across container */
+  margin-left: 550px;
+}
+
+.error {
+  background-color: #ffdfdf;
+  color: #ff0808;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 400;
+  width: 100%;
+  /* Remove margin: 0 auto and max-width restrictions */
+  margin: 0 0 20px 0; /* Only bottom margin */
+  box-sizing: border-box;
+  text-align: left; /* Ensure text alignment */
+}

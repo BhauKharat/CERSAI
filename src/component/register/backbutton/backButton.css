@@ -1,0 +1,107 @@
+/* .back-button {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-family: Gilroy;
+    color: #002CBA;
+    font-size: 14px;
+    font-weight: 500;
+    background: none;
+    border: none;
+    outline: none;
+  } */
+
+/* BackButton.css */
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  color: #1976d2;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  min-height: 40px;
+}
+
+.back-button:hover {
+  background-color: rgba(25, 118, 210, 0.04);
+}
+
+.back-button:active {
+  background-color: rgba(25, 118, 210, 0.12);
+}
+
+.back-icon {
+  font-size: 20px !important;
+  transition: transform 0.2s ease;
+}
+
+.back-label {
+  font-weight: 500;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+
+/* Mobile styles (< 600px) */
+@media (max-width: 599px) {
+  .back-button {
+    padding: 6px;
+    min-width: 36px;
+    min-height: 36px;
+    justify-content: center;
+  }
+
+  .back-icon {
+    font-size: 18px !important;
+  }
+
+  .back-label {
+    display: none; /* Hide label on mobile */
+  }
+}
+
+/* Tablet styles (600px - 959px) */
+@media (min-width: 600px) and (max-width: 959px) {
+  .back-button {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .back-icon {
+    font-size: 18px !important;
+  }
+
+  .back-label {
+    max-width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Desktop styles (≥ 960px) */
+@media (min-width: 960px) {
+  .back-button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .back-button:hover .back-icon {
+    transform: translateX(-2px);
+  }
+}
+
+/* Extra large screens (≥ 1200px) */
+@media (min-width: 1200px) {
+  .back-button {
+    padding: 10px 0px;
+    font-size: 15px;
+  }
+
+  .back-icon {
+    font-size: 22px !important;
+  }
+}

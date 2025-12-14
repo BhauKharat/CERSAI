@@ -1,0 +1,280 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px; /* Add padding to prevent modal from touching screen edges */
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px 40px;
+  width: 100%;
+  max-width: 600px; /* Increased to accommodate 6 OTP inputs */
+  min-width: 480px; /* Increased minimum width for 6 inputs */
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-height: 90vh; /* Prevent modal from being too tall */
+  overflow-y: auto; /* Add scroll if content is too long */
+}
+
+@media (max-width: 1568px) {
+  .modal {
+    width: 100%;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .modal {
+    padding: 20px 25px;
+    margin: 10px;
+    min-width: 350px;
+    max-width: 90vw;
+  }
+
+  .otp-input-group {
+    gap: 8px;
+  }
+
+  .otp-input {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal {
+    padding: 20px 15px;
+    margin: 5px;
+    min-width: 300px;
+    max-width: 95vw;
+  }
+
+  .otp-input-group {
+    gap: 6px; /* Further reduce gap on smaller screens */
+  }
+
+  .otp-input {
+    width: 35px; /* Even smaller input boxes for mobile */
+    height: 40px;
+    font-size: 14px;
+  }
+}
+
+.modal-title {
+  text-align: center;
+  color: #333333;
+  margin-bottom: 20px;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 25px;
+  color: #333333;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px; /* Add padding for better touch targets */
+}
+
+.close-button:hover {
+  color: #666666;
+}
+
+.otp-section {
+  margin-bottom: 20px;
+}
+
+.otp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  gap: 10px;
+}
+
+.otp-info {
+  font-size: 12px;
+  padding-left: 5px;
+  padding-top: 10px;
+  color: #666666;
+}
+
+.otp-label {
+  font-weight: 500;
+  font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  color: #333333;
+  gap: 4px;
+}
+
+.otp-label .required {
+  color: red;
+  font-weight: bold;
+}
+
+.otp-timer {
+  font-size: 12px;
+  text-align: right;
+  color: #000;
+}
+
+.resend-button {
+  background: none;
+  border: none;
+  color: #002cba;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold; 
+  text-decoration: none;
+  padding: 2px 4px; /* Add padding for better touch targets */
+}
+
+.resend-button:hover {
+  color: #001a75;
+}
+
+.otp-input-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  justify-content: center; /* Center the OTP inputs */
+  flex-wrap: nowrap; /* Prevent wrapping to keep inputs in one row */
+  max-width: 100%;
+  overflow: hidden; /* Prevent overflow */
+}
+
+.otp-input {
+  width: 45px;
+  height: 45px;
+  text-align: center;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: border-color 0.2s ease; /* Smooth transition for focus states */
+  flex-shrink: 0; /* Prevent inputs from shrinking */
+}
+
+.otp-input:focus {
+  outline: none;
+  border-color: #002cba;
+  box-shadow: 0 0 0 2px rgba(0, 44, 186, 0.2);
+}
+
+.submit-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.submit-button {
+  max-width: 200px;
+  width: 100%;
+  height: 45px;
+  padding: 10px;
+  background-color: #002cba;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.submit-button:hover {
+  background-color: #001a75;
+}
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.otp-input.invalid {
+  border-color: red;
+  animation: shake 0.5s ease-in-out;
+}
+
+.invalid {
+  border-color: red;
+}
+
+.otp-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* Align to top for better text alignment */
+  font-size: 12px;
+  color: #666666;
+  margin-top: 10px;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  gap: 10px;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-left: 10px;
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+/* Small shake animation for invalid inputs */
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+/* Ensure modal content doesn't overflow */
+.modal * {
+  box-sizing: border-box;
+}
+
+/* Additional responsive adjustments for very large screens */
+@media (min-width: 1200px) {
+  .modal {
+    max-width: 650px; /* Even larger on very large screens to accommodate 6 inputs */
+  }
+
+  .otp-input {
+    width: 50px; /* Restore larger size on big screens */
+  }
+
+  .otp-input-group {
+    gap: 12px; /* Restore larger gap on big screens */
+  }
+}
+
+#submitButtonsignup {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 600px;
+  align-self: center;
+}
+
+/* For mobile screens */
+@media (max-width: 768px) {
+  #submitButtonsignup {
+    flex-direction: column;
+    width: 300px;
+  }
+}

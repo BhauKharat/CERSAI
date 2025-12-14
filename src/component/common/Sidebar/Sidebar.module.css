@@ -1,0 +1,15 @@
+.sidebar {
+  width: 220px;
+  background: var(--secondary-color);
+  height: 100vh;
+  padding: 1.5rem 1rem;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.03);
+}
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+.sidebar li {
+  margin: 1.2rem 0;
+  cursor: pointer;
+}

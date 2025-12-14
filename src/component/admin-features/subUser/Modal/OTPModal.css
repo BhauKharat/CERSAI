@@ -1,0 +1,229 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  
+  .modal {
+    background: #fff;
+    border-radius: 2px;
+    padding: 30px 40px;
+    /* width: 100%; */
+    max-width: 450px; /* Reduced modal width */
+    min-width: 450px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .modal {
+      padding: 20px 25px;
+      margin: 10px;
+      min-width: 350px;
+      max-width: 90vw;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .modal {
+      padding: 20px 15px;
+      margin: 5px;
+      min-width: 300px;
+      max-width: 95vw;
+    }
+  }
+  
+  .modal-title {
+    text-align: center;
+    color: #262626;
+    margin-bottom: 30px;
+    font-size: 20px;
+    font-weight: 600;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    color: #8c8c8c;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+  }
+  
+  .close-button:hover {
+    color: #595959;
+  }
+  
+  .otp-section {
+    margin-bottom: 30px;
+  }
+  
+  .otp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    width: 310px; /* Exact width: 6 inputs * 45px + 5 gaps * 8px = 270px + 40px padding */
+  }
+  
+  .otp-label {
+    font-weight: 500;
+    font-size: 14px;
+    color: #262626;
+    margin: 0;
+  }
+  
+  .otp-label .required {
+    color: #ff4d4f;
+    margin-left: 2px;
+  }
+  
+  .otp-timer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #262626;
+    white-space: nowrap; /* Prevent text wrapping */
+  }
+  
+  .resend-button {
+    background: none;
+    border: none;
+    color: #1890ff;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: underline;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .resend-button:hover {
+    color: #40a9ff;
+  }
+  
+  .resend-disabled {
+    color: #bfbfbf;
+    cursor: not-allowed;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  .otp-input-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    justify-content: flex-start; /* Align to left like in screenshot */
+  }
+  
+  .otp-input {
+    width: 45px;
+    height: 45px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    transition: border-color 0.2s ease;
+    background: #fafafa;
+  }
+  
+  .otp-input:focus {
+    outline: none;
+    border-color: #1890ff;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+    background: #fff;
+  }
+  
+  .otp-input.invalid {
+    border-color: #ff4d4f;
+    background: #fff2f0;
+    animation: shake 0.5s ease-in-out;
+  }
+  
+  .otp-info {
+    font-size: 13px;
+    color: #8c8c8c;
+    margin: 0;
+    line-height: 1.4;
+  }
+  
+  .otp-info-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 8px;
+    gap: 10px;
+    flex-wrap: wrap;
+    width: 310px; /* Same width as input group */
+  }
+  
+  .error-message {
+    color: #ff4d4f;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .submit-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+  }
+  
+  .submit-button {
+    width: 100%;
+    max-width: 300px;
+    height: 45px;
+    padding: 12px 24px;
+    background-color: #002CBA;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .submit-button:hover {
+    background-color: #001a75;
+  }
+  
+  .submit-button:disabled {
+    background-color: #f5f5f5;
+    color: #bfbfbf;
+    cursor: not-allowed;
+  }
+  
+  /* Shake animation for invalid inputs */
+  @keyframes shake {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-3px);
+    }
+    75% {
+      transform: translateX(3px);
+    }
+  }
+  
+  /* Ensure modal content doesn't overflow */
+  .modal * {
+    box-sizing: border-box;
+  }

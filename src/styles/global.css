@@ -1,0 +1,64 @@
+@import url('./variables.css');
+@import url('./components.css');
+
+body {
+  margin: 0;
+  background: #f6f8fa;
+  color: #222;
+}
+
+/* Importing Gilroy Regular */
+@font-face {
+  font-family: 'Gilroy';
+  src: url('../assets/fonts/Gilroy-Regular.ttf') format('truetype');
+  font-weight: 400; /* Regular weight */
+  font-style: normal;
+}
+
+/* Importing Gilroy Medium */
+@font-face {
+  font-family: 'Gilroy';
+  src: url('../assets/fonts/Gilroy-Medium.ttf') format('truetype');
+  font-weight: 500; /* Medium weight */
+  font-style: normal;
+}
+
+/* Importing Gilroy Semibold */
+@font-face {
+  font-family: 'Gilroy';
+  src: url('../assets/fonts/Gilroy-SemiBold.ttf') format('truetype');
+  font-weight: 600; /* Semibold weight */
+  font-style: normal;
+}
+
+/* Importing Gilroy Bold */
+@font-face {
+  font-family: 'Gilroy';
+  src: url('../assets/fonts/Gilroy-Bold.ttf') format('truetype');
+  font-weight: 700; /* Bold weight */
+  font-style: normal;
+}
+
+body {
+  font-family: 'Gilroy', sans-serif;
+}
+
+h1 {
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 700; /* Bold */
+}
+
+p {
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 400; /* Regular */
+}
+
+.medium-text {
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 500; /* Medium */
+}
+
+.semibold-text {
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 600; /* Semibold */
+}

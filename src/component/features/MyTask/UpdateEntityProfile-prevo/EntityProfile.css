@@ -1,0 +1,84 @@
+/* EntityProfile.css */
+
+.entity-profile-container {
+  padding: 1rem;
+}
+
+.back-button-box {
+  margin-bottom: 0.5rem;
+}
+
+.back-button-text {
+  cursor: pointer;
+}
+
+.profile-tabs {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+  color: #002cba;
+}
+
+.tab-style {
+  color: #002cba;
+  font-family: inherit;
+}
+
+.accordion-container {
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.accordion-summary {
+  background-color: #f7f8ff;
+}
+
+.accordion-summary-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.accordion-typography {
+  font-family: inherit;
+  background-color: #e6ebff;
+}
+
+.accordion-details {
+  margin-bottom: 1.5rem;
+}
+
+.form-grid {
+  padding-top: 1rem;
+}
+
+.form-label {
+  margin-bottom: 0.5rem;
+}
+
+.required-star {
+  color: red;
+}
+
+.button-actions-box {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.cancel-button {
+  min-width: 100px;
+  border-color: #002cba;
+  color: #002cba;
+}
+
+.save-button {
+  min-width: 150px;
+  background-color: #002cba !important;
+  color: white;
+}
+
+.css-1808mag-MuiPaper-root-MuiAccordion-root.Mui-expanded {
+  margin: 40px 0 !important;
+}

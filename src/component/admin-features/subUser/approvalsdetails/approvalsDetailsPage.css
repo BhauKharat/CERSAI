@@ -1,0 +1,186 @@
+/* Main container adjustments */
+.approval-details-main {
+    padding-top: 16px;
+  }
+  
+  .approval-details-header {
+    margin-bottom: 24px;
+    padding-bottom: 0;
+  }
+  
+  .approval-details-header .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .approval-details-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+  
+  /* Form container */
+  .approval-form-container {
+    max-width: 1200px;
+    margin: 0;
+  }
+  
+  /* Card styling */
+  .approval-details-card {
+    background:none;
+    border-radius: 8px;
+    /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); */
+    padding: 24px;
+  }
+  
+  .approval-details-card .ant-card-body {
+    padding: 0;
+  }
+  
+  /* Form rows */
+  .form-row {
+    margin-bottom: 20px;
+  }
+  
+  .form-row:last-of-type {
+    margin-bottom: 32px;
+  }
+  
+  /* Form fields */
+  .form-field {
+    margin-bottom: 0;
+  }
+  
+  .field-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+  
+  /* Input styling */
+  .readonly-input,
+  .readonly-textarea {
+    background-color: #f8f9fa !important;
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
+    color: #1a1a1a;
+    font-size: 14px;
+    height: 40px;
+    cursor: default;
+  }
+  
+  .readonly-input:focus,
+  .readonly-textarea:focus {
+    border-color: #e1e5e9 !important;
+    box-shadow: none !important;
+    background-color: #f8f9fa !important;
+  }
+  
+  .readonly-textarea {
+    height: auto !important;
+    min-height: 100px;
+    resize: none;
+    padding: 12px;
+  }
+  
+  /* Action buttons */
+  .approval-action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #f0f0f0;
+  }
+  
+  .reject-button {
+    min-width: 120px;
+    height: 40px;
+    border-color: #002CBA;
+    color: #002CBA;
+    font-weight: 500;
+    border-radius: 6px;
+    background: transparent;
+  }
+  
+  .reject-button:hover {
+    border-color: #001a85;
+    color: #001a85;
+    background: #f8f9ff;
+  }
+  
+  .approve-button {
+    min-width: 120px;
+    height: 40px;
+    background-color: #002CBA;
+    border-color: #002CBA;
+    color: white;
+    font-weight: 500;
+    border-radius: 6px;
+  }
+  
+  .approve-button:hover {
+    background-color: #001a85;
+    border-color: #001a85;
+  }
+  
+  /* Back button styling */
+  .back-button {
+    padding: 4px 8px;
+    height: auto;
+    border: none;
+    background: transparent;
+    color: #666666;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .back-button:hover {
+    color: #002CBA;
+    background: rgba(0, 44, 186, 0.04);
+  }
+  
+  .back-button .anticon {
+    font-size: 14px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .approval-details-card {
+        background-color: none;
+      padding: 16px;
+    }
+    
+    .form-row {
+      margin-bottom: 16px;
+    }
+    
+    .approval-action-buttons {
+      flex-direction: column-reverse;
+      gap: 12px;
+    }
+    
+    .reject-button,
+    .approve-button {
+      width: 100%;
+    }
+    
+    .approval-details-header .header-left {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .approval-form-container {
+      padding: 0 8px;
+    }
+  }

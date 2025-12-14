@@ -1,0 +1,62 @@
+/* Example component styles */
+.button {
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.input {
+  padding: 0.5rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+}
+
+.textFieldStyles {
+  width: 30%; /* Ensures it takes full width of its Grid item */
+  /* maxWidth: 330px; */ /* Max width as per Figma */
+  background: white;
+  /* Custom styles to achieve 48px height for the entire input area */
+  & .MuiInputBase-root {
+    /* Targets the root of the input element (including adornments) */
+    height: 48px; /* Fixed height for the entire input component */
+    min-height: 48px; /* Ensure it doesn't shrink below this */
+    align-items: center; /* Vertically align content inside the input base */
+    padding: 0; /* Explicitly remove any default padding on the root */
+  }
+  & .MuiInputBase-input {
+    /* Targets the actual <input> element inside */
+    padding-top: 12px; /* Adjust padding to vertically center text within the 48px height */
+    padding-bottom: 12px;
+    line-height: 1.5em; /* Ensure consistent line height */
+    font-size: 1rem; /* Ensure consistent font size */
+  }
+  & .MuiInputLabel-root {
+    /* Adjust label position for the taller input field */
+    transform: translate(14px, 14px) scale(1); /* Default position for 48px height */
+    &.Mui-focused {
+      transform: translate(14px, -9px) scale(0.75); /* Focused position */
+    }
+    &.MuiFormLabel-filled {
+      transform: translate(14px, -9px) scale(0.75); /* Filled position (when value is present) */
+    }
+    &.MuiInputLabel-shrink {
+      /* Ensure label shrinks correctly when input is focused or filled */
+      transform: translate(14px, -9px) scale(0.75);
+    }
+  }
+}
+
+.MuiPickersSectionList-root {
+  padding: 13.5px 0 !important;
+}
+
+.buttonClass {
+  width: 148;
+  height: 48;
+  border-radius: '4px';
+  padding: 10px 47px !important;
+  background: var(--Primary, #002CBA) !important;
+}

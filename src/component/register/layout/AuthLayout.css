@@ -1,0 +1,182 @@
+.auth-background {
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-container {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  padding: 40px 0px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.logo {
+  height: 70px;
+  /* margin-top: 20px; */
+  margin-bottom: 25px;
+  font-size: large;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: black;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+}
+
+.footer {
+  font-size: 12px;
+  color: #999;
+  margin-top: 20px;
+}
+
+@media screen and (max-width: 480px) {
+  /* Keep background image on mobile and ensure full viewport height */
+  .auth-background {
+    min-height: 100dvh;
+    background-size: cover;
+    background-position: center;
+  }
+  
+  .login-form {
+    max-width: 95%;
+    padding: 10px;
+    margin: 10px auto;
+    
+  }
+  
+  .form-group {
+    margin-bottom: 12px;
+  }
+  
+  .form-group label {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  
+  .password-label-container .password-text {
+    font-size: 13px;
+  }
+  
+  .form-group input {
+    padding: 10px 8px;
+    font-size: 16px;
+    border-radius: 6px;
+  }
+  
+  .password-wrapper .toggle-password {
+    right: 8px;
+    padding: 3px;
+  }
+  
+  .link {
+    font-size: 11px;
+    margin-top: 3px;
+  }
+  
+  .upload-btn {
+    padding: 10px;
+    font-size: 12px;
+    gap: 8px;
+  }
+  
+  .icon-circle {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .icon-circle svg {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .login-btn {
+    width: 70%;
+    padding: 12px;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+  
+  .tooltip-box {
+    width: 250px;
+    left: 50%;
+    transform: translateX(-50%);
+    top: -100px;
+    font-size: 12px;
+    padding: 12px 15px;
+  }
+  
+  .tooltip-list li {
+    font-size: 12px;
+    gap: 4px;
+    margin-bottom: -4px;
+  }
+  
+  .check-icon {
+    font-size: 14px;
+    margin-top: 8px;
+  }
+  
+  .error {
+    font-size: 13px;
+    padding: 8px 12px;
+    gap: 8px;
+    border-radius: 12px;
+  }
+  
+  .preview-box {
+    margin-top: 5px;
+  }
+  
+  .upload-section {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  /* Adjust password label spacing for mobile */
+  .password-label-container {
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .auth-container {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+    padding: 24px 16px;
+    max-width: 92%;
+    width: 100%;
+    text-align: center;
+    margin: 12px;
+  }
+
+  .logo {
+    height: 56px;
+    margin-top: 8px;
+    margin-bottom: 16px;
+  }
+
+  .footer {
+    font-size: 11px;
+    margin-top: 16px;
+  }
+}

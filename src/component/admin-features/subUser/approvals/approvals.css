@@ -1,0 +1,338 @@
+/* Approvals.css - Clean version with single border fix */
+
+.dashboard {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+  }
+  
+  .dashboard-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    transition: margin-left 0.3s ease;
+  }
+  
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 8px;
+  }
+  
+  .page-header {
+    margin-bottom: 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .header-left {
+    display: flex;
+    align-items: center;
+  }
+  
+  .back-button {
+    color: #666;
+    font-size: 14px;
+    padding: 4px 8px;
+    height: auto;
+    border: none;
+    background: none;
+    margin-top: -30px;
+    margin-left: -35px;
+  }
+  
+  .back-button:hover {
+    color: #002CBA;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+  }
+  
+  .filters-container {
+    margin-bottom: 20px;
+    margin-top: -48px;
+    background: #fafafa;
+    padding: 16px;
+    border-radius: 6px;
+    margin-left: -20px;
+  }
+  
+  .search-section {
+    display: flex;
+    gap: 20px;
+    align-items: end;
+    flex-wrap: wrap;
+  }
+  
+  .search-group {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .search-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+  }
+  
+  .search-input-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  /* CLEAN FIX FOR DOUBLE BORDER - Target all input variations */
+  .search-input-group .ant-input,
+  .search-input-group .ant-input-affix-wrapper,
+  .search-input-group input {
+    /* border: 1px solid #d9d9d9 !important; */
+    box-shadow: none !important;
+    outline: none !important;
+    background: white !important;
+    border-radius: 6px !important;
+  }
+  
+  :where(.css-dev-only-do-not-override-vai92f).ant-input-affix-wrapper >input.ant-input, :where(.css-dev-only-do-not-override-vai92f).ant-input-affix-wrapper >textarea.ant-input {
+    font-size: inherit;
+    border: none !important;
+    border-radius: 0;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    /* border: none; */
+    width: 45%;
+}
+  .search-input-group .ant-input:focus,
+  .search-input-group .ant-input-affix-wrapper:focus,
+  .search-input-group input:focus {
+    border-color: #002CBA !important;
+    box-shadow: 0 0 0 2px rgba(0, 44, 186, 0.2) !important;
+  }
+  
+  .search-input-group .ant-input:hover,
+  .search-input-group .ant-input-affix-wrapper:hover,
+  .search-input-group input:hover {
+    border-color: #002CBA !important;
+  }
+  
+  /* Override any global Ant Design styles that might cause issues */
+  .search-input-group * {
+    box-sizing: border-box !important;
+  }
+  
+  .status-group {
+    min-width: 150px;
+  }
+  
+  .status-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+  }
+  
+  .create-button-group {
+    min-width: 120px;
+  }
+  
+  .table-container {
+    background: none;
+    overflow: hidden;
+  }
+  
+  .table-wrapper {
+    overflow-x: auto;
+  }
+  
+  /* Status indicator styles */
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  
+  .status-dot.approved {
+    background-color: #52c41a;
+  }
+  
+  .status-dot.pending-approval {
+    background-color: #faad14;
+  }
+  
+  .status-dot.rejected {
+    background-color: #ff4d4f;
+  }
+  
+  .status-dot.suspended {
+    background-color: #722ed1;
+  }
+  
+  .status-dot.inactive {
+    background-color: #d9d9d9;
+  }
+  
+  /* Action button styles */
+  .action-button {
+    color: #666;
+    border: none;
+    background: none;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+  
+  .action-button:hover {
+    color: #002CBA;
+    background-color: #f0f0f0;
+  }
+  
+  /* Pagination styles */
+  .pagination-arrow,
+  .pagination-number {
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 4px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 4px;
+  }
+  
+  .pagination-arrow {
+    padding: 0 12px;
+    min-width: auto;
+  }
+  
+  .pagination-number[ant-click-animating-without-extra-node]::after {
+    display: none;
+  }
+  
+  /* Footer styles */
+  .page-footer {
+    background: #fff;
+    padding: 16px 20px;
+    border-top: 1px solid #e8e8e8;
+    text-align: center;
+    margin-top: auto;
+  }
+  
+  .footer-text {
+    color: #666;
+    font-size: 12px;
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .dashboard-content {
+      margin-left: 0;
+    }
+    
+    .main-content {
+      margin: 10px;
+      padding: 15px;
+    }
+    
+    .search-section {
+      flex-direction: column;
+      gap: 15px;
+      align-items: stretch;
+    }
+    
+    .search-group {
+      min-width: unset;
+    }
+    
+    .search-input-group {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .search-input-group .ant-input,
+    .search-input-group .ant-input-affix-wrapper {
+      width: 100%;
+    }
+    
+    .status-group,
+    .create-button-group {
+      min-width: unset;
+    }
+    
+    .status-group .ant-select,
+    .create-button-group .ant-btn {
+      width: 100%;
+    }
+    
+    .table-wrapper {
+      overflow-x: auto;
+    }
+    
+    .filters-container {
+      padding: 12px;
+      margin-top: -40px;
+      margin-left: -10px;
+    }
+
+    .page-header {
+      margin-bottom: 0px;
+    }
+    
+    .back-button {
+      margin-left: -30px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .main-content {
+      margin: 5px;
+      padding: 10px;
+    }
+    
+    .filters-container {
+      padding: 10px;
+      margin-top: -38px;
+    }
+    
+    .search-section {
+      gap: 12px;
+    }
+    
+    .page-header {
+      margin-bottom: 0px;
+    }
+    
+    .back-button {
+      margin-left: -25px;
+    }
+  }
+  
+  /* Table responsive styles */
+  @media (max-width: 768px) {
+    .ant-table-thead > tr > th,
+    .ant-table-tbody > tr > td {
+      padding: 8px 4px;
+      font-size: 12px;
+    }
+    
+    .ant-table-thead > tr > th:first-child,
+    .ant-table-tbody > tr > td:first-child {
+      padding-left: 8px;
+    }
+    
+    .ant-table-thead > tr > th:last-child,
+    .ant-table-tbody > tr > td:last-child {
+      padding-right: 8px;
+    }
+  }

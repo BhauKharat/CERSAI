@@ -1,0 +1,31 @@
+.header {
+  height: var(--header-height, 64px);
+  background: var(--primary-color, #002CBA);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+  font-size: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 1024px) {
+  .header {
+    padding: 0 1.5rem;
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 0 1rem;
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 0 0.5rem;
+    font-size: 1rem;
+  }
+}

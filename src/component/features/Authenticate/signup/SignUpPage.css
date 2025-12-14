@@ -1,0 +1,234 @@
+/* Styles specific to the redesigned SignUp screen */
+
+/* Root wrapper for the signup background and layout */
+.signup-root {
+  min-height: 100vh;
+  background-color: #E6EBFF;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Paper card container */
+.signup-paper {
+  border-radius: 24px;
+  background-color: #ffffff;
+  overflow: hidden;
+  min-height: 718px;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+  /* Mirrors the complex shadow used inline */
+  box-shadow: 0px 459px 129px 0px rgba(0, 0, 0, 0),
+    0px 294px 118px 0px rgba(0, 0, 0, 0.01),
+    0px 165px 99px 0px rgba(0, 0, 0, 0.03),
+    0px 73px 73px 0px rgba(0, 0, 0, 0.05),
+    0px 18px 40px 0px rgba(0, 0, 0, 0.06);
+}
+
+@media (min-width: 900px) {
+  .signup-paper {
+    max-width: 1309px;
+  }
+}
+
+/* Tabs top margin (responsive) */
+.signup-tabs-margin {
+  margin-top: 64px; /* xs ~ 8 spacing */
+}
+
+@media (min-width: 900px) {
+  .signup-tabs-margin {
+    margin-top: 80px; /* md ~ 10 spacing */
+  }
+}
+
+/* Tabs container bar */
+.signup-tabs {
+  background: rgba(246, 248, 255, 0.8);
+  -webkit-backdrop-filter: blur(78.5px);
+  backdrop-filter: blur(78.5px);
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Tabs inner styles */
+.signup-tabs .MuiTab-root {
+  text-transform: none;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: "Gilroy-Medium", sans-serif;
+  min-width: 174px;
+  color: #000;
+}
+
+.signup-tabs .Mui-selected {
+  color: #002CBA !important;
+  font-weight: 700;
+  font-family: "Gilroy-Bold", sans-serif;
+}
+
+.signup-tabs .MuiTabs-indicator {
+  background-color: #002CBA;
+  height: 6px;
+  border-radius: 1px;
+}
+
+/* Form title */
+.signup-title {
+  text-align: center;
+  color: #333333;
+  font-weight: 700;
+  font-size: 24px;
+}
+
+.signup-title-mb {
+  margin-bottom: 32px; /* 4 spacing */
+}
+
+/* Centered grid container width */
+.signup-grid {
+  max-width: 1022px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Spacing helpers */
+.mb-1 {
+  margin-bottom: 8px;
+}
+
+.mt-4 {
+  margin-top: 32px;
+}
+
+.mt-2 {
+  margin-top: 16px;
+}
+
+.mb-4 {
+  margin-bottom: 32px;
+}
+
+/* Header back button */
+.signup-header-btn {
+  color: #000;
+  text-transform: none;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: "Gilroy-Medium", sans-serif;
+}
+
+/* Common form field wrapper to normalize heights and fonts */
+.signup-field .MuiInputBase-root {
+  height: 48px;
+  font-size: 14px;
+  font-family: "Gilroy-Medium", sans-serif;
+}
+
+.signup-field .MuiInputBase-input {
+  padding: 12px;
+}
+
+.signup-select .MuiSelect-select {
+  padding: 12px;
+}
+
+.signup-disabled .MuiInputBase-root {
+  background-color: #EEEEEE;
+  color: #999999;
+}
+
+.signup-label {
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Gilroy-SemiBold", sans-serif;
+  color: #1a1a1a;
+}
+
+.signup-label.disabled {
+  color: #999999;
+}
+
+.required-asterisk {
+  color: #ff0707;
+  margin-left: 4px;
+}
+
+/* Verify button inside InputAdornment */
+.signup-verify-btn {
+  background-color: #002CBA !important;
+  text-transform: none !important;
+  min-width: 73px;
+  height: 34px;
+  font-size: 16px !important;
+  font-family: "Gilroy-Medium", sans-serif !important;
+  border-radius: 4px !important;
+}
+
+/* Action buttons */
+.signup-clear-btn {
+    border-color: #002CBA !important;
+    color: #002CBA !important;
+    text-transform: none !important;
+    min-width: 138px;
+    height: 48px;
+    font-size: 16px !important;
+    font-family: "Gilroy-Medium", sans-serif !important;
+    border-radius: 4px !important;
+  }
+
+.signup-clear-btn:hover {
+  border-color: #002CBA !important;
+  background-color: rgba(0, 44, 186, 0.04) !important;
+}
+
+.signup-submit-btn {
+  background-color: rgba(128, 128, 128, 0.55) !important;
+  color: #fff !important;
+  text-transform: none !important;
+  min-width: 200px;
+  height: 48px;
+  font-size: 16px !important;
+  font-family: "Gilroy-Medium", sans-serif !important;
+  border-radius: 4px !important;
+}
+
+.signup-submit-btn:hover {
+  background-color: #002CBA !important;
+}
+
+.signup-submit-btn:disabled,
+.signup-submit-btn.Mui-disabled {
+  background-color: rgba(128, 128, 128, 0.55) !important;
+}
+
+/* Notes */
+.signup-note {
+  text-align: center;
+}
+
+.signup-note .text {
+  font-size: 16px;
+  font-family: "Gilroy-Medium", sans-serif;
+  color: #000;
+}
+
+.signup-note .light {
+  font-weight: 400;
+  font-family: "Gilroy-Regular", sans-serif;
+}
+
+/* Actions container */
+.signup-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+/* Utility for muted option items */
+.muted {
+  color: #999999 !important;
+}

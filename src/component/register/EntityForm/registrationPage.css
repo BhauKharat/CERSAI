@@ -1,0 +1,948 @@
+/* src/pages/RegistrationPage.css - Responsive Version with Fixed File Input Preview */
+
+.registration-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  padding: 1rem;
+  background: #e6eeff;
+}
+
+.bg-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+.registration-box {
+  position: relative;
+  z-index: 1;
+  background: white;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.logo {
+  display: block;
+  height: 60px;
+  margin: 0 auto 1rem auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.logo-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.step-indicator {
+  text-align: center;
+  font-weight: 600;
+  font-size: 18px;
+  color: #333;
+  margin-top: -50px;
+  margin-bottom: 1.5rem;
+}
+
+.entity-form {
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  /* margin-bottom: 4px; */
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-width: 200px;
+}
+
+.form-group label {
+  font-family: "Gilroy", sans-serif !important;
+  font-weight: 400 !important;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px !important;
+  font-size: 14px;
+  line-height: 1.4;
+  appearance: none;
+  background-color: #fff;
+  box-sizing: border-box;
+  min-height: 48px;
+  font-family: inherit;
+  width: 100%;
+}
+
+.form-group select {
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%23333' stroke-width='2' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px 8px;
+  padding-right: 30px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.form-footer {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.submit-btn {
+  background: #002cba;
+  color: #fff;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px !important;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 200px;
+  height: 50px;
+  display: block;
+  margin: 0 auto;
+  transition: background-color 0.3s;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background-color: #001a8a;
+}
+
+.submit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* File Upload Components - FIXED ALIGNMENT */
+.custom-file-input {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 4px !important;
+  overflow: hidden;
+  height: 48px;
+  padding: 0 8px 0 16px;
+  background-color: white;
+  position: relative;
+  flex: 1;
+  box-sizing: border-box;
+  min-width: 0; /* Allow shrinking */
+}
+
+.custom-file-input input[type="text"] {
+  border: none;
+  outline: none;
+  flex-grow: 1;
+  font-size: 14px;
+  color: #333;
+  height: 100%;
+  line-height: 48px;
+  box-sizing: border-box;
+  padding: 0 8px;
+  width: 100%;
+}
+
+.upload-icon {
+  background-color: #002cba;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  width: 32px;
+  flex-shrink: 0;
+}
+
+.upload-doc-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  /* Reset all positioning */
+  position: relative !important;
+
+  /* Consistent spacing */
+  gap: 8px !important;
+
+  /* Visual styling */
+  background-color: #f6f8ff !important;
+  color: #002cba !important;
+  border: 1.5px solid #002cba !important;
+  padding: 12px 16px !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  font-weight: 500 !important;
+  font-size: 12px !important;
+  transition: background-color 0.2s !important;
+  height: 48px !important;
+  flex: 1 !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+  min-width: 0 !important;
+  text-decoration: none !important;
+
+  /* Remove any inherited styles that might interfere */
+  margin: 0 !important;
+  vertical-align: baseline !important;
+  line-height: 1 !important;
+}
+
+.upload-doc-btn svg {
+  /* width: 20px;
+  height: 20px;
+  flex-shrink: 0; */
+  width: 20px !important;
+  height: 20px !important;
+  flex-shrink: 0 !important;
+  color: #002cba !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  /* vertical-align: middle !important; */
+  display: block !important;
+}
+
+.upload-doc-btn span {
+  /* Remove ALL transforms, margins, and positioning */
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+  line-height: 1 !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  display: inline-block !important;
+
+  /* Reset any inherited styles */
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+}
+
+.upload-doc-btn:hover {
+  background-color: #e6eeff;
+}
+
+.hidden-file-input,
+.hidden-upload {
+  display: none;
+}
+
+/* FIXED: Input with preview always horizontal */
+.input-with-preview {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  gap: 12px;
+  width: 100%;
+}
+
+.preview-box {
+  flex-shrink: 0;
+  width: 50px;
+  position: relative;
+  margin-top: 3px !important; /* Force alignment */
+}
+
+.preview-img {
+  width: 100%;
+  height: auto;
+  max-height: 48px; /* Match input height */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  object-fit: cover;
+}
+
+.tick-icon {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: white;
+  color: #4caf50;
+  font-size: 12px;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  z-index: 1;
+}
+
+/* When preview is shown, adjust input/button width */
+.input-with-preview.has-preview .custom-file-input,
+.input-with-preview.has-preview .upload-doc-btn {
+  flex: 0.7; /* Reduce width to make room for preview */
+}
+
+.country-code-select {
+  height: 48px !important;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-position: right 10px center;
+  background-repeat: no-repeat;
+  width: 100%;
+}
+
+/* Error Styling */
+.input-error {
+  border-color: red !important;
+}
+
+/* .error-message,
+.error-text {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+} */
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 10px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-align: center; 
+  /* centers text inside the div */
+  display: block;
+  width: 100%; /* ensures it spans across container */
+}
+
+/* Autofill Styling */
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  background-color: white !important;
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  box-shadow: 0 0 0px 1000px white inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: auto;
+}
+
+/* RESPONSIVE BREAKPOINTS */
+
+/* Large Desktop (1200px and up) */
+@media (min-width: 1200px) {
+  .registration-container {
+    padding: 2rem;
+  }
+
+  .registration-box {
+    padding: 3rem;
+  }
+
+  .entity-form {
+    padding: 40px 50px;
+    gap: 16px;
+  }
+
+  .form-row {
+    gap: 35px;
+  }
+
+  .form-group {
+    min-width: 250px;
+  }
+
+  .step-indicator {
+    font-size: 20px;
+  }
+
+  .input-with-preview {
+    gap: 15px;
+  }
+
+  .preview-box {
+    width: 55px;
+  }
+}
+
+/* Desktop (992px to 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .registration-box {
+    padding: 2.5rem;
+  }
+
+  .entity-form {
+    padding: 30px 40px;
+  }
+
+  .form-row {
+    gap: 25px;
+  }
+
+  .form-group {
+    min-width: 220px;
+  }
+
+  .input-with-preview {
+    gap: 14px;
+  }
+
+  .preview-box {
+    width: 52px;
+  }
+}
+
+/* Tablet (768px to 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .registration-container {
+    padding: 1.5rem;
+  }
+
+  .registration-box {
+    padding: 2rem;
+  }
+
+  .entity-form {
+    padding: 25px 20px;
+  }
+
+  .form-row {
+    gap: 20px;
+  }
+
+  .form-group {
+    min-width: 200px;
+    flex: 1 1 calc(50% - 10px);
+  }
+
+  .step-indicator {
+    font-size: 18px;
+   /* Add these lines to remove any horizontal lines */
+  border: none !important;
+  border-bottom: none !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+  background-image: none !important;
+  
+  /* Remove any pseudo-elements that might create lines */
+  position: relative;
+}
+
+.step-indicator::before,
+.step-indicator::after {
+  display: none !important;
+}
+
+/* Also make sure no parent elements are adding borders */
+.step-indicator * {
+  border: none !important;
+  text-decoration: none !important;
+}
+
+  .logo {
+    height: 50px;
+  }
+
+  /* Show 2 items per row on tablet */
+  .form-row .form-group:nth-child(3) {
+    flex: 1 1 100%;
+  }
+
+  /* Tablet file input adjustments */
+  .input-with-preview {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 15px;
+  }
+
+  .preview-box {
+    width: 55px;
+    margin-top: 6px !important;
+  }
+
+  .preview-img {
+    max-height: 48px;
+  }
+}
+
+/* Small Tablet/Large Phone (576px to 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+  .registration-container {
+    padding: 1rem;
+  }
+
+  .registration-box {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+
+  .entity-form {
+    padding: 20px 15px;
+    gap: 16px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .form-group {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .form-group label {
+    white-space: normal;
+    font-size: 13px;
+  }
+
+  .step-indicator {
+    font-size: 16px;
+  }
+
+  .logo {
+    height: 45px;
+  }
+
+  .submit-btn {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  /* FIXED: Keep preview beside button for small tablet */
+  .input-with-preview {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .preview-box {
+    flex-shrink: 0;
+    width: 60px;
+    margin-top: 6px !important;
+  }
+
+  .upload-doc-btn {
+    font-size: 11px;
+    padding: 10px 12px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .upload-doc-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .custom-file-input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .preview-img {
+    max-height: 48px;
+  }
+}
+
+/* Mobile (up to 575px) */
+@media (max-width: 575px) {
+  .registration-container {
+    padding: 0.5rem;
+    min-height: 100vh;
+  }
+
+  .registration-box {
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 0.5rem auto;
+  }
+
+  .entity-form {
+    padding: 15px 10px;
+    gap: 12px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .form-group {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .form-group label {
+    white-space: normal;
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 10px;
+    font-size: 13px;
+    min-height: 44px;
+  }
+
+  .step-indicator {
+    font-size: 14px;
+    margin-bottom: 1rem;
+  }
+
+  .logo {
+    height: 40px;
+  }
+
+  .logo-container {
+    padding: 15px 0;
+  }
+
+  .submit-btn {
+    max-width: 100%;
+    width: 100%;
+    height: 44px;
+    font-size: 14px;
+  }
+
+  /* File upload mobile adjustments */
+  .custom-file-input {
+    height: 44px;
+    padding: 0 6px 0 12px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .custom-file-input input[type="text"] {
+    font-size: 13px;
+    line-height: 44px;
+  }
+
+  .upload-icon {
+    width: 28px;
+    height: 28px;
+    padding: 6px;
+  }
+
+  .upload-doc-btn {
+    font-size: 10px;
+    padding: 8px 10px;
+    height: 44px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .upload-doc-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .upload-doc-btn span {
+    transform: translateY(2px);
+  }
+
+  /* FIXED: Keep preview beside button on mobile */
+  .input-with-preview {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .preview-box {
+    flex-shrink: 0;
+    width: 50px;
+    margin-top: 6px !important;
+  }
+
+  .preview-img {
+    max-height: 44px; /* Match mobile input height */
+  }
+
+  /* When preview is shown on mobile */
+  .input-with-preview.has-preview .custom-file-input,
+  .input-with-preview.has-preview .upload-doc-btn {
+    flex: 0.7;
+  }
+
+  /* Modal adjustments for mobile */
+  .modal-overlay {
+    padding: 0.5rem;
+  }
+
+  .modal-content {
+    max-width: 95vw;
+    max-height: 95vh;
+    padding: 15px;
+  }
+
+  .modal-content h3 {
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+
+  .modal-content img {
+    max-height: 50vh;
+  }
+
+  .modal-content button {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  /* Error message adjustments */
+  .error-message,
+  .error-text {
+    font-size: 11px;
+  }
+}
+
+/* Extra Small Mobile (up to 360px) */
+@media (max-width: 360px) {
+  .registration-container {
+    padding: 0.25rem;
+  }
+
+  .registration-box {
+    padding: 0.75rem;
+    margin: 0.25rem auto;
+  }
+
+  .entity-form {
+    padding: 10px 5px;
+  }
+
+  .form-group label {
+    font-size: 11px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 8px;
+    font-size: 12px;
+    min-height: 40px;
+  }
+
+  .custom-file-input {
+    height: 40px;
+    padding: 0 4px 0 8px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .upload-icon {
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+  }
+
+  .upload-doc-btn {
+    height: 40px;
+    font-size: 9px;
+    padding: 6px 8px;
+    flex: 1;
+    min-width: 0;
+    
+  }
+
+  .upload-doc-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .submit-btn {
+    height: 40px;
+    font-size: 13px;
+  }
+
+  /* FIXED: Keep preview beside button even on extra small screens */
+  .input-with-preview {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .preview-box {
+    flex-shrink: 0;
+    width: 45px;
+    margin-top: 6px !important;
+  }
+
+  .preview-img {
+    max-height: 40px; /* Match extra small input height */
+  }
+
+  /* When preview is shown on extra small screens */
+  .input-with-preview.has-preview .custom-file-input,
+  .input-with-preview.has-preview .upload-doc-btn {
+    flex: 0.65; /* Even more space for preview on tiny screens */
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  .registration-container {
+    padding: 0.5rem;
+  }
+
+  .registration-box {
+    margin: 0.5rem auto;
+  }
+
+  .entity-form {
+    gap: 8px;
+  }
+
+  .form-row {
+    margin-bottom: 2px;
+  }
+
+  .logo {
+    height: 35px;
+  }
+
+  .logo-container {
+    padding: 10px 0;
+  }
+
+  .step-indicator {
+    margin-bottom: 0.5rem;
+  }
+
+  /* Maintain horizontal preview in landscape */
+  .input-with-preview {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .registration-container {
+    background: white;
+    padding: 0;
+  }
+
+  .bg-image {
+    display: none;
+  }
+
+  .registration-box {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+
+  .upload-doc-btn,
+  .submit-btn {
+    display: none;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .form-group input,
+  .form-group select {
+    border-width: 0.5px;
+  }
+}
+
+.checkbox-container {
+  /* display: flex; */
+  align-items: left;
+  margin-top: 1px;
+  margin-bottom: -10px;
+  /* margin-left: auto; */
+  /* margin-right: auto; */
+  /* padding: 0 16px; */
+  max-width: 100%;
+  justify-content: flex-start;
+}
+
+@media (min-width: 768px) {
+  .checkbox-container {
+    /* justify-content: center; */
+  }
+}
+
+/* @media (min-width: 1024px) {
+  .checkbox-container {
+    margin-left: 450px;
+  }
+} */

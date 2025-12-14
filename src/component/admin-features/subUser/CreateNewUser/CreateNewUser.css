@@ -1,0 +1,276 @@
+/* CreateNewUser.css */
+
+/* Create New User specific styling */
+.create-new-user-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: calc(100vh - 120px);
+    
+  }
+  
+  .create-new-user-container {
+    padding: 24px;
+    width: 100%;
+    max-width: none;
+    flex: 1;
+  }
+  
+  .page-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #000;
+    margin-left: 8px;
+  }
+  
+  .create-new-user-form {
+    /* background: white; */
+  }
+  
+  .form-section {
+    margin-bottom: 24px;
+  }
+  
+  .create-new-user-field {
+    margin-bottom: 16px;
+  }
+  
+  .create-new-user-field-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #000;
+    font-size: 14px;
+  }
+  
+  .required {
+    color: #ff4d4f;
+  }
+  
+  /* Details Cards */
+  .create-new-user-details-card {
+    margin-bottom: 24px;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    /* background-color: #001a94; */
+  }
+  
+  .create-new-user-details-card .ant-card-body {
+    padding: 0;
+  }
+  
+  .create-new-user-card-header {
+    padding: 16px 24px;
+    background: #E6EBFF;
+    border-bottom: 1px solid #e8e8e8;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    color: #000;
+    font-size: 16px;
+  }
+  
+  .create-new-user-card-header:hover {
+    background: #f0f2ff;
+  }
+  
+  .create-new-user-card-content {
+    padding: 24px;
+    background-color: white;
+  }
+  
+  /* Form Items */
+  .ant-form-item {
+    margin-bottom: 16px;
+  }
+  
+  .ant-form-item-label > label {
+    font-weight: 500;
+    color: #000;
+    height: auto;
+  }
+  
+  .ant-input,
+  .ant-select-selector {
+    border-radius: 6px;
+    border: 1px solid #d9d9d9;
+    height: 40px;
+  }
+  
+  .ant-input:focus,
+  .ant-select-selector:focus,
+  .ant-select-focused .ant-select-selector {
+    /* border-color: #002CBA; */
+    box-shadow: 0 0 0 2px rgba(0, 44, 186, 0.2);
+  }
+  
+  .ant-input::placeholder {
+    color: #bfbfbf;
+  }
+  
+  .ant-select-selection-placeholder {
+    color: #bfbfbf;
+  }
+  
+  /* Country Code Group */
+  .create-new-user-country-code-group {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .create-new-user-country-code-group .ant-select {
+    flex-shrink: 0;
+  }
+  
+  /* Date Picker */
+  .ant-picker {
+    width: 100%;
+    height: 40px;
+    border-radius: 6px;
+  }
+  
+  .ant-picker:focus,
+  .ant-picker-focused {
+    border-color: #002CBA;
+    box-shadow: 0 0 0 2px rgba(0, 44, 186, 0.2);
+  }
+  
+  /* Form Actions */
+  .create-new-user-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #e8e8e8;
+  }
+  
+  .create-new-user-validate-button {
+    padding: 8px 32px;
+    height: 40px;
+    border-radius: 6px;
+    border: 1px solid #002CBA;
+    color: #002CBA;
+    font-weight: 500;
+  }
+  
+  .create-new-user-validate-button:hover {
+    border-color: #001a94;
+    color: #001a94;
+  }
+  
+  .create-new-user-submit-button {
+    padding: 8px 32px;
+    height: 40px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  
+  /* Page Footer */
+  .create-new-user-page-footer {
+    text-align: center;
+    padding: 16px 24px;
+    background: #f5f5f5;
+    border-top: 1px solid #e8e8e8;
+    margin-top: auto;
+  }
+  
+  .create-new-user-footer-text {
+    color: #8c8c8c;
+    font-size: 12px;
+  }
+  
+  /* Back Button */
+  .create-new-user-back-button {
+    color: #000;
+    font-weight: 500;
+    padding: 4px 8px;
+    height: auto;
+  }
+  
+  .create-new-user-back-button:hover {
+    color: #002CBA;
+    background: rgba(0, 44, 186, 0.04);
+  }
+  
+ /* Updated Page Header CSS */
+.page-header {
+  padding: 16px 24px;
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column; /* Changed from default row to column */
+  align-items: flex-start; /* Align items to start instead of center */
+  gap: 8px; /* Add space between back button and title */
+}
+
+.page-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #000;
+  margin-left: 0; /* Remove left margin since it's now below */
+}
+
+.create-new-user-back-button {
+  color: #000;
+  font-weight: 500;
+  padding: 4px 8px;
+  height: auto;
+  margin-bottom: 0; /* Ensure no extra margin */
+}
+
+.create-new-user-back-button:hover {
+  /* color: #002CBA; */
+  background: rgba(0, 44, 186, 0.04);
+}
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .create-new-user-container {
+      padding: 0 16px 16px 16px;
+    }
+    
+    .create-new-user-card-content {
+      padding: 16px;
+      background-color: white;
+    }
+    
+    .ant-col {
+      margin-bottom: 16px;
+    }
+    
+    .create-new-user-form-actions {
+      flex-direction: column;
+    }
+    
+    .create-new-user-validate-button,
+    .create-new-user-submit-button {
+      width: 100%;
+    }
+  }
+  
+  /* Custom scrollbar for form */
+  .create-new-user-container::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .create-new-user-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  .create-new-user-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+  }
+  
+  .create-new-user-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }

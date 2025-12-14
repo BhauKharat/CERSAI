@@ -1,0 +1,375 @@
+/* .signup-container {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url('../../../assets/sign_up_bg.svg') no-repeat center/cover;
+    overflow: hidden;
+    padding: 20px;
+} */
+
+.signup-container {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column; /* stack form and footer vertically */
+    justify-content: center; /* center form vertically */
+    align-items: center;
+    background: url('../../../../assets/sign_up_bg.svg') no-repeat center/cover;
+    overflow: hidden;
+    padding: 20px;
+}
+
+.footer {
+    font-size: 17px;
+    color: #999;
+    margin-top: 10px;
+    text-align: center;
+}
+/* .signup-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    width: 90%; 
+    z-index: 1;
+    margin-bottom: 50px;
+} */
+.signup-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    width: 90%; 
+    z-index: 1;
+    margin-bottom: 20px; /* space between card and footer */
+    padding:0em;
+}
+
+.signup-card h2 {
+    margin-bottom: 0px;
+    text-align: center;
+}
+
+.signup-form {
+    padding: 10px 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-row {
+    display: flex;
+    gap: 15px;
+    justify-content: space-between;
+    flex-wrap: wrap; /* allows wrapping on smaller screens */
+}
+
+.input-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+}
+
+.input-group label {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.input-group input,
+.input-group select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    background-color: white;
+    box-sizing: border-box;
+    height: 40px;
+    width: 100%;
+}
+
+.input-group select {
+    cursor: pointer;
+}
+
+.input-group label.required::after {
+    content: " *";
+    color: red;
+    font-weight: bold;
+}
+
+.country-code-select {
+  height: 42px !important;    /* Use !important to override */
+  padding: 10px 12px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+  appearance: none;          /* Remove default OS styling */
+  -webkit-appearance: none;  /* For Safari */
+  -moz-appearance: none;     /* For Firefox */
+  background-position: right 10px center; /* For dropdown arrow */
+  background-repeat: no-repeat;
+}
+
+.signup-form input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    height: 25px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.signup-form input:focus {
+    border-color: #007bff;
+  
+}
+
+
+.consent-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.consent-checkbox input[type="checkbox"] {
+    width: 20px; /* Adjust size */
+    height: 20px;
+    cursor: pointer;
+    appearance: none; /* Remove default styles */
+    
+    border: 2px solid #CCCCCC;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.consent-checkbox input[type="checkbox"]:checked {
+    background-color: #52AE32; /* Green background */
+    border: 2px solid #52AE32;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.2l-4.2-4.2-1.4 1.4L9 19l12-12-1.4-1.4z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100%;
+}
+
+.signup-form button {
+    background: #002CBA;
+    color: #fff;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+    width: 100%;
+    height: 50px;
+    max-width: 200px; /* Adjust this as needed */
+    margin: 0 auto;
+    margin-top: 20px;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.signup-form button:hover {
+    background: #0056cc;
+}
+
+.signup-form button[disabled] {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* Responsive for mobile devices */
+@media (max-width: 768px) {
+    .signup-form button {
+        max-width: 100%;
+    }
+}
+
+/* Responsive for mobile devices */
+@media (max-width: 768px) {
+    .input-row {
+        flex-direction: column;
+    }
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 30px;
+}
+
+
+.signup-logo {
+    width: 180px;
+    height: auto;
+}
+ 
+/* Tab Container */
+.tab-container {
+    display: flex;
+    justify-content: center;
+    position: relative; 
+    background: #f0f4f8;
+    padding: 10px 0;
+    margin-bottom: 0px;
+    
+}
+
+.tab-container button {
+    background: transparent;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    color: black;
+    cursor: pointer;
+    padding: 8px 15px;
+    position: relative;
+    transition: color 0.3s;
+    /* Removed flex: 1 for desktop - buttons will only take needed space */
+}
+
+.tab-container button.active {
+    color: #1d4ed8;
+}
+
+.tab-container .active::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 30px); /* Responsive width based on button content */
+    max-width: 120px; /* Maximum width for longer text */
+    min-width: 60px; /* Minimum width for shorter text */
+    height: 4px;
+    background-color: #1d4ed8;
+    border-radius: 2px;
+}
+
+.signup-card h2 {
+    font-weight: 600;
+    font-size: 20px;
+    color: #333333;
+    display: block;
+    text-align: center; 
+    margin-top: 25px;
+}
+
+.input-group select {
+    height: 36px;
+    padding: 6px;
+}
+
+/* Updated mobile responsiveness for tabs */
+@media (max-width: 768px) {
+    .input-row {
+        flex-direction: column;
+    }
+    
+    .tab-container {
+        display: flex;
+        flex-direction: row; /* Force horizontal layout */
+    }
+    
+    .tab-container button {
+        /* flex: 1; Each button takes equal width */
+        padding: 8px 10px;
+        font-size: 14px;
+        white-space: nowrap; /* Prevent text wrapping */
+        min-width: 0; /* Allow buttons to shrink if needed */
+    }
+    
+    .tab-container .active::after {
+        width: calc(100% - 20px); /* More responsive for mobile */
+        max-width: 100px;
+        min-width: 50px;
+    }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+    .tab-container button {
+        padding: 6px 8px;
+        font-size: 13px;
+    }
+}
+ 
+.country-code-wrapper {
+  display: flex;
+  width: 100%; 
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 42px;
+  background: white;
+  align-items: center;
+  box-sizing: border-box;
+  margin-top: 5px;
+}
+
+.country-code-dropdown {
+  flex: 0 0 60px ;
+  border: none;
+  /* padding: 10px; */
+  padding: 0 20px;
+  /* margin-top: 2px; */
+  margin-left: -1px;
+  outline: none;
+  font-size: 14px;
+  background-color: transparent;
+  appearance: none;
+  background-image: url('../../../../assets/drop_down.svg');
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+  background-position: right 5px center;
+  cursor: pointer;
+  position: relative;
+  height: 50px !important;
+ 
+}
+
+.country-name-input {
+  margin: 10px;
+  font-size: 14px;   
+  white-space: nowrap; 
+}
+
+.vertical-divider {
+  width: 1px;
+  background-color: #ccc;
+  height: 100%;
+  align-self: stretch; /* <-- ensures full height */
+}
+
+.input-group.mobile-number {
+  flex: 1; /* Or use a specific width like 300px */
+  /* min-width: 220px;
+  max-width: 380px; */
+}
+
+.input-group.mobile-number input {
+  width: 100%;
+}
+
+.form-input,
+.form-select {
+  height: 45px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+  width: 100%;
+  background-color: #fff;
+}

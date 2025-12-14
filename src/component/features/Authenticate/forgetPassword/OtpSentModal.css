@@ -1,0 +1,83 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px 40px;
+  width: 400px;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.modal-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333333;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.modal-message {
+  font-size: 14px;
+  color: #535353;
+  margin-bottom: 15px; 
+  line-height: 1.5;
+  max-width: 300px; 
+}
+
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 25px;
+  color: #333333;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.submit-button-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.submit-button {
+  max-width: 180px;
+  width: 100%;
+  height: 45px;
+  padding: 10px;
+  background-color: #002CBA;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top:-20px;
+}
+
+.submit-button:hover {
+  background-color: #002299;
+}

@@ -1,0 +1,521 @@
+/* Page container with sidebar */
+.page-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Dashboard content wrapper */
+.dashboard-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Header stays fixed at top */
+.dashboard-content > header {
+  flex-shrink: 0;
+}
+
+/* Main content area - only this part scrolls */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  background-color: #f0f2f5;
+}
+
+/* Content wrapper */
+.content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Footer stays at bottom */
+.footer-container {
+  flex-shrink: 0;
+}
+
+/* Back button */
+.back-button {
+  margin-bottom: 16px;
+  color: #000;
+}
+
+/* Content card */
+.content-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+}
+
+/* Main layout container */
+.request-details-container {
+  padding: 24px;
+  background-color: #f0f2f5;
+  min-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-bottom: 48px; /* Space for footer */
+}
+
+/* Content wrapper */
+.content-wrapper {
+  flex: 1 0 auto;
+}
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-bottom: 80px;
+  padding: 16px 0 8px;
+  background: transparent;
+  position: relative;
+  z-index: 1;
+}
+
+.action-button {
+  min-width: 160px;
+  height: 40px;
+  font-weight: 500;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  border-width: 1px;
+  border-style: solid;
+}
+
+/* Approve Button */
+.action-button.approve {
+  background: #002CBA;
+  border-color: #002CBA;
+  color: #fff;
+}
+
+.action-button.approve:hover {
+  background: #0024a3;
+  border-color: #0024a3;
+  color: #fff;
+}
+
+/* Request for Modification Button */
+.action-button.request-modification {
+  color: #FFB700;
+  border-color: #FFB700;
+  background: transparent;
+}
+
+.action-button.request-modification:hover {
+  color: #e6a500;
+  border-color: #e6a500;
+  background: rgba(255, 183, 0, 0.05);
+}
+
+/* Reject Button */
+.action-button.reject {
+  color: #FF0707;
+  border-color: #FF0707;
+  background: transparent;
+}
+
+.action-button.reject:hover {
+  color: #e60606;
+  border-color: #e60606;
+  background: rgba(255, 7, 7, 0.05);
+}
+
+/* Modal Styles */
+.confirmation-modal .ant-modal-content {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.confirmation-modal .ant-modal-header {
+  border-bottom: none;
+  padding: 24px 24px 0;
+}
+
+.confirmation-modal .ant-modal-body {
+  padding: 0 24px 24px;
+}
+
+.confirmation-modal .ant-modal-title {
+  text-align: center;
+  font-weight: 500;
+  font-size: 18px;
+  color: #262626;
+}
+
+.confirmation-modal .ant-modal-footer {
+  border-top: none;
+  padding: 0 24px 24px;
+  text-align: center;
+  margin: 0;
+}
+
+.confirmation-modal .ant-modal-footer .ant-btn {
+  min-width: 120px;
+  height: 40px;
+  border-radius: 4px;
+  margin: 0 8px;
+}
+
+.modal-content {
+  text-align: center;
+  padding: 8px 0 0;
+}
+
+.modal-icon {
+  margin-bottom: 16px;
+}
+
+.modal-icon .anticon {
+  font-size: 48px;
+}
+
+/* Reject Modal Specific */
+.reject-modal .ant-modal-footer .ant-btn-primary {
+  background: #FF4D4F;
+  border-color: #FF4D4F;
+}
+
+.reject-modal .ant-modal-footer .ant-btn-primary:hover {
+  background: #FF7875;
+  border-color: #FF7875;
+}
+
+/* Modify Modal Specific */
+.modify-modal .ant-modal-footer .ant-btn-primary {
+  background: #FAAD14;
+  border-color: #FAAD14;
+}
+
+.modify-modal .ant-modal-footer .ant-btn-primary:hover {
+  background: #FFC53D;
+  border-color: #FFC53D;
+}
+
+/* Approve Modal Specific */
+.confirmation-modal:not(.reject-modal):not(.modify-modal) .ant-modal-footer .ant-btn-primary {
+  background: #52C41A;
+  border-color: #52C41A;
+}
+
+.confirmation-modal:not(.reject-modal):not(.modify-modal) .ant-modal-footer .ant-btn-primary:hover {
+  background: #73D13D;
+  border-color: #73D13D;
+}
+
+/* Footer styles */
+.footer-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  z-index: 10;
+}
+
+.request-details-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  margin-bottom: 24px;
+  border: 1px solid #f0f0f0;
+  padding: 24px;
+}
+
+/* Field Section Styles */
+.field-section {
+  width: 100%;
+}
+
+.fields-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+.field-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.field-label {
+  font-size: 12px;
+  color: #8c8c8c;
+  margin-bottom: 4px;
+}
+
+.field-value {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  gap: 0;
+}
+
+.field-value > span {
+  flex: 1;
+  color: #000000;
+  font-weight: 500;
+}
+
+.check-toggle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.check-toggle.checked {
+  background-color: #52c41a;
+  color: white;
+}
+
+.check-toggle.crossed {
+  background-color: #ff4d4f;
+  color: white;
+}
+
+.check-toggle svg {
+  font-size: 10px;
+  width: 12px;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Section Title */
+.section-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+/* Expandable Sections */
+.sections-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.section-collapse {
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+  margin-bottom: 0;
+}
+
+.section-collapse > .ant-collapse-item {
+  border: none !important;
+}
+
+.section-collapse > .ant-collapse-item > .ant-collapse-header {
+  background: #E7EBFD;
+  padding: 0 16px 0 24px !important;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.85);
+  border-radius: 8px 8px 0 0;
+  transition: all 0.2s ease;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.panel-header .anticon {
+  font-size: 16px;
+}
+
+/* Toggle button in expandable header */
+.section-collapse .panel-header .check-toggle {
+  position: absolute;
+  right: 32px;
+  margin: 0;
+  background-color: #52c41a;
+  color: white;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.section-collapse .panel-header .check-toggle.checked {
+  background-color: #52c41a;
+}
+
+.section-collapse .panel-header .check-toggle.crossed {
+  background-color: #ff4d4f;
+}
+
+.section-title {
+  margin-right: 8px;
+}
+
+/* Adjust arrow position to not overlap with checkmark */
+.section-collapse > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
+  position: absolute;
+  right: 16px;
+  left: auto;
+  padding: 0;
+  margin: 0;
+  order: 3; /* Move to the end of flex container */
+}
+
+.section-collapse > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-collapse > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow svg {
+  color: #595959;
+  font-size: 12px;
+  transition: transform 0.24s;
+}
+
+.section-collapse > .ant-collapse-item > .ant-collapse-header .anticon-check-circle {
+  position: absolute;
+  right: 40px;
+  margin: 0;
+}
+
+.section-collapse > .ant-collapse-item > .ant-collapse-header:hover {
+  background: #D6DCFB;
+}
+
+.section-collapse > .ant-collapse-item > .ant-collapse-content {
+  border: none;
+  border-top: 1px solid #f0f0f0;
+  border-radius: 0 0 8px 8px;
+}
+
+.section-collapse > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+  padding: 24px !important;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  padding: 0;
+}
+
+.section-content {
+  background: #fff;
+  border-radius: 0 0 8px 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .section-collapse > .ant-collapse-item > .ant-collapse-header {
+    padding: 12px 16px !important;
+  }
+  
+  .section-collapse > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+    padding: 16px !important;
+  }
+}
+
+.request-details-card .ant-card-head {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 24px;
+}
+
+.request-details-card .ant-card-body {
+  padding: 24px;
+}
+
+.request-details-card .ant-card-type-inner .ant-card-head {
+  background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 12px 16px;
+}
+
+.request-details-card .ant-card-type-inner .ant-card-body {
+  padding: 16px;
+}
+
+/* Status indicators */
+.status-valid {
+  color: #52c41a;
+  margin-left: 8px;
+}
+
+.status-invalid {
+  color: #ff4d4f;
+  margin-left: 8px;
+}
+
+/* Document list */
+.document-list {
+  margin-top: 16px;
+}
+
+.document-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 8px;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+  background: #fafafa;
+}
+
+.document-item:hover {
+  background: #f5f5f5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .request-details-container {
+    padding: 16px;
+  }
+  
+  .request-details-card {
+    margin: 0 -16px;
+    border-radius: 0;
+  }
+  
+  .request-details-card .ant-card-body {
+    padding: 16px;
+  }
+}

@@ -1,0 +1,102 @@
+.entity-form .accordion-summary-title {
+  background-color: #61db49;
+  padding: 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+.entity-form label {
+  font-weight: 500 !important;
+}
+
+.entity-form {
+  padding: 5px 0px 40px 50px !important;
+  margin-top: 1rem;
+}
+.css-17g9jzt-MuiButtonBase-root-MuiAccordionSummary-root {
+  margin-bottom: 0px !important;
+}
+.MuiAccordionDetails-root {
+  padding: 8px 25px 14px 25px !important;
+}
+.checkbox-container {
+  margin-bottom: 15px;
+  margin-left: 6px;
+  margin-top: 15px;
+}
+.css-17g9jzt-MuiButtonBase-root-MuiAccordionSummary-root.Mui-expanded {
+  min-height: 50px !important;
+}
+.css-1pq1nh1 {
+  padding: 40px 0px 40px 50px !important;
+  margin-left: -82px !important;
+}
+.css-1wcaknn {
+  overflow: hidden;
+}
+/* If it's an input field */
+input {
+  width: 100%;
+  max-width: 400px; /* or your desired width */
+}
+.input-quie {
+  width: 100%;
+  max-width: 27px !important; /* or your desired width */
+}
+
+
+/* If it's a container/box */
+.address-container {
+  width: 100%;
+  max-width: 500px; /* or your desired width */
+}
+
+/* For specific form elements */
+.form-control {
+  width: 100%;
+  max-width: 400px;
+}
+
+/* new */
+.css-1956rkl-MuiButtonBase-root-MuiAccordionSummary-root.Mui-expanded {
+  min-height: 50px !important;
+}
+.css-1956rkl-MuiButtonBase-root-MuiAccordionSummary-root {
+  background-color: #e6ebff !important;
+}
+.css-yfrx4k-MuiAccordionSummary-content.Mui-expanded {
+  margin: 0px 0 !important;
+}
+
+/* nodal */
+.css-1f1pi2l-MuiButtonBase-root-MuiAccordionSummary-root.Mui-expanded {
+  min-height: 50px !important;
+}
+.css-1f1pi2l-MuiButtonBase-root-MuiAccordionSummary-root {
+  background-color: #e6ebff !important;
+}
+
+/* instituation admin */
+.css-1f1pi2l-MuiButtonBase-root-MuiAccordionSummary-root.Mui-expanded {
+  min-height: 50px !important;
+}
+/* .css-9oz3hi{
+      margin-bottom: 0px !important;
+} */
+
+.css-xi606m {
+  text-align: center;
+  margin-top: 2%;
+}
+
+/* preview */
+.margin-bottom-0px h3 button {
+  margin-bottom: 0px !important;
+}
+/* preview */
+.margin-bottom-0px h3 button {
+  margin-bottom: 0px !important;
+}
+
+.MuiAccordion-root.Mui-expanded {
+  margin-top: 0 !important;
+}

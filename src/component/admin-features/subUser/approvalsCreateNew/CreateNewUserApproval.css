@@ -1,0 +1,325 @@
+/* CreateNewUserApprovals.css */
+
+/* Create New User specific styling */
+.create-new-user-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: calc(100vh - 120px);
+  margin-left: -10px;
+  /* padding-top: 0; Remove any top padding */
+}
+
+.create-new-user-container {
+  padding: 16px 24px 24px 24px; /* Reduced top padding from 24px to 16px */
+  width: 100%;
+  max-width: none;
+  flex: 1;
+  margin-top: -8px; /* Move content up by reducing negative margin */
+}
+
+.page-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #000;
+  margin-left: 8px;
+}
+
+.create-new-user-form {
+  margin-top: 8px; /* Reduce space between title and form */
+}
+
+.form-section {
+  margin-bottom: 24px;
+}
+
+.create-new-user-field {
+  margin-bottom: 12px; /* Reduced from 16px to 12px */
+}
+
+.create-new-user-field-label {
+  display: block;
+  margin-bottom: 6px; /* Reduced from 8px to 6px */
+  font-weight: 500;
+  color: #000;
+  font-size: 14px;
+}
+
+.required {
+  color: #ff4d4f;
+}
+
+/* Details Cards */
+.create-new-user-details-card {
+  margin-bottom: 20px; /* Reduced from 24px to 20px */
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+}
+
+.create-new-user-details-card .ant-card-body {
+  padding: 0;
+}
+
+.create-new-user-card-header {
+  padding: 14px 24px; /* Reduced from 16px to 14px */
+  background: #E6EBFF;
+  border-bottom: 1px solid #e8e8e8;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: #000;
+  font-size: 16px;
+}
+
+.create-new-user-card-header:hover {
+  background: #f0f2ff;
+}
+
+.create-new-user-card-content {
+  padding: 20px 24px; /* Reduced top/bottom padding from 24px to 20px */
+}
+
+/* Form Items - Enhanced for consistency */
+.create-new-user-card-content .ant-form-item {
+  margin-bottom: 14px; /* Reduced from 16px to 14px */
+}
+
+.create-new-user-card-content .ant-form-item-label {
+  margin-bottom: 6px; /* Reduced label spacing */
+}
+
+.create-new-user-card-content .ant-form-item-label > label {
+  font-weight: 500;
+  color: #000;
+  height: auto;
+}
+
+/* Enhanced form controls styling for consistency */
+.create-new-user-card-content .ant-input,
+.create-new-user-card-content .ant-select-selector,
+.create-new-user-card-content .ant-picker {
+  border-radius: 2px !important;
+  border: 1px solid #d9d9d9 !important;
+  height: 40px !important;
+  font-size: 14px;
+}
+
+/* Fix Select specific styling */
+.create-new-user-card-content .ant-select {
+  height: 40px;
+}
+
+.create-new-user-card-content .ant-select-selector {
+  height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 4px 11px !important;
+  border-radius: 2px !important;
+}
+
+.create-new-user-card-content .ant-select-selection-item {
+  line-height: 32px !important;
+  height: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.create-new-user-card-content .ant-select-selection-placeholder {
+  line-height: 32px !important;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  color: #bfbfbf;
+}
+
+/* Input styling */
+.create-new-user-card-content .ant-input {
+  padding: 4px 11px;
+  line-height: 32px;
+}
+
+/* DatePicker styling */
+.create-new-user-card-content .ant-picker {
+  width: 100%;
+  height: 40px !important;
+  border-radius: 2px !important; /* Keep consistent with other inputs */
+}
+
+.create-new-user-card-content .ant-picker-input > input {
+  height: 32px;
+  line-height: 32px;
+}
+
+/* Focus states */
+.create-new-user-card-content .ant-input:focus,
+.create-new-user-card-content .ant-input-focused,
+.create-new-user-card-content .ant-select-focused .ant-select-selector,
+.create-new-user-card-content .ant-picker:focus,
+.create-new-user-card-content .ant-picker-focused {
+  border-color: #002CBA !important;
+  box-shadow: 0 0 0 2px rgba(0, 44, 186, 0.2) !important;
+}
+
+.create-new-user-card-content .ant-input::placeholder {
+  color: #bfbfbf;
+}
+
+/* Country Code Group */
+.create-new-user-country-code-group {
+  display: flex;
+  gap: 8px;
+}
+
+.create-new-user-country-code-group .ant-select {
+  flex-shrink: 0;
+  height: 40px;
+}
+
+.country-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.country-code {
+  font-weight: 500;
+  min-width: 40px;
+}
+
+.country-name {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+/* Disabled state */
+.create-new-user-card-content .ant-input[disabled],
+.create-new-user-card-content .ant-select-disabled .ant-select-selector,
+.create-new-user-card-content .ant-picker-disabled {
+  background-color: #f5f5f5;
+  border-color: #d9d9d9;
+  cursor: not-allowed;
+}
+
+/* Form Actions */
+.create-new-user-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 24px; /* Reduced from 32px to 24px */
+  padding-top: 20px; /* Reduced from 24px to 20px */
+  border-top: 1px solid #e8e8e8;
+}
+
+.create-new-user-validate-button {
+  padding: 8px 32px;
+  height: 40px;
+  border-radius: 6px;
+  border: 1px solid #002CBA;
+  color: #002CBA;
+  font-weight: 500;
+}
+
+.create-new-user-validate-button:hover {
+  border-color: #001a94;
+  color: #001a94;
+}
+
+.create-new-user-submit-button {
+  padding: 8px 32px;
+  height: 40px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+/* Page Footer */
+.create-new-user-page-footer {
+  text-align: center;
+  padding: 12px 24px; /* Reduced from 16px to 12px */
+  background: #f5f5f5;
+  border-top: 1px solid #e8e8e8;
+  margin-top: auto;
+}
+
+.create-new-user-footer-text {
+  color: #8c8c8c;
+  font-size: 12px;
+}
+
+/* Back Button */
+.create-new-user-back-button {
+  color: #000;
+  font-weight: 500;
+  padding: 4px 8px;
+  height: auto;
+  margin-left: -80px;
+}
+
+.create-new-user-back-button:hover {
+  color: #002CBA;
+  background: rgba(0, 44, 186, 0.04);
+}
+
+/* Page Header - Reduced padding */
+.page-header {
+  padding: 12px 24px; /* Reduced from 16px to 12px */
+  margin-bottom: 0;
+  width: 100%;
+  
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  /* margin-left: -10px; */
+}
+
+/* Compact Row spacing */
+.create-new-user-card-content .ant-row {
+  margin-bottom: 4px; /* Add small margin between rows */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .create-new-user-container {
+    padding: 12px 16px 16px 16px; /* Reduced top padding for mobile */
+  }
+  
+  .create-new-user-card-content {
+    padding: 16px; /* Keep mobile padding reasonable */
+  }
+  
+  .ant-col {
+    margin-bottom: 12px; /* Reduced mobile spacing */
+  }
+  
+  .create-new-user-form-actions {
+    flex-direction: column;
+    margin-top: 20px; /* Reduced mobile top margin */
+  }
+  
+  .create-new-user-validate-button,
+  .create-new-user-submit-button {
+    width: 100%;
+  }
+}
+
+/* Custom scrollbar for form */
+.create-new-user-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.create-new-user-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.create-new-user-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.create-new-user-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
