@@ -148,9 +148,20 @@ const ResumeRegistrationForm: React.FC = () => {
       console.log('registrationData', registrationData);
       await validationSchema.validate(registrationData, { abortEarly: false });
       setFieldErrors({});
-      
-      // Bypass API calls and redirect directly to registration stepper
-      navigate('/entity-profile');
+      // Dispatch login
+
+      dispatch(showLoader('Please Wait...'));
+      const resultAction = await dispatch(
+        loginUser({
+          userId: registrationData.email,
+          password: registrationData.password,
+        })
+      );
+      if (loginUser.fulfilled.match(resultAction)) {
+        setIsLoginSuccess(true);
+        sessionStorage.setItem('fromLogin', 'true');
+      }
+      dispatch(hideLoader());
     } catch (err) {
       console.error('registrationData', registrationData);
       if (err instanceof Yup.ValidationError) {
@@ -161,6 +172,8 @@ const ResumeRegistrationForm: React.FC = () => {
           }
         });
         setFieldErrors(nextErrors);
+      } else {
+        dispatch(hideLoader());
       }
     }
   };

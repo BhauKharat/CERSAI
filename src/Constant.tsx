@@ -3,7 +3,7 @@ import { USER_ROLES } from './utils/enumUtils';
 export const API_URL = 'https://dev.ckycindia.dev';
 export const CMS_URL = 'https://dev.ckycindia.dev/cms';
 export const API_URL_REINITILIZE = 'https://dev.ckycindia.dev';
-export const BASE_ENV = 'https://dev.ckycindia.dev';
+export const BASE_ENV = 'admin';
 export const API_DROPDOWN_URL = 'https://dev.ckycindia.dev';
 export const API_ADMIN_BASE_URL = 'https://dev.ckycindia.dev';
 
@@ -218,14 +218,14 @@ export const API_ENDPOINTS = {
   submit_final_registration: `${API_URL}/${BASE_ENV}/v1/registration/submission`,
 
   post_validate_otp: `${API_URL}/${BASE_ENV}/v1/otp/validate`,
-  post_login: `${API_ADMIN_BASE_URL}/${BASE_ENV}/v1/auth/login`,
+  post_login: `${API_ADMIN_BASE_URL}/${BASE_ENV}/api/v2/auth/login`,
   auth_verify_user: `${API_ADMIN_BASE_URL}/${BASE_ENV}/v1/auth/verify-user`,
   forgot_user_id_new: `${API_ADMIN_BASE_URL}/${BASE_ENV}/v1/auth/forgot-userId`,
   validate_otp_user_management: `${API_URL}/${BASE_ENV}/v1/otp/validate`,
 
-  REINITIALIZE: `${API_URL}/${BASE_ENV}/v1/registration/initialize`,
-  get_user_info: `${API_ADMIN_BASE_URL}/${BASE_ENV}/v1/user/info`,
-  user_login: `${API_ADMIN_BASE_URL}/${BASE_ENV}/v1/auth/token`,
+  REINITIALIZE: `${API_URL}/${BASE_ENV}/api/v2/registration/initialize`,
+  get_user_info: `${API_ADMIN_BASE_URL}/${BASE_ENV}/api/v2/user/info`,
+  user_login: `${API_ADMIN_BASE_URL}/${BASE_ENV}/api/v2/auth/token`,
 
   post_password_dsc_setup: `${API_ADMIN_BASE_URL}/api/v1/auth/password-dsc-setup`,
   validate_activate_token: `${API_ADMIN_BASE_URL}/api/v1/auth/validate/password-setup-link`,
