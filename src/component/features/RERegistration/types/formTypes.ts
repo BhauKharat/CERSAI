@@ -82,6 +82,8 @@ export interface ConditionalLogic {
       description?: string;
       autoPopulate?: string[];
     };
+    autoFillFields?: string[]; // Fields to auto-fill
+    selectedFields?: string[]; // Source fields for auto-fill
   };
   else?: {
     validationRules?: ValidationRules;

@@ -34,6 +34,9 @@ import {
 import type { AppDispatch } from '../../../redux/store';
 import { getCompletedStepsFromData } from './utils/stepCompletionUtils';
 import { selectAckNo } from './slice/pdfGenerationSlice';
+import FrontendEntityProfileStep from './steps/FrontendEntityProfileStep';
+import FrontendAddressDetailsStep from './steps/FrontendAddressDetailsStep';
+import FrontendAdminUserDetailsStep from './steps/FrontendAdminUserDetailsStep';
 // import { MultiStepForm } from './types/registrationConfigTypes';
 
 // Default fallback configuration
@@ -425,8 +428,16 @@ const RERegistrationContainer: React.FC = () => {
     // Map form types to components
     switch (currentStepConfig.formtype) {
       case 'RE_entity_profile':
+        // return (
+        //   <EntityProfileStep
+        //     onSave={handleStepSave}
+        //     onNext={handleNext}
+        //     url={'entity_profile'}
+        //     onValidationChange={setIsCurrentStepValid}
+        //   />
+        // );
         return (
-          <EntityProfileStep
+          <FrontendEntityProfileStep
             onSave={handleStepSave}
             onNext={handleNext}
             url={'entity_profile'}
@@ -434,8 +445,16 @@ const RERegistrationContainer: React.FC = () => {
           />
         );
       case 'RE_addressDetails':
+        // return (
+        //   <AddressDetailsStep
+        //     onSave={handleStepSave}
+        //     onNext={handleNext}
+        //     url={'address_details'}
+        //     onValidationChange={setIsCurrentStepValid}
+        //   />
+        // );
         return (
-          <AddressDetailsStep
+          <FrontendAddressDetailsStep
             onSave={handleStepSave}
             onNext={handleNext}
             url={'address_details'}
@@ -477,8 +496,16 @@ const RERegistrationContainer: React.FC = () => {
           />
         );
       case 'RE_iau':
+        // return (
+        //   <AdminUserDetailsStep
+        //     onSave={handleStepSave}
+        //     onNext={handleNext}
+        //     url={'admin_user_details'}
+        //     onValidationChange={setIsCurrentStepValid}
+        //   />
+        // );
         return (
-          <AdminUserDetailsStep
+          <FrontendAdminUserDetailsStep
             onSave={handleStepSave}
             onNext={handleNext}
             url={'admin_user_details'}

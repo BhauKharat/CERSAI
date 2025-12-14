@@ -17,14 +17,16 @@ export interface FrontendFormField {
   fieldFileName?: string;
   fieldOptions?: DropdownOption[];
   fieldMaster?: string; // Master data key for fetching options from API
-  validationRules?: ValidationRules;
+  validationRules?: ValidationRules | null;
   fieldOrder: number;
   fieldOrderGroup: number;
   isActive: boolean;
   isUnique: boolean;
   fieldWidth: string;
   languageSlug: string;
+  fieldGroup?: string; // Field group for grouping fields
   conditionalLogic?: ConditionalLogic[];
+  fieldAttributes?: FieldAttributes;
 }
 
 export interface DropdownOption {
@@ -68,6 +70,10 @@ export interface FormConfiguration {
     validateIsGroup?: boolean;
     validateButton?: boolean;
     validateButtonText?: string;
+    validateGroupButtons?: Array<{
+      validateButton: boolean;
+      validateButtonText: string;
+    }>;
   };
   isActive: boolean;
   languageSlug: string;
@@ -80,7 +86,7 @@ export interface FormConfiguration {
 
 export interface FrontendFormConfig {
   fields: FrontendFormField[];
-  groupedFields?: Record<string, { fields: FrontendFormField[] }>;
+  groupedFields?: Record<string, { label: string; fields: FrontendFormField[] }>;
   configuration: FormConfiguration;
   formType: string;
 }

@@ -1,6 +1,6 @@
 import React, { useCallback, Component, ErrorInfo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Alert } from '@mui/material';
+import { Alert, CircularProgress } from '@mui/material';
 import DynamicForm from '../DynamicForm';
 import {
   submitEntityProfile,
@@ -17,12 +17,16 @@ import {
   selectFetchedDocuments,
   clearStepData,
 } from '../slice/stepDataSlice';
-import { updateFormValue } from '../slice/formSlice';
+import { updateFormValue, setFieldsFromConfig } from '../slice/formSlice';
 import { RootState } from '../../../../redux/store';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../../redux/store';
 import { FieldErrorProvider } from '../context/FieldErrorContext';
 import { EntityProfileSubmissionError } from '../types/entityProfileSubmissionTypes';
+// Frontend configuration imports
+import { useFrontendFormConfig } from '../frontendConfig/utils/useFrontendFormConfig';
+import { entityProfileConfig } from '../frontendConfig/configs/entityProfileConfig';
+import { FormField } from '../types/formTypes';
 
 // Simple Error Boundary for catching render errors
 class FormErrorBoundary extends Component<
@@ -57,20 +61,28 @@ class FormErrorBoundary extends Component<
   }
 }
 
-interface EntityProfileStepProps {
+interface FrontendEntityProfileStepProps {
   onSave?: (formData: Record<string, unknown>) => void;
   onNext?: () => void;
   url?: string;
   onValidationChange?: (isValid: boolean) => void;
 }
 
-const EntityProfileStep: React.FC<EntityProfileStepProps> = ({
+const FrontendEntityProfileStep: React.FC<FrontendEntityProfileStepProps> = ({
   onSave,
   onNext,
   url,
   onValidationChange,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+
+  // Use frontend form configuration instead of API
+  const {
+    fields: frontendFields,
+    configuration: frontendConfig,
+    loading: configLoading,
+    error: configError,
+  } = useFrontendFormConfig(entityProfileConfig);
 
   // Redux selectors
   const submissionLoading = useSelector(selectSubmissionLoading);
@@ -103,16 +115,42 @@ const EntityProfileStep: React.FC<EntityProfileStepProps> = ({
     (state: RootState) => state.auth.workflowId
   );
 
-  // Get form fields for dynamic validation
+  // Get form fields from Redux (now populated from frontend config)
   const formFields = useSelector(
     (state: RootState) => state.dynamicForm.fields
   );
-  const formFieldsLoading = useSelector(
-    (state: RootState) => state.dynamicForm.loading
-  );
-  const formFieldsError = useSelector(
-    (state: RootState) => state.dynamicForm.error
-  );
+
+  // Set frontend config fields in Redux when loaded (do this immediately, before DynamicForm renders)
+  React.useEffect(() => {
+    if (
+      frontendFields &&
+      frontendFields.length > 0 &&
+      !configLoading &&
+      frontendConfig
+    ) {
+      console.log(
+        '✅ Setting frontend config fields in Redux:',
+        frontendFields.length
+      );
+      dispatch(
+        setFieldsFromConfig({
+          fields: frontendFields as FormField[],
+          configuration: frontendConfig as any,
+        })
+      );
+    }
+  }, [frontendFields, frontendConfig, configLoading, dispatch]);
+
+  // Ensure fields are set before rendering DynamicForm
+  const fieldsReady = React.useMemo(() => {
+    return (
+      frontendFields &&
+      frontendFields.length > 0 &&
+      !configLoading &&
+      formFields &&
+      formFields.length > 0
+    );
+  }, [frontendFields, configLoading, formFields]);
 
   const handleSave = useCallback(
     async (formData: Record<string, unknown>) => {
@@ -224,7 +262,7 @@ const EntityProfileStep: React.FC<EntityProfileStepProps> = ({
     ]
   );
 
-  // Fetch step data after form fields are loaded and rendered
+  // Fetch step data after frontend form fields are loaded
   React.useEffect(() => {
     const currentWorkflowId = authWorkflowId || userDetails?.workflowId;
     const userId = userDetails?.userId || userDetails?.id;
@@ -234,55 +272,27 @@ const EntityProfileStep: React.FC<EntityProfileStepProps> = ({
       currentWorkflowId || '19c166c7-aecd-4d0f-93cf-0ff9fa07caf7';
     const testUserId = userId || 'NO_6149';
 
-    // console.log('🔍 Form fields state check:', {
-    //   formFieldsLoading,
-    //   formFieldsError,
-    //   formFieldsCount: formFields?.length || 0,
-    //   url,
-    //   currentWorkflowId,
-    //   userId,
-    //   testWorkflowId,
-    //   testUserId,
-    //   // Debug auth state
-    //   authState: {
-    //     authWorkflowId,
-    //     userDetails,
-    //     userDetailsKeys: userDetails ? Object.keys(userDetails) : [],
-    //     // Detailed userDetails breakdown
-    //     userDetailsBreakdown: userDetails
-    //       ? {
-    //           id: userDetails.id,
-    //           userId: userDetails.userId,
-    //           workflowId: userDetails.workflowId,
-    //           email: userDetails.email,
-    //           role: userDetails.role,
-    //         }
-    //       : null,
-    //   },
-    // });
-
-    // Only fetch step data if form fields are available (fields API has completed)
-    // Use test values for now since auth data is not available
-    // Add check to prevent multiple API calls
+    // Only fetch step data if frontend form fields are available and loaded
+    // No need to wait for API call - frontend config is available immediately
     if (
       testWorkflowId &&
       testUserId &&
-      formFields &&
-      formFields.length > 0 &&
-      !formFieldsLoading &&
+      frontendFields &&
+      frontendFields.length > 0 &&
+      !configLoading &&
       !stepDataFetched.current &&
       !stepDataLoading
     ) {
-      // console.log(
-      //   '✅ Form fields loaded, now fetching step data for entityDetails:',
-      //   {
-      //     stepKey: 'entityDetails',
-      //     workflowId: testWorkflowId,
-      //     userId: testUserId,
-      //     formFieldsCount: formFields.length,
-      //     usingTestValues: !currentWorkflowId || !userId,
-      //   }
-      // );
+      console.log(
+        '✅ Frontend form fields loaded, now fetching step data for entityDetails:',
+        {
+          stepKey: 'entityDetails',
+          workflowId: testWorkflowId,
+          userId: testUserId,
+          formFieldsCount: frontendFields.length,
+          usingTestValues: !currentWorkflowId || !userId,
+        }
+      );
 
       stepDataFetched.current = true; // Mark as fetched to prevent loops
 
@@ -293,29 +303,13 @@ const EntityProfileStep: React.FC<EntityProfileStepProps> = ({
           userId: testUserId,
         })
       );
-    } else {
-      // console.log(
-      //   '⏳ Waiting for form fields to load before fetching step data:',
-      //   {
-      //     workflowId: currentWorkflowId,
-      //     userId,
-      //     testWorkflowId,
-      //     testUserId,
-      //     formFieldsAvailable: formFields?.length || 0,
-      //     formFieldsLoading,
-      //     formFieldsError,
-      //     url,
-      //   }
-      // );
     }
   }, [
     dispatch,
     authWorkflowId,
     userDetails,
-    formFields,
-    formFieldsLoading,
-    formFieldsError,
-    url,
+    frontendFields,
+    configLoading,
     stepDataLoading,
   ]);
 
@@ -481,26 +475,44 @@ const EntityProfileStep: React.FC<EntityProfileStepProps> = ({
     }
   }, [generalErrorMessage]);
 
-  // Show loading state during submission or step data fetching
-  // if (submissionLoading || stepDataLoading) {
-  //   return (
-  //     <Box
-  //       display="flex"
-  //       flexDirection="column"
-  //       alignItems="center"
-  //       justifyContent="center"
-  //       minHeight="200px"
-  //       gap={2}
-  //     >
-  //       <CircularProgress size={40} />
-  //       <Box>
-  //         {stepDataLoading
-  //           ? 'Loading form data...'
-  //           : 'Submitting entity profile...'}
-  //       </Box>
-  //     </Box>
-  //   );
-  // }
+  // Show error if frontend config failed to load (shouldn't happen, but safety check)
+  if (configError) {
+    return (
+      <Alert severity="error" sx={{ mb: 2 }}>
+        Error loading form configuration: {configError}
+        <br />
+        Please refresh the page and try again.
+      </Alert>
+    );
+  }
+
+  // Show error if no fields loaded (shouldn't happen, but safety check)
+  if (!frontendFields || frontendFields.length === 0) {
+    return (
+      <Alert severity="warning" sx={{ mb: 2 }}>
+        No form fields available. Please check the configuration.
+      </Alert>
+    );
+  }
+
+  // Wait for fields to be set in Redux before rendering DynamicForm
+  if (!fieldsReady) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '200px',
+          flexDirection: 'column',
+          gap: '16px',
+        }}
+      >
+        <CircularProgress size={40} />
+        <div>Loading form fields...</div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -527,6 +539,7 @@ const EntityProfileStep: React.FC<EntityProfileStepProps> = ({
                 Object.keys(stepData.data).length > 0
               )
             }
+            useFrontendConfig={true}
             onValidationChange={onValidationChange}
           />
         </FieldErrorProvider>
@@ -535,4 +548,4 @@ const EntityProfileStep: React.FC<EntityProfileStepProps> = ({
   );
 };
 
-export default EntityProfileStep;
+export default FrontendEntityProfileStep;

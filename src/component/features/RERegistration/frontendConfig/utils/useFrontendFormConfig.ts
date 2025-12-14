@@ -11,10 +11,18 @@ interface FormFieldsAPIResponse {
   status: boolean;
   message: string;
   data: {
-    fields: Array<{
+    fields?: Array<{
       id: number;
       fieldName: string;
       fieldOptions?: DropdownOption[];
+    }>;
+    groupedFields?: Record<string, {
+      label: string;
+      fields: Array<{
+        id: number;
+        fieldName: string;
+        fieldOptions?: DropdownOption[];
+      }>;
     }>;
   };
 }
@@ -72,15 +80,31 @@ export const useFrontendFormConfig = (
         console.log(`📡 Fetching fieldOptions from API: ${endpoint}`);
         const response = await axios.get<FormFieldsAPIResponse>(endpoint);
         
-        if (response.data.status && response.data.data?.fields) {
+        if (response.data.status && response.data.data) {
           // Create a map of fieldId -> fieldOptions from API response
           const optionsMap: Record<number, DropdownOption[]> = {};
           
-          response.data.data.fields.forEach((apiField) => {
-            if (apiField.fieldOptions && apiField.fieldOptions.length > 0) {
-              optionsMap[apiField.id] = apiField.fieldOptions;
-            }
-          });
+          // Handle regular fields
+          if (response.data.data.fields) {
+            response.data.data.fields.forEach((apiField) => {
+              if (apiField.fieldOptions && apiField.fieldOptions.length > 0) {
+                optionsMap[apiField.id] = apiField.fieldOptions;
+              }
+            });
+          }
+          
+          // Handle groupedFields
+          if (response.data.data.groupedFields) {
+            Object.values(response.data.data.groupedFields).forEach((group) => {
+              if (group.fields) {
+                group.fields.forEach((apiField) => {
+                  if (apiField.fieldOptions && apiField.fieldOptions.length > 0) {
+                    optionsMap[apiField.id] = apiField.fieldOptions;
+                  }
+                });
+              }
+            });
+          }
           
           setApiFieldOptions(optionsMap);
           console.log(`✅ FieldOptions loaded from API:`, Object.keys(optionsMap).length, 'fields');
@@ -117,10 +141,38 @@ export const useFrontendFormConfig = (
     });
   }, [formConfig.fields, apiFieldOptions]);
 
+  // Enrich groupedFields with fieldOptions from API
+  const enrichedGroupedFields = useMemo(() => {
+    if (!formConfig.groupedFields) {
+      return undefined;
+    }
+
+    const enriched: Record<string, { label: string; fields: FrontendFormField[] }> = {};
+    
+    Object.entries(formConfig.groupedFields).forEach(([groupKey, group]) => {
+      enriched[groupKey] = {
+        label: group.label,
+        fields: group.fields.map((field) => {
+          // If API has fieldOptions for this field, use them
+          if (apiFieldOptions[field.id]) {
+            return {
+              ...field,
+              fieldOptions: apiFieldOptions[field.id],
+            };
+          }
+          // Otherwise return field as-is (may have fieldMaster for DynamicForm to handle)
+          return field;
+        }),
+      };
+    });
+
+    return enriched;
+  }, [formConfig.groupedFields, apiFieldOptions]);
+
   return {
     fields: enrichedFields,
     configuration: formConfig.configuration,
-    groupedFields: formConfig.groupedFields,
+    groupedFields: enrichedGroupedFields,
     loading,
     error,
   };
