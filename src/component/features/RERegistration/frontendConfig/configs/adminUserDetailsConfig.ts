@@ -164,8 +164,8 @@ const createAdminFields = (adminNumber: 1 | 2) => {
       fieldOptions: [],
       validationRules: {
         required: false,
-        regx: "^(?!.*'.*')[A-Za-z .']+$",
-        regxMessage: 'Last Name can only contain letters, spaces, single apostrophes, dots.',
+        regx: "^(?!.*'.*')[A-Za-z.']+$",
+        regxMessage: 'Last Name can only contain letters, single apostrophes, and dots. Spaces are not allowed.',
         maxLength: '33',
         maxLengthMessage: 'Last Name cannot exceed 33 characters.',
         minLength: '2',
@@ -313,8 +313,8 @@ const createAdminFields = (adminNumber: 1 | 2) => {
       validationRules: {
         required: true,
         requiredMessage: 'Select a country code.',
-        maxLength: '10',
-        maxLengthMessage: 'Valid length for country code is 10',
+        maxLength: '60',
+        maxLengthMessage: 'Valid length for country code is 60',
       },
       fieldOrder: 12,
       fieldOrderGroup: adminNumber === 1 ? 6 : 7,
@@ -386,8 +386,8 @@ const createAdminFields = (adminNumber: 1 | 2) => {
       fieldOptions: [],
       validationRules: {
         required: false,
-        regx: '^[A-Za-z0-9+]+$',
-        regxMessage: 'Landline number can contain letters, numbers, and + sign only.',
+        regx: '^[0-9+ -]+$',
+        regxMessage: 'Landline number can contain digits, +, space, and hyphen only.',
         maxLength: '15',
         maxLengthMessage: 'Landline number cannot exceed 15 digits.',
       },

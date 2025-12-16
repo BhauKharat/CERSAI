@@ -148,8 +148,8 @@ export const nodalOfficerConfig: FrontendFormConfig = {
       fieldPlaceholder: 'Enter your last name',
       validationRules: {
         required: false,
-        regx: "^(?!.*'.*')[A-Za-z .']+$",
-        regxMessage: 'Last Name can only contain letters, spaces, single apostrophes, dots.',
+        regx: "^(?!.*'.*')[A-Za-z.']+$",
+        regxMessage: 'Last Name can only contain letters, single apostrophes, and dots. Spaces are not allowed.',
         maxLength: '33',
         maxLengthMessage: 'Last Name cannot exceed 33 characters.',
         minLength: '2',
@@ -354,8 +354,8 @@ export const nodalOfficerConfig: FrontendFormConfig = {
       fieldPlaceholder: 'Enter landline number',
       validationRules: {
         required: false,
-        regx: '^[A-Za-z0-9+]{0,15}$',
-        regxMessage: 'Landline number must contain only digits.',
+        regx: '^[0-9+ -]+$',
+        regxMessage: 'Landline number can contain digits, +, space, and hyphen only.',
         maxLength: '15',
         maxLengthMessage: 'Landline number cannot exceed 15 digits.',
       },

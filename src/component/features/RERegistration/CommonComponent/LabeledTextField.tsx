@@ -22,14 +22,14 @@ interface LabeledTextFieldProps {
   maxLength?: number;
   pattern?: string;
   inputMode?:
-    | 'none'
-    | 'text'
-    | 'tel'
-    | 'url'
-    | 'email'
-    | 'numeric'
-    | 'decimal'
-    | 'search';
+  | 'none'
+  | 'text'
+  | 'tel'
+  | 'url'
+  | 'email'
+  | 'numeric'
+  | 'decimal'
+  | 'search';
   className?: string;
   sx?: SxProps<Theme>;
   'aria-label'?: string;
@@ -108,17 +108,17 @@ const LabeledTextField = forwardRef<HTMLInputElement, LabeledTextFieldProps>(
 
     // Debug logging for mobile number fields
     if (isMobileNumber) {
-      console.log('📱 LabeledTextField - Mobile field props:', {
-        fieldName,
-        isMobileNumber,
-        maxLength,
-        minLength,
-        pattern,
-        inputMode,
-        type,
-        placeholder,
-        value,
-      });
+      // console.log('📱 LabeledTextField - Mobile field props:', {
+      //   fieldName,
+      //   isMobileNumber,
+      //   maxLength,
+      //   minLength,
+      //   pattern,
+      //   inputMode,
+      //   type,
+      //   placeholder,
+      //   value,
+      // });
     }
 
     return (

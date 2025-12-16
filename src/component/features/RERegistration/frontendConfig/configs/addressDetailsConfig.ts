@@ -232,8 +232,8 @@ export const addressDetailsConfig: FrontendFormConfig = {
                 validationRules: {
                   required: true,
                   requiredMessage: 'Enter city',
-                  maxLength: '50',
-                  maxLengthMessage: 'Max length for district is 50',
+                  maxLength: '60',
+                  maxLengthMessage: 'Max length for city is 60',
                   regx: '^[A-Za-z0-9]+( [A-Za-z0-9]+)*$',
                   regxMessage:
                     'City/Town must contain only alphanumeric characters with a single space between words.',
@@ -244,7 +244,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
                   required: false,
                   requiredMessage: 'Enter city',
                   maxLength: '50',
-                  maxLengthMessage: 'Max length for district is 50',
+                  maxLengthMessage: 'Max length for city is 50',
                   regx: '^[A-Za-z0-9]+( [A-Za-z0-9]+)*$',
                   regxMessage:
                     'City/Town must contain only alphanumeric characters with a single space between words.',
@@ -663,8 +663,8 @@ export const addressDetailsConfig: FrontendFormConfig = {
                 validationRules: {
                   required: true,
                   requiredMessage: 'Enter city',
-                  maxLength: '50',
-                  maxLengthMessage: 'Max length for district is 50',
+                  maxLength: '60',
+                  maxLengthMessage: 'Max length for city is 60',
                   regx: '^[A-Za-z0-9]+( [A-Za-z0-9]+)*$',
                   regxMessage:
                     'City/Town must contain only alphanumeric characters with a single space between words.',
@@ -675,7 +675,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
                   required: false,
                   requiredMessage: 'Enter city',
                   maxLength: '50',
-                  maxLengthMessage: 'Max length for district is 50',
+                  maxLengthMessage: 'Max length for city is 50',
                   regx: '^[A-Za-z0-9]+( [A-Za-z0-9]+)*$',
                   regxMessage:
                     'City/Town must contain only alphanumeric characters with a single space between words.',

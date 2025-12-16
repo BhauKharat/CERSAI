@@ -255,8 +255,8 @@ const InstitutionDetails = () => {
   const hasInitialContactInfo = () => {
     return Boolean(
       initialFormState.mobileNo ||
-        initialFormState.email ||
-        initialFormState.countryCode
+      initialFormState.email ||
+      initialFormState.countryCode
     );
   };
 
@@ -440,8 +440,9 @@ const InstitutionDetails = () => {
     formData: any
   ): string | undefined => {
     // Regexes based on your rules
-    const nameRegexMandatory = /^[A-Za-z.' ]{1,33}$/; // No spaces, A-Z/a-z, single apostrophe allowed, dot allowed
-    const nameRegexOptional = /^[A-Za-z.']{0,33}$/; // Space allowed for middle name
+    const nameRegexMandatory = /^[A-Za-z.' ]{1,33}$/; // A-Z/a-z, single apostrophe, dot, space allowed
+    const nameRegexOptional = /^[A-Za-z.' ]{0,33}$/; // For middle name: space allowed per SRS
+    const lastNameRegex = /^[A-Za-z.']{0,33}$/; // For last name: NO space allowed per SRS
     const designationRegex = /^[A-Za-z0-9 `~@#$%^&*()_+\-=]{0,100}$/;
     const emailRegex =
       /^[A-Za-z0-9`~@#$%^&*.()_+\-=]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
@@ -466,10 +467,19 @@ const InstitutionDetails = () => {
         break;
 
       case 'lastName':
+        console.log('🔍 Validating lastName:', { value, length: value?.length, hasSpace: value?.includes(' ') });
         // if (!value?.trim()) return 'Last Name is required';
         if (value.length > 33) return 'Last Name cannot exceed 33 characters';
-        if (!nameRegexOptional.test(value.trim()))
+        // Check for space BEFORE trimming to catch internal spaces
+        if (value && value.includes(' ')) {
+          console.log('❌ lastName has space, returning error');
           return 'Last Name: Only A-Z, a-z, single apostrophe, and dot allowed; no spaces';
+        }
+        if (value && !lastNameRegex.test(value.trim())) {
+          console.log('❌ lastName failed regex test');
+          return 'Last Name: Only A-Z, a-z, single apostrophe, and dot allowed; no spaces';
+        }
+        console.log('✅ lastName validation passed');
         break;
 
       case 'designation':
@@ -613,6 +623,23 @@ const InstitutionDetails = () => {
         processedValue = numericValue.slice(0, maxLength);
       }
 
+      // FIRST NAME HANDLING - Allow A-Z, a-z, apostrophe, dot, space
+      if (name === 'firstName') {
+        processedValue = value.replace(/[^A-Za-z.' ]/g, '').slice(0, 33);
+      }
+
+      // MIDDLE NAME HANDLING - Allow A-Z, a-z, apostrophe, dot, space
+      if (name === 'middleName') {
+        processedValue = value.replace(/[^A-Za-z.' ]/g, '').slice(0, 33);
+      }
+
+      // LAST NAME HANDLING - Allow typing space but validation will show error
+      // Filter only invalid chars (numbers, special chars except apostrophe/dot)
+      if (name === 'lastName') {
+        processedValue = value.replace(/[^A-Za-z.' ]/g, '').slice(0, 33);
+        console.log('📝 lastName input filtering:', { original: value, processed: processedValue });
+      }
+
       // CKYC NUMBER HANDLING
       if (name === 'ckycNumber') {
         processedValue = value.replace(/\D/g, '').slice(0, 14);
@@ -670,6 +697,9 @@ const InstitutionDetails = () => {
 
       // Error handling
       const errorMsg = validateEntityField(name, processedValue, updated);
+      if (name === 'lastName') {
+        console.log('🔧 handleChange for lastName:', { name, processedValue, errorMsg });
+      }
       if (name === 'ckycNumber') {
         setErrors((prev: any) => ({
           ...prev,
@@ -682,6 +712,9 @@ const InstitutionDetails = () => {
         }));
       } else {
         setErrors((prev: any) => ({ ...prev, [name]: errorMsg }));
+        if (name === 'lastName') {
+          console.log('🔧 Error set for lastName:', errorMsg);
+        }
       }
     }
   };
@@ -952,7 +985,7 @@ const InstitutionDetails = () => {
                   defaultValue="Select citizenship"
                   disabled={
                     !isIndianCitizen ||
-                    Reinitializestatus === 'REQUEST_FOR_MODIFICATION'
+                      Reinitializestatus === 'REQUEST_FOR_MODIFICATION'
                       ? !isEditableField(HEAD_OFFICE_DETAILS, 'hoiTitle')
                       : true // 🔒 keep disabled for all other statuses
                   }
@@ -987,10 +1020,11 @@ const InstitutionDetails = () => {
                   value={ckycDataHOI?.firstName || formData?.firstName || ''}
                   onChange={handleChange}
                   disabled={
-                    !isIndianCitizen ||
-                    Reinitializestatus === 'REQUEST_FOR_MODIFICATION'
-                      ? !isEditableField(HEAD_OFFICE_DETAILS, 'hoiFirstName')
-                      : true // 🔒 keep disabled for all other statuses
+                    // Editable for non-Indian, disabled for Indian when CKYC populated
+                    (isIndianCitizen && !!ckycDataHOI?.firstName) ||
+                    (Reinitializestatus === 'REQUEST_FOR_MODIFICATION' &&
+                      !isEditableField(HEAD_OFFICE_DETAILS, 'hoiFirstName')) ||
+                    isViewOnlyHOI
                   }
                   required={isEditableField(
                     HEAD_OFFICE_DETAILS,
@@ -1010,15 +1044,16 @@ const InstitutionDetails = () => {
                   value={ckycDataHOI?.middleName || formData?.middleName || ''}
                   onChange={handleChange}
                   disabled={
-                    !isIndianCitizen ||
-                    Reinitializestatus === 'REQUEST_FOR_MODIFICATION'
-                      ? !isEditableField(HEAD_OFFICE_DETAILS, 'hoiMiddleName')
-                      : true // 🔒 keep disabled for all other statuses
+                    // Editable for non-Indian, disabled for Indian when CKYC populated
+                    (isIndianCitizen && !!ckycDataHOI?.middleName) ||
+                    (Reinitializestatus === 'REQUEST_FOR_MODIFICATION' &&
+                      !isEditableField(HEAD_OFFICE_DETAILS, 'hoiMiddleName')) ||
+                    isViewOnlyHOI
                   }
-                  // required={isEditableField(
-                  //   HEAD_OFFICE_DETAILS,
-                  //   'hoiMiddleName'
-                  // )}
+                // required={isEditableField(
+                //   HEAD_OFFICE_DETAILS,
+                //   'hoiMiddleName'
+                // )}
                 />
                 {errors.middleName && (
                   <div className="error-message">{errors.middleName}</div>
@@ -1033,10 +1068,11 @@ const InstitutionDetails = () => {
                   value={ckycDataHOI?.lastName || formData?.lastName || ''}
                   onChange={handleChange}
                   disabled={
-                    !isIndianCitizen ||
-                    Reinitializestatus === 'REQUEST_FOR_MODIFICATION'
-                      ? !isEditableField(HEAD_OFFICE_DETAILS, 'hoiLastName')
-                      : true // 🔒 keep disabled for all other statuses
+                    // Editable for non-Indian, disabled for Indian when CKYC populated
+                    (isIndianCitizen && !!ckycDataHOI?.lastName) ||
+                    (Reinitializestatus === 'REQUEST_FOR_MODIFICATION' &&
+                      !isEditableField(HEAD_OFFICE_DETAILS, 'hoiLastName')) ||
+                    isViewOnlyHOI
                   }
                   required={isEditableField(HEAD_OFFICE_DETAILS, 'hoiLastName')}
                 />
@@ -1100,7 +1136,7 @@ const InstitutionDetails = () => {
                   disabled={
                     // !isEditableField("headOfInstitutionDetails", "hoiGender")
                     !isIndianCitizen ||
-                    Reinitializestatus === 'REQUEST_FOR_MODIFICATION'
+                      Reinitializestatus === 'REQUEST_FOR_MODIFICATION'
                       ? !isEditableField(HEAD_OFFICE_DETAILS, 'hoiGender')
                       : true // 🔒 keep disabled for all other statuses
                   }
@@ -1132,15 +1168,15 @@ const InstitutionDetails = () => {
                 </label>
                 <div
                   className="country-code-wrapper"
-                  // style={{
-                  //   height: "47px",
-                  //   display: "flex",
-                  //   alignItems: "center",
-                  //   border: "1px solid grey",
-                  //   borderRadius: "7px",
-                  //   position: "relative",
-                  //   width: "100%", // Ensures responsiveness
-                  // }}
+                // style={{
+                //   height: "47px",
+                //   display: "flex",
+                //   alignItems: "center",
+                //   border: "1px solid grey",
+                //   borderRadius: "7px",
+                //   position: "relative",
+                //   width: "100%", // Ensures responsiveness
+                // }}
                 >
                   <select
                     className="country-code-dropdown"
@@ -1233,7 +1269,7 @@ const InstitutionDetails = () => {
                   onChange={handleChange}
                   maxLength={
                     formData.countryCode === '+91' ||
-                    formData.citizenship === 'Indian'
+                      formData.citizenship === 'Indian'
                       ? 10
                       : 15
                   }

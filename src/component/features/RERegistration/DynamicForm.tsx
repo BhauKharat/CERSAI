@@ -258,8 +258,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         const updatedStepDocuments =
           stepDocuments && Array.isArray(stepDocuments)
             ? stepDocuments.filter(
-                (doc) => !uniqueDocumentsToRemove.includes(doc.id)
-              )
+              (doc) => !uniqueDocumentsToRemove.includes(doc.id)
+            )
             : [];
         console.log(
           `📋 Updated stepDocuments after removal:`,
@@ -807,7 +807,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
       console.log('⏭️ Skipping API fetch - using frontend configuration');
       return;
     }
-    
+
     // Only fetch from API if not using frontend config
     if (urlDynamic) {
       dispatch(fetchFormFields({ url: urlDynamic }));
@@ -1605,11 +1605,11 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         // Determine citizenship dynamically
         const citizenshipValue = String(
           formValues[
-            isHoiPage
-              ? 'hoiCitizenship'
-              : isNodalOfficerPage
-                ? 'noCitizenship'
-                : 'citizenship'
+          isHoiPage
+            ? 'hoiCitizenship'
+            : isNodalOfficerPage
+              ? 'noCitizenship'
+              : 'citizenship'
           ] || ''
         )
           .trim()
@@ -2036,22 +2036,39 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           return value && String(value).trim() !== '';
 
         case 'textfield_with_image': {
-          // For textfield_with_image, BOTH text field and file must be filled
-          const textFieldValue = value;
-          const fileFieldName =
-            field.fieldFileName || `${field.fieldName}_file`;
+          const textValue = value;
+          const fileFieldName = field.fieldFileName || `${field.fieldName}_file`;
           const fileValue = formValues[fileFieldName];
 
-          // Check if text field is filled
-          const hasTextValue =
-            textFieldValue && String(textFieldValue).trim() !== '';
+          const hasText =
+            textValue && String(textValue).trim() !== '';
 
-          // Check if file is uploaded
-          const hasFileValue = hasValidAttachment(field, fileValue);
+          const effectiveRules = evaluateConditionalLogic(field);
+          const fileRules = effectiveRules?.validationFile;
 
-          // Both must be present for the field to be valid
-          return hasTextValue && hasFileValue;
+          const hasFile = hasValidAttachment(field, fileValue);
+
+          if (
+            hasText &&
+            fileRules?.imageRequired === true &&
+            !hasFile
+          ) {
+            dispatch(
+              setFieldError({
+                field: fileFieldName,
+                message:
+                  fileRules.imageRequiredMessage || 'Document is required',
+              })
+            );
+            return false;
+          }
+
+          if (hasText && hasFile) {
+            dispatch(clearFieldError(fileFieldName));
+          }
+          return fileRules?.imageRequired ? hasText && hasFile : true;
         }
+
 
         case 'file': {
           // For regular file fields, the file is stored directly in field.fieldName
@@ -2523,16 +2540,16 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               label:
                 typeof option === 'object' && option !== null
                   ? (option.label as string) ||
-                    (option.name as string) ||
-                    (option.text as string) ||
-                    String(option)
+                  (option.name as string) ||
+                  (option.text as string) ||
+                  String(option)
                   : String(option),
               value:
                 typeof option === 'object' && option !== null
                   ? (option.value as string) ||
-                    (option.id as string) ||
-                    (option.code as string) ||
-                    String(option)
+                  (option.id as string) ||
+                  (option.code as string) ||
+                  String(option)
                   : String(option),
             })
           );
@@ -2902,7 +2919,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             ? typeof mobileRules.required === 'boolean'
               ? mobileRules.required
               : mobileRules.required === 'true' ||
-                mobileRules.required === 'required'
+              mobileRules.required === 'required'
             : validationRules?.required || false;
 
         // Override required status for pincode "other" field if conditional rules apply
@@ -2911,7 +2928,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             typeof pincodeOtherRules.required === 'boolean'
               ? pincodeOtherRules.required
               : pincodeOtherRules.required === 'true' ||
-                pincodeOtherRules.required === 'required';
+              pincodeOtherRules.required === 'required';
         }
 
         // Compute pattern for validation
@@ -3067,8 +3084,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               option?.value ||
               String(
                 optionWithExtras.id ||
-                  optionWithExtras.code ||
-                  `option_${index}`
+                optionWithExtras.code ||
+                `option_${index}`
               ),
             // Pass through regulator and types for nested structure
             regulator: (optionWithExtras.regulator as string) || '',
@@ -3322,14 +3339,14 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             }
             maxLength={
               field.validationRules?.maxLength ||
-              field?.conditionalLogic?.[0]?.then?.validationRules?.maxLength
+                field?.conditionalLogic?.[0]?.then?.validationRules?.maxLength
                 ? parseInt(
-                    String(
-                      field?.validationRules?.maxLength ||
-                        field?.conditionalLogic?.[0]?.then?.validationRules
-                          ?.maxLength
-                    )
+                  String(
+                    field?.validationRules?.maxLength ||
+                    field?.conditionalLogic?.[0]?.then?.validationRules
+                      ?.maxLength
                   )
+                )
                 : undefined
             }
             error={!!displayError}
@@ -3359,12 +3376,12 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               });
               const fa = matched?.then?.fieldAttributes as
                 | {
-                    url?: string;
-                    method?: string;
-                    headers?: Record<string, string>;
-                    urlData?: string;
-                    payloadTemplate?: Record<string, unknown>;
-                  }
+                  url?: string;
+                  method?: string;
+                  headers?: Record<string, string>;
+                  urlData?: string;
+                  payloadTemplate?: Record<string, unknown>;
+                }
                 | undefined;
               if (!fa?.url) return;
 
@@ -3483,12 +3500,12 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               // const fa = matched?.fieldAttributes as
               const fa = matched?.fieldAttributes as
                 | {
-                    url?: string;
-                    method?: string;
-                    headers?: Record<string, string>;
-                    urlData?: string;
-                    payloadTemplate?: Record<string, unknown>;
-                  }
+                  url?: string;
+                  method?: string;
+                  headers?: Record<string, string>;
+                  urlData?: string;
+                  payloadTemplate?: Record<string, unknown>;
+                }
                 | undefined;
               if (!fa?.url) return false;
 
@@ -3530,9 +3547,9 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
               const fa = matched?.then?.fieldAttributes as
                 | {
-                    autoPopulate?: string[];
-                    responseMapping?: { label?: string; value?: string };
-                  }
+                  autoPopulate?: string[];
+                  responseMapping?: { label?: string; value?: string };
+                }
                 | undefined;
 
               if (
@@ -3681,13 +3698,13 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               // const fa = matched.fieldAttributes as
               const fa = matched?.fieldAttributes as
                 | {
-                    url?: string;
-                    method?: string;
-                    headers?: Record<string, string>;
-                    urlData?: string;
-                    payloadTemplate?: Record<string, unknown>;
-                    autoPopulate?: string[];
-                  }
+                  url?: string;
+                  method?: string;
+                  headers?: Record<string, string>;
+                  urlData?: string;
+                  payloadTemplate?: Record<string, unknown>;
+                  autoPopulate?: string[];
+                }
                 | undefined;
 
               if (!fa?.url) return;
@@ -3900,8 +3917,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             const fieldKey =
               field.conditionalLogic && field.conditionalLogic.length > 0
                 ? `${field.id}-${field.conditionalLogic
-                    .map((logic: any) => formValues[logic.when?.field] || '')
-                    .join('-')}`
+                  .map((logic: any) => formValues[logic.when?.field] || '')
+                  .join('-')}`
                 : field.id;
 
             return (

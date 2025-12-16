@@ -129,13 +129,13 @@ export interface FormField {
   fieldLabel: string;
   fieldFileName?: string;
   fieldType:
-    | 'textfield'
-    | 'dropdown'
-    | 'checkbox'
-    | 'date'
-    | 'textfield_with_image'
-    | 'textfield_with_verify'
-    | 'file';
+  | 'textfield'
+  | 'dropdown'
+  | 'checkbox'
+  | 'date'
+  | 'textfield_with_image'
+  | 'textfield_with_verify'
+  | 'file';
   fieldPlaceholder: string;
   fieldOptions: Array<{ label: string; value: string }>;
   validationRules: {
@@ -594,8 +594,8 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
       const isIndianCitizen =
         adminIndex === 1
           ? ['indian', 'india', 'in', '+91'].some((v) =>
-              rawCitizenship.includes(v)
-            )
+            rawCitizenship.includes(v)
+          )
           : ['indian', 'india', 'in'].some((v) => rawCitizenship.includes(v)); // admin two can have different logic if needed
 
       // --- Admin-specific CKYC ---
@@ -940,7 +940,7 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
 
             // Clear their values in Redux immediately
             dependentFields.forEach((fieldName) => {
-              dispatch(updateFormValue({ fieldName, value: '' }));
+              updateFormValue({ fieldName, value: '' });
             });
 
             // Remove them from autoPopulatedFields so they become editable
@@ -2632,12 +2632,12 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                 ? typeof pincodeOtherRules.required === 'boolean'
                   ? pincodeOtherRules.required
                   : pincodeOtherRules.required === 'true' ||
-                    pincodeOtherRules.required === 'required'
+                  pincodeOtherRules.required === 'required'
                 : isMobileField && mobileRules
                   ? typeof mobileRules.required === 'boolean'
                     ? mobileRules.required
                     : mobileRules.required === 'true' ||
-                      mobileRules.required === 'required'
+                    mobileRules.required === 'required'
                   : isRequired
             }
             disabled={isFieldAutoPopulated(field.fieldName, groupName)}
@@ -2653,29 +2653,27 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
             maxLength={
               // For main pincode fields with India selected, enforce 6 digits
               (isRegisterPincodeField && isRegisterCountryIndia) ||
-              (isCorrespondencePincodeField && isCorrespondenceCountryIndia)
+                (isCorrespondencePincodeField && isCorrespondenceCountryIndia)
                 ? 6
-                : isLimitedField
-                  ? 50
-                  : isPincodeOtherSelected && pincodeOtherRules?.maxLength
-                    ? parseInt(pincodeOtherRules.maxLength)
-                    : isMobileField && mobileRules?.maxLength
-                      ? parseInt(mobileRules.maxLength)
-                      : isProofOfIdentityNumberField && proofMaxLength
-                        ? proofMaxLength
-                        : field.validationRules?.maxLength
-                          ? parseInt(field.validationRules.maxLength)
-                          : undefined
+                : isPincodeOtherSelected && pincodeOtherRules?.maxLength
+                  ? parseInt(pincodeOtherRules.maxLength)
+                  : isMobileField && mobileRules?.maxLength
+                    ? parseInt(mobileRules.maxLength)
+                    : isProofOfIdentityNumberField && proofMaxLength
+                      ? proofMaxLength
+                      : field.validationRules?.maxLength
+                        ? parseInt(field.validationRules.maxLength)
+                        : undefined
             }
             pattern={
               isLimitedField
                 ? // For main pincode fields, check country
-                  isRegisterPincodeField ||
+                isRegisterPincodeField ||
                   isCorrespondencePincodeField ||
                   isIauPincodeField1 ||
                   isIauPincodeField2
                   ? // India: digits only, Other countries: alphanumeric
-                    (isRegisterPincodeField && isRegisterCountryIndia) ||
+                  (isRegisterPincodeField && isRegisterCountryIndia) ||
                     (isCorrespondencePincodeField &&
                       isCorrespondenceCountryIndia) ||
                     (isIauPincodeField1 && isIauCountry1India) ||
@@ -2765,8 +2763,8 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                 option?.value ||
                 String(
                   optionWithExtras.id ||
-                    optionWithExtras.code ||
-                    `option_${index}`
+                  optionWithExtras.code ||
+                  `option_${index}`
                 ),
               // Pass through regulator and types for nested structure
               regulator: (optionWithExtras.regulator as string) || '',
@@ -3136,11 +3134,11 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
               required={field.validationRules?.required || false}
               verifyIcon={Boolean(
                 formValues[`${field.fieldName}_autoPopulated`] === 'true' ||
-                  formValues[`${field.fieldName}_autoPopulated`] === true
+                formValues[`${field.fieldName}_autoPopulated`] === true
               )}
               hasData={Boolean(
                 formValues[`${field.fieldName}_autoPopulated`] === 'true' ||
-                  formValues[`${field.fieldName}_autoPopulated`] === true
+                formValues[`${field.fieldName}_autoPopulated`] === true
               )}
               minLength={
                 field.validationRules?.minLength
@@ -3184,12 +3182,12 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                 });
                 const fa = matched?.then?.fieldAttributes as
                   | {
-                      url?: string;
-                      method?: string;
-                      headers?: Record<string, string>;
-                      urlData?: string;
-                      payloadTemplate?: Record<string, unknown>;
-                    }
+                    url?: string;
+                    method?: string;
+                    headers?: Record<string, string>;
+                    urlData?: string;
+                    payloadTemplate?: Record<string, unknown>;
+                  }
                   | undefined;
                 if (!fa?.url) return;
 
@@ -3309,12 +3307,12 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                 });
                 const fa = matched?.then?.fieldAttributes as
                   | {
-                      url?: string;
-                      method?: string;
-                      headers?: Record<string, string>;
-                      urlData?: string;
-                      payloadTemplate?: Record<string, unknown>;
-                    }
+                    url?: string;
+                    method?: string;
+                    headers?: Record<string, string>;
+                    urlData?: string;
+                    payloadTemplate?: Record<string, unknown>;
+                  }
                   | undefined;
                 if (!fa?.url) return false;
 
@@ -3362,9 +3360,9 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
 
                 const fa = matched?.then?.fieldAttributes as
                   | {
-                      autoPopulate?: string[];
-                      responseMapping?: { label?: string; value?: string };
-                    }
+                    autoPopulate?: string[];
+                    responseMapping?: { label?: string; value?: string };
+                  }
                   | undefined;
 
                 console.log('🔍 Field attributes found:', fa, matched);
@@ -3573,13 +3571,13 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
 
                 const fa = matched.then?.fieldAttributes as
                   | {
-                      url?: string;
-                      method?: string;
-                      headers?: Record<string, string>;
-                      urlData?: string;
-                      payloadTemplate?: Record<string, unknown>;
-                      autoPopulate?: string[];
-                    }
+                    url?: string;
+                    method?: string;
+                    headers?: Record<string, string>;
+                    urlData?: string;
+                    payloadTemplate?: Record<string, unknown>;
+                    autoPopulate?: string[];
+                  }
                   | undefined;
 
                 if (!fa?.url) return;
@@ -3813,7 +3811,7 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                   // </Grid>
                   <>
                     {field.fieldLabel == 'Date of Authorization' ? (
-                      <Grid size={gridSize} key={field.id}></Grid>
+                      <Grid size={gridSize} key={`${field.id}-spacer`}></Grid>
                     ) : (
                       ''
                     )}

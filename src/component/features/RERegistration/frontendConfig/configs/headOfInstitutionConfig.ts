@@ -146,8 +146,8 @@ export const headOfInstitutionConfig: FrontendFormConfig = {
       fieldPlaceholder: 'Enter your last name',
       validationRules: {
         required: false,
-        regx: "^(?!.*'.*')[A-Za-z .']+$",
-        regxMessage: 'Last Name can contain only letters, spaces, a single apostrophe, and dots.',
+        regx: "^(?!.*'.*')[A-Za-z.']+$",
+        regxMessage: 'Last Name can contain only letters, a single apostrophe, and dots. Spaces are not allowed.',
         maxLength: '33',
         maxLengthMessage: 'Last Name cannot exceed 33 characters.',
         minLength: '2',
@@ -211,8 +211,8 @@ export const headOfInstitutionConfig: FrontendFormConfig = {
       validationRules: {
         required: true,
         requiredMessage: 'Please enter your email address.',
-        maxLength: '254',
-        maxLengthMessage: 'Email address cannot exceed 254 characters.',
+        maxLength: '255',
+        maxLengthMessage: 'Email address cannot exceed 255 characters.',
         regx: '^[A-Za-z0-9`~#$%^&*.()_+\\-=]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$',
         regxMessage: 'Please enter a valid email address.',
       },
@@ -302,8 +302,8 @@ export const headOfInstitutionConfig: FrontendFormConfig = {
       fieldPlaceholder: 'Enter landline number',
       validationRules: {
         required: false,
-        regx: '^[A-Za-z0-9+]+$',
-        regxMessage: 'Landline number can contain letters, numbers, and + sign only.',
+        regx: '^[0-9+ -]+$',
+        regxMessage: 'Landline number can contain digits, +, space, and hyphen only.',
         maxLength: '15',
         maxLengthMessage: 'Landline number cannot exceed 15 digits.',
       },
