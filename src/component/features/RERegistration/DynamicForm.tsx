@@ -132,6 +132,7 @@ interface DynamicFormProps {
   prefilledDisablesValidate?: boolean; // If true, when hasStepData, keep Validate disabled until contact change
   onValidationChange?: (isValid: boolean) => void; // Callback to notify parent of validation state changes
   useFrontendConfig?: boolean; // If true, skip API fetch for form fields (fields already set from frontend config)
+  specialDropdownHandlers?: Record<string, (value: string) => void>; // Custom handlers for special dropdown fields
   // getFieldDisabled?: (fieldName: string) => boolean; // Function to determine if a field should be disabled
 }
 
@@ -146,6 +147,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   prefilledDisablesValidate = false,
   onValidationChange,
   useFrontendConfig = false, // Default to false for backward compatibility
+  specialDropdownHandlers = {}, // Default to empty object
   // getFieldDisabled,
 }) => {
   const dispatch = useAppDispatch();
@@ -1326,8 +1328,14 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           }
         }
       }
+
+      // Call special dropdown handlers if defined for this field
+      if (specialDropdownHandlers && specialDropdownHandlers[fieldName]) {
+        console.log(`🔄 Calling special handler for ${fieldName} with value: ${value}`);
+        specialDropdownHandlers[fieldName](value);
+      }
     },
-    [dispatch, fields, getFilteredInstitutionTypeOptions, setValidationErrors]
+    [dispatch, fields, getFilteredInstitutionTypeOptions, setValidationErrors, specialDropdownHandlers]
   );
 
   // Validate all fields

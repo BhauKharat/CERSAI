@@ -1,4 +1,4 @@
-import React, { useCallback, Component, ErrorInfo, useEffect, useRef, useMemo } from 'react';
+import React, { useCallback, Component, ErrorInfo, useEffect, useRef, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Alert, CircularProgress } from '@mui/material';
 import DynamicForm from '../DynamicForm';
@@ -27,6 +27,7 @@ import { FieldErrorProvider } from '../context/FieldErrorContext';
 import { useFrontendFormConfig } from '../frontendConfig/utils/useFrontendFormConfig';
 import { nodalOfficerConfig } from '../frontendConfig/configs/nodalOfficerConfig';
 import { FormField } from '../types/formTypes';
+import { API_URL_REINITILIZE } from '../../../../Constant';
 
 // Simple Error Boundary for catching render errors
 class FormErrorBoundary extends Component<
@@ -225,7 +226,7 @@ const FrontendNodalOfficerStep: React.FC<FrontendNodalOfficerStepProps> = ({
       console.log(
         '✅ Frontend Nodal Officer form fields loaded, now fetching step data for nodal:',
         {
-          stepKey: 'nodal',
+          stepKey: 'nodalOfficer',
           workflowId: testWorkflowId,
           userId: testUserId,
           formFieldsCount: frontendFields.length,
@@ -235,7 +236,7 @@ const FrontendNodalOfficerStep: React.FC<FrontendNodalOfficerStepProps> = ({
       stepDataFetched.current = true;
       dispatch(
         fetchStepData({
-          stepKey: 'nodal',
+          stepKey: 'nodalOfficer',
           workflowId: testWorkflowId,
           userId: testUserId,
         })
@@ -258,20 +259,175 @@ const FrontendNodalOfficerStep: React.FC<FrontendNodalOfficerStepProps> = ({
     };
   }, [dispatch, authWorkflowId, userDetails?.userId]);
 
+  // Field name mapping from API response to frontend config field names
+  // API returns fields without "no" prefix, but frontend config uses "no" prefix
+  const apiToFrontendFieldMap: Record<string, string> = {
+    // Personal fields - API uses no prefix, frontend uses "no" prefix
+    citizenship: 'noCitizenship',
+    ckycNumber: 'noCkycNumber',
+    title: 'noTitle',
+    firstName: 'noFirstName',
+    middleName: 'noMiddleName',
+    lastName: 'noLastName',
+    gender: 'noGender',
+    dob: 'noDob',
+    designation: 'noDesignation',
+    employCode: 'noEmployCode',
+    email: 'noEmail',
+    countryCode: 'noCountryCode',
+    phoneNumber: 'noMobileNumber',
+    mobileNumber: 'noMobileNumber',
+    landline: 'noLandline',
+    // Office Address
+    officeAddress: 'noOfficeAddress',
+    noOfficeAddress: 'noOfficeAddress',
+    // Address fields - these already have "no" prefix in API
+    noAddressLine1: 'noAddressLine1',
+    noAddressLine2: 'noAddressLine2',
+    noAddressLine3: 'noAddressLine3',
+    noRegisterCountry: 'noRegisterCountry',
+    noRegisterState: 'noRegisterState',
+    noRegisterDistrict: 'noRegisterDistrict',
+    noRegisterCity: 'noRegisterCity',
+    noRegisterPincode: 'noRegisterPincode',
+    noRegisterPincodeOther: 'noRegisterPincodeOther',
+    noRegisterDigipin: 'noRegisterDigipin',
+    // Proof of Identity fields
+    proofOfIdentity: 'noProofOfIdentity',
+    noProofOfIdentity: 'noProofOfIdentity',
+    proofOfIdentityNumber: 'noProofOfIdentityNumber',
+    noProofOfIdentityNumber: 'noProofOfIdentityNumber',
+    // Board Resolution fields
+    boardResoluationDate: 'noBoardResoluationDate',
+    noBoardResoluationDate: 'noBoardResoluationDate',
+    boardResoluation: 'noBoardResoluation',
+    noBoardResoluation: 'noBoardResoluation',
+  };
+
+  // State for storing fetched address data
+  const [addressData, setAddressData] = useState<Record<string, any> | null>(null);
+  const addressDataFetched = useRef(false);
+
+  // Fetch address data for office address population
+  const fetchAddressData = useCallback(async () => {
+    const currentWorkflowId = authWorkflowId || userDetails?.workflowId;
+    const userId = userDetails?.userId || userDetails?.id;
+    
+    const testWorkflowId = currentWorkflowId || '19c166c7-aecd-4d0f-93cf-0ff9fa07caf7';
+    const testUserId = userId || 'NO_6149';
+
+    if (addressDataFetched.current) {
+      return addressData;
+    }
+
+    try {
+      console.log('🏠 Fetching address data for office address population...');
+      const response = await fetch(
+        `${API_URL_REINITILIZE}/api/v1/registration/step-data?stepKey=addresses&workflowId=${testWorkflowId}&userId=${testUserId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        const fetchedAddressData = result?.data?.data?.step?.data || {};
+        console.log('📍 Fetched address data:', fetchedAddressData);
+        setAddressData(fetchedAddressData);
+        addressDataFetched.current = true;
+        return fetchedAddressData;
+      } else {
+        console.error('Failed to fetch address data:', response.statusText);
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching address data:', error);
+      return null;
+    }
+  }, [authWorkflowId, userDetails, addressData]);
+
+  // Populate office address fields based on selected option
+  const populateOfficeAddress = useCallback(async (selectedOption: string) => {
+    console.log('🏢 Office Address selected:', selectedOption);
+    
+    let fetchedData = addressData;
+    if (!fetchedData) {
+      fetchedData = await fetchAddressData();
+    }
+
+    if (!fetchedData) {
+      console.warn('⚠️ No address data available to populate office address');
+      return;
+    }
+
+    // Define field mapping based on selected option
+    let sourcePrefix: string;
+    if (selectedOption === 'Same as registered address') {
+      sourcePrefix = 'register';
+    } else if (selectedOption === 'Same as correspondence address') {
+      sourcePrefix = 'correspondence';
+    } else {
+      return;
+    }
+
+    // Map source address fields to nodal officer address fields
+    const fieldMappings: Record<string, string> = {
+      [`${sourcePrefix}Line1`]: 'noAddressLine1',
+      [`${sourcePrefix}Line2`]: 'noAddressLine2',
+      [`${sourcePrefix}Line3`]: 'noAddressLine3',
+      [`${sourcePrefix}Country`]: 'noRegisterCountry',
+      [`${sourcePrefix}State`]: 'noRegisterState',
+      [`${sourcePrefix}District`]: 'noRegisterDistrict',
+      [`${sourcePrefix}City`]: 'noRegisterCity',
+      [`${sourcePrefix}Pincode`]: 'noRegisterPincode',
+      [`${sourcePrefix}Digipin`]: 'noRegisterDigipin',
+    };
+
+    console.log(`📋 Populating office address from ${sourcePrefix} address...`);
+    
+    // Populate the fields (with null check for fetchedData)
+    if (fetchedData) {
+      // Assign to a const to help TypeScript narrow the type inside the callback
+      const data = fetchedData;
+      Object.entries(fieldMappings).forEach(([sourceField, targetField]) => {
+        const value = data[sourceField];
+        if (value !== null && value !== undefined && value !== '') {
+          console.log(`  Setting ${targetField} = ${value}`);
+          dispatch(updateFormValue({ fieldName: targetField, value: String(value) }));
+        }
+      });
+    }
+  }, [addressData, fetchAddressData, dispatch]);
+
+  // Special dropdown handlers for office address
+  const specialDropdownHandlers = useMemo(() => ({
+    noOfficeAddress: (value: string) => {
+      populateOfficeAddress(value);
+    },
+  }), [populateOfficeAddress]);
+
   // Populate form fields when step data is loaded
   React.useEffect(() => {
     if (stepData && stepData.data && Object.keys(stepData.data).length > 0) {
       console.log('Populating Nodal Officer form fields with step data:', stepData.data);
 
-      Object.entries(stepData.data).forEach(([fieldName, fieldValue]) => {
+      Object.entries(stepData.data).forEach(([apiFieldName, fieldValue]) => {
         if (
           fieldValue !== null &&
           fieldValue !== undefined &&
           fieldValue !== ''
         ) {
+          // Map API field name to frontend field name
+          const frontendFieldName = apiToFrontendFieldMap[apiFieldName] || apiFieldName;
+          
           const stringValue =
             typeof fieldValue === 'string' ? fieldValue : String(fieldValue);
-          dispatch(updateFormValue({ fieldName, value: stringValue }));
+          
+          console.log(`Mapping field: ${apiFieldName} -> ${frontendFieldName} = ${stringValue}`);
+          dispatch(updateFormValue({ fieldName: frontendFieldName, value: stringValue }));
         }
       });
     }
@@ -339,6 +495,7 @@ const FrontendNodalOfficerStep: React.FC<FrontendNodalOfficerStepProps> = ({
             }
             onValidationChange={onValidationChange}
             useFrontendConfig={true}
+            specialDropdownHandlers={specialDropdownHandlers}
           />
         </FieldErrorProvider>
       </FormErrorBoundary>

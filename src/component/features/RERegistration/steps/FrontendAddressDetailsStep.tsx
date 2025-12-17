@@ -123,6 +123,8 @@ const FrontendAddressDetailsStep: React.FC<FrontendAddressDetailsStepProps> = ({
 
   // Add a ref to track if step data has been fetched
   const stepDataFetched = React.useRef(false);
+  // Add a ref to track if geographical fields have been processed
+  const geoFieldsProcessed = React.useRef(false);
 
   // Get user details from auth state
   const userDetails = useSelector((state: RootState) => state.auth.userDetails);
@@ -147,8 +149,9 @@ const FrontendAddressDetailsStep: React.FC<FrontendAddressDetailsStepProps> = ({
   >({});
   const [clearKey, setClearKey] = useState<number>(0);
 
-  // Flatten grouped fields for validation and dependent dropdown support
-  const flattenedFields = useMemo(() => {
+  // Base fields from config (stable, doesn't change with dropdown options)
+  // Used for geographical field processing to avoid infinite loops
+  const baseFields = useMemo(() => {
     let fields: any[] = [];
     if (frontendGroupedFields) {
       fields = Object.values(frontendGroupedFields).flatMap(
@@ -157,38 +160,49 @@ const FrontendAddressDetailsStep: React.FC<FrontendAddressDetailsStepProps> = ({
     } else if (frontendFields) {
       fields = frontendFields;
     }
-    // Map fields to ensure compatibility with DynamicExpandCollapseForm
-    // Also merge in any dropdown options fetched from Redux (for dependent dropdowns)
-    return fields.map((field) => {
+    // Map fields to ensure compatibility but WITHOUT merging dropdown options
+    return fields.map((field) => ({
+      ...field,
+      fieldPlaceholder: field.fieldPlaceholder || '',
+      fieldOptions: (field.fieldOptions || []).map((opt: any) => ({
+        label: opt.name || opt.label || opt.code || '',
+        value: opt.code || opt.value || opt.name || '',
+      })),
+      validationRules: field.validationRules || null,
+      isRequired: field.isRequired ?? false,
+      defaultValue: field.defaultValue ?? null,
+      helpText: field.helpText ?? null,
+      fieldGroup: field.fieldGroup || '',
+      conditionalLogic: field.conditionalLogic || null,
+      cssClasses: field.cssClasses || null,
+      fieldAttributes: field.fieldAttributes || null,
+      createdAt: field.createdAt || '',
+      updatedAt: field.updatedAt || '',
+    }));
+  }, [frontendGroupedFields, frontendFields]);
+
+  // Flatten grouped fields for validation and dependent dropdown support
+  // This merges in dropdown options from Redux for rendering
+  const flattenedFields = useMemo(() => {
+    // Merge in any dropdown options fetched from Redux (for dependent dropdowns)
+    return baseFields.map((field) => {
       // Check if there are fetched options for this field in Redux
       const fetchedOptions = reduxDropdownOptions?.[field.id];
       
       // Use fetched options if available, otherwise use config options
-      let fieldOptions = field.fieldOptions || [];
       if (fetchedOptions && fetchedOptions.length > 0) {
-        fieldOptions = fetchedOptions;
+        return {
+          ...field,
+          fieldOptions: fetchedOptions.map((opt: any) => ({
+            label: opt.name || opt.label || opt.code || '',
+            value: opt.code || opt.value || opt.name || '',
+          })),
+        };
       }
       
-      return {
-        ...field,
-        fieldPlaceholder: field.fieldPlaceholder || '',
-        fieldOptions: fieldOptions.map((opt: any) => ({
-          label: opt.name || opt.label || opt.code || '',
-          value: opt.code || opt.value || opt.name || '',
-        })),
-        validationRules: field.validationRules || null,
-        isRequired: field.isRequired ?? false,
-        defaultValue: field.defaultValue ?? null,
-        helpText: field.helpText ?? null,
-        fieldGroup: field.fieldGroup || '',
-        conditionalLogic: field.conditionalLogic || null,
-        cssClasses: field.cssClasses || null,
-        fieldAttributes: field.fieldAttributes || null,
-        createdAt: field.createdAt || '',
-        updatedAt: field.updatedAt || '',
-      };
+      return field;
     });
-  }, [frontendGroupedFields, frontendFields, reduxDropdownOptions]);
+  }, [baseFields, reduxDropdownOptions]);
 
   // Create merged grouped fields with fetched dropdown options
   const mergedGroupedFields = useMemo(() => {
@@ -360,11 +374,12 @@ const FrontendAddressDetailsStep: React.FC<FrontendAddressDetailsStepProps> = ({
     flattenedFields,
   ]);
 
-  // Reset the fetch flag when component unmounts
+  // Reset the fetch flags when component unmounts
   React.useEffect(() => {
     return () => {
       dispatch(clearStepData());
       stepDataFetched.current = false;
+      geoFieldsProcessed.current = false;
     };
   }, [dispatch, authWorkflowId, userDetails?.userId]);
 
@@ -384,17 +399,35 @@ const FrontendAddressDetailsStep: React.FC<FrontendAddressDetailsStepProps> = ({
           dispatch(updateFormValue({ fieldName, value: stringValue }));
         }
       });
+    }
+  }, [dispatch, stepData]);
 
+  // Process geographical fields separately (only once when step data is loaded)
+  // Use a ref to prevent infinite loops from repeated API calls
+  // Use baseFields (stable) instead of flattenedFields (changes with dropdown options)
+  React.useEffect(() => {
+    if (
+      stepData &&
+      stepData.data &&
+      Object.keys(stepData.data).length > 0 &&
+      baseFields &&
+      baseFields.length > 0 &&
+      !geoFieldsProcessed.current
+    ) {
+      console.log('🌍 Processing geographical fields for Address Details (one-time)');
+      geoFieldsProcessed.current = true;
+      
       // Process geographical fields using common utility
+      // Use stepData.data as the values source to avoid dependency on formValues
       processGeographicalFields(
-        flattenedFields,
+        baseFields,
         stepData,
-        formValues,
+        stepData.data as Record<string, unknown>, // Use stepData instead of formValues
         dispatch,
         fetchDependentDropdownOptions
       );
     }
-  }, [dispatch, stepData, flattenedFields, formValues]);
+  }, [dispatch, stepData, baseFields]);
 
   // Document field mapping
   const documentFieldMapping = React.useMemo(() => {
