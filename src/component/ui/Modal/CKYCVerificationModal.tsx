@@ -100,10 +100,21 @@ function CKYCVerificationModal({
 
         // Directly close modal and notify parent on success (no verified animation)
         setOtpError(false);
-        onVerificationSuccess(responseData);
+        
+        // Close the modal first, then call the success callback
+        // This ensures the modal closes even if the callback throws an error
         onClose();
+        
+        // Call verification success after closing modal
+        try {
+          onVerificationSuccess(responseData);
+        } catch (callbackError) {
+          console.error('CKYC verification success callback error:', callbackError);
+          // Modal is already closed, so we just log the error
+        }
       } catch (error) {
         console.error('CKYC OTP verification error:', error);
+        setOtpError(true);
       } finally {
         setIsSubmitting(false);
       }

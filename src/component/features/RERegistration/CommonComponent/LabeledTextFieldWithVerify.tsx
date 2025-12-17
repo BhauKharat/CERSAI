@@ -259,14 +259,28 @@ const LabeledTextFieldWithVerify: React.FC<LabeledTextFieldWithVerifyProps> = ({
   const handleModalClose = () => setModalOpen(false);
 
   const handleVerificationSuccess = (data?: unknown) => {
-    // First, emit the OTP-verified payload to parent if provided
-    onOtpVerified?.(data);
-    // Backward compatibility: trigger onVerify after success with current value
-    onVerify?.(value);
+    console.log('🎯 handleVerificationSuccess called with data:', data);
+    
+    // First, close the modal
+    setModalOpen(false);
+    
     // Mark the current value as the new verified baseline
     prefilledValueRef.current = value;
     setIsVerified(true);
-    setModalOpen(false);
+    
+    // Then emit the OTP-verified payload to parent if provided
+    try {
+      onOtpVerified?.(data);
+    } catch (error) {
+      console.error('Error in onOtpVerified callback:', error);
+    }
+    
+    // Backward compatibility: trigger onVerify after success with current value
+    try {
+      onVerify?.(value);
+    } catch (error) {
+      console.error('Error in onVerify callback:', error);
+    }
   };
 
   useEffect(() => {

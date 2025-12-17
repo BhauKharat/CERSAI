@@ -404,6 +404,11 @@ interface DynamicExpandCollapseFormProps {
     [fieldName: string]: (checked: boolean) => void;
   };
 
+  // Special dropdown handlers for fields like office address
+  specialDropdownHandlers?: {
+    [fieldName: string]: (value: string) => void;
+  };
+
   // Custom field disabled logic
   getFieldDisabled?: (field: FormField) => boolean;
 
@@ -450,6 +455,7 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
   onNext,
   onPrevious,
   specialCheckboxHandlers,
+  specialDropdownHandlers,
   getFieldDisabled,
   clearKey,
   setClearKey,
@@ -1512,6 +1518,14 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
         console.log(
           '🏢 IAU office address condition MET - processing autofill'
         );
+        
+        // Check if there's a special handler for this dropdown
+        if (specialDropdownHandlers && specialDropdownHandlers[field.fieldName]) {
+          console.log('🏢 Using specialDropdownHandler for', field.fieldName);
+          specialDropdownHandlers[field.fieldName](value);
+          return; // Let the special handler handle the population
+        }
+        
         const trimmedValue = value.trim().toLowerCase();
         let sourcePrefix = '';
 
@@ -1540,7 +1554,6 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
 
                 if (addressData) {
                   // Field mappings - only copy text fields, not dropdowns
-                  const adminText = adminIndex === 1 ? 'One' : 'Two';
                   const textFieldMappings = [
                     {
                       source: `${sourcePrefix}Line1`,
@@ -1587,7 +1600,7 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                     },
                   ];
 
-                  // Copy TEXT fields and clear if API missing
+                  // Copy TEXT fields and clear if API missing - use prop function directly
                   textFieldMappings.forEach(({ source, target }) => {
                     const hasKey = Object.prototype.hasOwnProperty.call(
                       addressData,
@@ -1597,12 +1610,10 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                       ? (addressData[source] ?? '')
                       : '';
 
-                    dispatch(
-                      updateFormValue({
-                        fieldName: target,
-                        value: String(valueToSet),
-                      })
-                    );
+                    updateFormValue({
+                      fieldName: target,
+                      value: String(valueToSet),
+                    });
                   });
 
                   // Copy DROPDOWN fields with delay & clear if missing
@@ -1830,6 +1841,7 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
       updateFormValue,
       userId,
       workflowId,
+      specialDropdownHandlers,
     ]
   );
 
@@ -2108,15 +2120,12 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
       // Check if all admin sections are verified
       adminSectionsVerified = adminGroups.every((groupName) => {
         const isVerified = verifiedSections.has(groupName);
-        const hasDataChanged = hasSectionDataChanged(
-          groupName,
-          groupedFields[groupName].fields
-        );
         const isSectionStillValid = isSectionValid(
           groupedFields[groupName].fields
         );
-        // Section must be verified, data should not have changed, and all fields must still be valid
-        return isVerified && !hasDataChanged && isSectionStillValid;
+        // Section must be verified and all fields must still be valid
+        // Allow submission even if data changed, as long as section is verified and valid
+        return isVerified && isSectionStillValid;
       });
     }
 
@@ -3528,6 +3537,7 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                 return resp?.data ?? true;
               }}
               onOtpVerified={(data?: unknown) => {
+                try {
                 console.log(
                   '🎯 CKYC OTP Verified - Auto-population starting:',
                   data
@@ -3692,19 +3702,30 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                     }
                   }
 
-                  // Update form value
-                  dispatch(
-                    updateFormValue({
-                      fieldName: target,
-                      value: String(value || ''),
-                    })
-                  );
+                  // Update form value - use prop function directly, not dispatch
+                  updateFormValue({
+                    fieldName: target,
+                    value: String(value || ''),
+                  });
+
+                  // Also set the _autoPopulated flag for the field
+                  updateFormValue({
+                    fieldName: `${target}_autoPopulated`,
+                    value: 'true',
+                  });
 
                   // Track this field as auto-populated with admin prefix
                   populatedFields.add(`admin${adminIndex}_${target}`);
                 });
                 // Add CKYC field with admin prefix
                 populatedFields.add(`admin${adminIndex}_${ckycField}`);
+                
+                // Mark CKYC field as auto-populated/verified
+                updateFormValue({
+                  fieldName: `${ckycField}_autoPopulated`,
+                  value: 'true',
+                });
+                
                 // Update state with populated fields and verified values
                 // First, remove old auto-populated fields for this admin, then add new ones
                 setAutoPopulatedFields((prev) => {
@@ -3741,6 +3762,9 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                   });
                   return newErrors;
                 });
+                } catch (error) {
+                  console.error('Error in CKYC auto-population:', error);
+                }
               }}
               onVerify={async (currentValue: string) => {
                 // Find matching conditional logic (if any)
@@ -3792,12 +3816,11 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                           data &&
                           Object.prototype.hasOwnProperty.call(data, target)
                         ) {
-                          dispatch(
-                            updateFormValue({
-                              fieldName: target,
-                              value: data[target] as string,
-                            })
-                          );
+                          // updateFormValue is a prop function, call it directly without dispatch
+                          updateFormValue({
+                            fieldName: target,
+                            value: data[target] as string,
+                          });
                         }
                       });
                     }
@@ -3814,24 +3837,22 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                           data &&
                           Object.prototype.hasOwnProperty.call(data, target)
                         ) {
-                          dispatch(
-                            updateFormValue({
-                              fieldName: target,
-                              value: data[target] as string,
-                            })
-                          );
+                          // updateFormValue is a prop function, call it directly without dispatch
+                          updateFormValue({
+                            fieldName: target,
+                            value: data[target] as string,
+                          });
                         }
                       });
                     }
                   }
                 } catch {
-                  dispatch(
-                    setFieldError({
-                      field: field.fieldName,
-                      message:
-                        'Verification failed. Please check the value and try again.',
-                    })
-                  );
+                  // setFieldError is a prop function, call it directly without dispatch
+                  setFieldError({
+                    field: field.fieldName,
+                    message:
+                      'Verification failed. Please check the value and try again.',
+                  });
                 }
               }}
             />

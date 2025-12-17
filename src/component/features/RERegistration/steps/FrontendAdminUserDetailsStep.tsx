@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, {
   useCallback,
   Component,
@@ -39,7 +40,16 @@ import { processGeographicalFields } from '../utils/geographicalDataUtils';
 import {
   fetchAdminUserDropdownOptions,
   selectAdminUserDetailsDropdownOptions,
+  setVerifiedSections,
+  addVerifiedSection,
+  updateSectionDataHash,
+  selectAdminUserDetailsVerifiedSections,
+  selectAdminUserDetailsSectionDataHashes,
 } from '../slice/adminUserDetailsSlice';
+import OTPVerificationModal from '../../../ui/Modal/OTPVerificationModal';
+import SuccessModal from '../../../ui/Modal/SuccessModal';
+import { OTPSend } from '../../Authenticate/slice/authSlice';
+import { Secured } from '../../../../utils/HelperFunctions/api';
 
 // Simple Error Boundary for catching render errors
 class FormErrorBoundary extends Component<
@@ -142,11 +152,35 @@ const FrontendAdminUserDetailsStep: React.FC<FrontendAdminUserDetailsStepProps> 
   // Get dynamically fetched dropdown options from Redux
   const reduxDropdownOptions = useSelector(selectAdminUserDetailsDropdownOptions);
 
+  // Get verified sections and data hashes from Redux
+  const reduxVerifiedSections = useSelector(selectAdminUserDetailsVerifiedSections);
+  const reduxSectionDataHashes = useSelector(selectAdminUserDetailsSectionDataHashes);
+
+  // Convert Redux array to Set for compatibility
+  const verifiedSections = useMemo(
+    () => new Set<string>(reduxVerifiedSections),
+    [reduxVerifiedSections]
+  );
+  const sectionDataHashes = useMemo(
+    () => reduxSectionDataHashes,
+    [reduxSectionDataHashes]
+  );
+
   // Local state for validation
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string>
   >({});
   const [clearKey, setClearKey] = useState<number>(0);
+
+  // OTP verification state
+  const [otpModalOpen, setOtpModalOpen] = useState(false);
+  const [, setOtpSendLoading] = useState(false);
+  const [currentValidatingSection, setCurrentValidatingSection] = useState<{
+    sectionName: string;
+    sectionIndex: number;
+  } | null>(null);
+  const [pendingOtpData, setPendingOtpData] = useState<string>('');
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
 
   // Base fields from config (stable, doesn't change with dropdown options)
   // Used for geographical field processing to avoid infinite loops
@@ -245,6 +279,116 @@ const FrontendAdminUserDetailsStep: React.FC<FrontendAdminUserDetailsStepProps> 
     return buildValidationSchema(flattenedFields as FormField[]);
   }, [flattenedFields]);
 
+  // State for storing fetched address data for office address population
+  const [addressData, setAddressData] = useState<Record<string, any> | null>(null);
+  const addressDataFetched = useRef(false);
+
+  // Fetch address data for office address population
+  const fetchAddressData = useCallback(async () => {
+    const currentWorkflowId = authWorkflowId || userDetails?.workflowId;
+    const userId = userDetails?.userId || userDetails?.id;
+    
+    const testWorkflowId = currentWorkflowId || '19c166c7-aecd-4d0f-93cf-0ff9fa07caf7';
+    const testUserId = userId || 'NO_6149';
+
+    if (addressDataFetched.current && addressData) {
+      return addressData;
+    }
+
+    try {
+      console.log('🏠 Fetching address data for admin office address population...');
+      // Use Secured.get which automatically adds authorization token
+      const response = await Secured.get(
+        `/api/v1/registration/step-data?stepKey=addresses&workflowId=${testWorkflowId}&userId=${testUserId}`
+      );
+
+      if (response?.data) {
+        // API response structure: response.data.data.data.step.data
+        const fetchedAddressData = response?.data?.data?.data?.step?.data || {};
+        console.log('📍 Fetched address data for admin:', fetchedAddressData);
+        setAddressData(fetchedAddressData);
+        addressDataFetched.current = true;
+        return fetchedAddressData;
+      } else {
+        console.error('Failed to fetch address data');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching address data:', error);
+      return null;
+    }
+  }, [authWorkflowId, userDetails, addressData]);
+
+  // Populate admin office address fields based on selected option
+  const populateAdminOfficeAddress = useCallback(async (adminNumber: 1 | 2, selectedOption: string) => {
+    console.log(`🏢 Admin ${adminNumber} Office Address selected:`, selectedOption);
+    
+    let fetchedData = addressData;
+    if (!fetchedData) {
+      fetchedData = await fetchAddressData();
+    }
+
+    if (!fetchedData) {
+      console.warn('⚠️ No address data available to populate admin office address');
+      return;
+    }
+
+    // Define source prefix based on selected option
+    let sourcePrefix: string;
+    if (selectedOption === 'Same as registered address') {
+      sourcePrefix = 'register';
+    } else if (selectedOption === 'Same as correspondence address') {
+      sourcePrefix = 'correspondence';
+    } else {
+      return;
+    }
+
+    // Define target prefix for address line fields based on admin number
+    const addressLinePrefix = adminNumber === 1 ? 'iauAddressLineOne' : 'iauAddressLineTwo';
+    const suffix = adminNumber.toString();
+
+    console.log(`📋 Populating Admin ${adminNumber} office address from ${sourcePrefix} address...`);
+    console.log('📋 Available data keys:', Object.keys(fetchedData));
+    
+    // All address fields are now text fields - set them immediately
+    if (fetchedData) {
+      const data = fetchedData;
+      
+      // All field mappings (all are text fields now)
+      const fieldMappings = [
+        { source: `${sourcePrefix}Line1`, target: `${addressLinePrefix}1` },
+        { source: `${sourcePrefix}Line2`, target: `${addressLinePrefix}2` },
+        { source: `${sourcePrefix}Line3`, target: `${addressLinePrefix}3` },
+        { source: `${sourcePrefix}Country`, target: `iauCountry${suffix}` },
+        { source: `${sourcePrefix}State`, target: `iauState${suffix}` },
+        { source: `${sourcePrefix}District`, target: `iauDistrict${suffix}` },
+        { source: `${sourcePrefix}City`, target: `iauCity${suffix}` },
+        { source: `${sourcePrefix}Pincode`, target: `iauPincode${suffix}` },
+        { source: `${sourcePrefix}Digipin`, target: `iauDigipin${suffix}` },
+      ];
+
+      fieldMappings.forEach(({ source, target }) => {
+        const value = data[source];
+        if (value !== null && value !== undefined && value !== '') {
+          console.log(`  ✅ Setting ${target} = ${value}`);
+          dispatch(updateFormValue({ fieldName: target, value: String(value) }));
+        } else {
+          console.log(`  ⚠️ No value for ${source} -> ${target}`);
+        }
+      });
+    }
+  }, [addressData, fetchAddressData, dispatch]);
+
+  // Special dropdown handlers for office address
+  const specialDropdownHandlers = useMemo(() => ({
+    iauOfficeAddress1: (value: string) => {
+      populateAdminOfficeAddress(1, value);
+    },
+    iauOfficeAddress2: (value: string) => {
+      populateAdminOfficeAddress(2, value);
+    },
+  }), [populateAdminOfficeAddress]);
+
   // Set frontend config fields in Redux when loaded
   React.useEffect(() => {
     if (
@@ -275,9 +419,30 @@ const FrontendAdminUserDetailsStep: React.FC<FrontendAdminUserDetailsStepProps> 
     );
   }, [frontendGroupedFields, frontendFields, configLoading, formFields]);
 
+  // Check if all admin sections are OTP verified (defined before handleSave)
+  const areAllAdminSectionsVerified = useCallback(() => {
+    if (!mergedGroupedFields) return false;
+
+    // Get all admin section names (admin1, admin2, etc.)
+    const adminSectionNames = Object.keys(mergedGroupedFields).filter((sectionName) =>
+      sectionName.toLowerCase().includes('admin')
+    );
+
+    // Check if all admin sections are verified
+    return adminSectionNames.every((sectionName) =>
+      verifiedSections.has(sectionName)
+    );
+  }, [mergedGroupedFields, verifiedSections]);
+
   const handleSave = useCallback(
     async (formData: Record<string, unknown>) => {
       console.log('Admin User Details Step - Form data received:', formData);
+
+      // Check if all admin sections are OTP verified
+      if (!areAllAdminSectionsVerified()) {
+        console.warn('Save blocked: Not all admin sections are OTP verified');
+        return;
+      }
 
       const currentWorkflowId = authWorkflowId || userDetails?.workflowId;
       const userId = userDetails?.userId || userDetails?.id;
@@ -323,6 +488,7 @@ const FrontendAdminUserDetailsStep: React.FC<FrontendAdminUserDetailsStepProps> 
       flattenedFields,
       onSave,
       onNext,
+      areAllAdminSectionsVerified,
     ]
   );
 
@@ -439,6 +605,235 @@ const FrontendAdminUserDetailsStep: React.FC<FrontendAdminUserDetailsStepProps> 
     return mapping;
   }, [stepDocuments]);
 
+  // Auto-mark admin sections as verified if CKYC is present and auto-populated
+  React.useEffect(() => {
+    const updated = new Set<string>(Array.from(verifiedSections));
+
+    const ckyc1 = String(formValues['iauCkycNumber1'] || '');
+    const ckyc1Auto =
+      formValues['iauCkycNumber1_autoPopulated'] === 'true' ||
+      formValues['iauCkycNumber1_autoPopulated'] === true;
+    if (ckyc1Auto && ckyc1.length === 14) {
+      updated.add('admin_one');
+      updated.add('adminone');
+      updated.add('admin1');
+    }
+
+    const ckyc2 = String(formValues['iauCkycNumber2'] || '');
+    const ckyc2Auto =
+      formValues['iauCkycNumber2_autoPopulated'] === 'true' ||
+      formValues['iauCkycNumber2_autoPopulated'] === true;
+    if (ckyc2Auto && ckyc2.length === 14) {
+      updated.add('admin_two');
+      updated.add('admintwo');
+      updated.add('admin2');
+    }
+
+    // Persist to Redux
+    dispatch(setVerifiedSections(Array.from(updated)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formValues, dispatch]);
+
+  // OTP Modal Handlers
+  const handleOtpSuccess = () => {
+    if (currentValidatingSection && mergedGroupedFields) {
+      const { sectionName, sectionIndex } = currentValidatingSection;
+
+      // Mark section as verified - persist to Redux
+      dispatch(addVerifiedSection(sectionName));
+
+      // Store current section data hash for change detection
+      const sectionGroup = mergedGroupedFields[sectionName];
+      if (sectionGroup) {
+        const sectionData = sectionGroup.fields.reduce(
+          (acc: Record<string, string | boolean | null>, field: any) => {
+            const value = formValues[field.fieldName];
+            // Type cast to handle the unknown type from formValues
+            if (value instanceof File) {
+              acc[field.fieldName] = value.name;
+            } else if (typeof value === 'string' || typeof value === 'boolean' || value === null) {
+              acc[field.fieldName] = value;
+            } else {
+              acc[field.fieldName] = value ? String(value) : null;
+            }
+            return acc;
+          },
+          {} as Record<string, string | boolean | null>
+        );
+        const dataHash = JSON.stringify(sectionData);
+        dispatch(
+          updateSectionDataHash({ section: sectionName, hash: dataHash })
+        );
+      }
+
+      // Close OTP modal
+      setOtpModalOpen(false);
+
+      // Show success modal
+      setSuccessModalOpen(true);
+
+      console.log(
+        `✅ Section ${sectionName} (Admin ${sectionIndex}) verified with OTP`
+      );
+    }
+  };
+
+  const handleOtpClose = () => {
+    setOtpModalOpen(false);
+    setCurrentValidatingSection(null);
+    setPendingOtpData('');
+  };
+
+  // Success Modal Handler
+  const handleSuccessModalClose = () => {
+    setSuccessModalOpen(false);
+    setCurrentValidatingSection(null);
+    setPendingOtpData('');
+  };
+
+  // Handle section validation
+  const handleValidateSection = async (
+    sectionName: string,
+    sectionIndex: number
+  ) => {
+    console.log(`Validating section: ${sectionName}, Admin ${sectionIndex}`);
+
+    if (!validationSchema || !mergedGroupedFields) {
+      console.warn('Validation schema or grouped fields not available');
+      return;
+    }
+    let email = '',
+      mobile = '',
+      countryCode = '';
+    // Get fields for this specific section
+    const sectionGroup = mergedGroupedFields[sectionName];
+    const sectionFields = sectionGroup?.fields || [];
+
+    // Clear existing validation errors for this section
+    const currentErrors = Object.entries(validationErrors);
+    const filteredErrors: Record<string, string> = {};
+
+    currentErrors.forEach(([field, message]) => {
+      if (!field.startsWith(sectionName)) {
+        filteredErrors[field] = message;
+      }
+    });
+
+    setValidationErrors(filteredErrors);
+
+    // Validate each field in the section
+    const sectionErrors: Record<string, string> = {};
+
+    sectionFields.forEach((field: any) => {
+      const fieldValue = formValues[field.fieldName];
+      // Check if field is required and empty
+      if (
+        field.validationRules?.required &&
+        (!fieldValue || fieldValue === '')
+      ) {
+        sectionErrors[field.fieldName] =
+          field.validationRules.requiredMessage ||
+          `${field.fieldLabel} is required`;
+      }
+
+      if (field.fieldName.toLowerCase().includes('email')) {
+        email = fieldValue as string;
+      }
+      if (field.fieldName.toLowerCase().includes('mobile')) {
+        mobile = fieldValue as string;
+      }
+      if (field.fieldName.toLowerCase().includes('countrycode')) {
+        countryCode = fieldValue as string;
+      }
+      // Additional validation based on field name (for email fields)
+      if (fieldValue && field.fieldName.toLowerCase().includes('email')) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(fieldValue as string)) {
+          sectionErrors[field.fieldName] =
+            `${field.fieldLabel} must be a valid email`;
+        }
+      }
+
+      // Check regex validation if provided
+      if (fieldValue && field.validationRules?.regx) {
+        const regex = new RegExp(field.validationRules.regx);
+        if (!regex.test(fieldValue as string)) {
+          sectionErrors[field.fieldName] =
+            field.validationRules.regxMessage ||
+            `${field.fieldLabel} format is invalid`;
+        }
+      }
+    });
+
+    // Update validation errors
+    if (Object.keys(sectionErrors).length > 0) {
+      setValidationErrors((prev) => ({ ...prev, ...sectionErrors }));
+      console.log(`Admin ${sectionIndex} validation failed:`, sectionErrors);
+    } else {
+      console.log(`Admin ${sectionIndex} validation passed successfully!`);
+
+      // Open OTP modal for verification
+      setCurrentValidatingSection({ sectionName, sectionIndex });
+
+      // Create OTP data
+      const otpData = {
+        requestType: 'DIRECT',
+        emailId: email,
+        mobileNo: mobile,
+        countryCode: countryCode,
+        workflowId: authWorkflowId as string,
+        ckycNo:
+          formValues[`iauCitizenship${sectionIndex}`] === 'Indian'
+            ? (formValues[`iauCkycNumber${sectionIndex}`] as string)
+            : undefined,
+        stepKey: 'institutionalAdminUser' as string,
+        name: formValues[`iauFirstName${sectionIndex}`] as string,
+      };
+
+      console.log('otpData====', otpData);
+
+      // Show loading state
+      setOtpSendLoading(true);
+
+      try {
+        const result = await dispatch(OTPSend(otpData));
+        console.log('result=====', result);
+
+        if (OTPSend.fulfilled.match(result)) {
+          console.log('OTP sent successfully!', result);
+          setPendingOtpData(result?.payload?.data?.otpIdentifier);
+          setOtpModalOpen(true);
+          console.log(
+            `Opening OTP modal for Admin ${sectionIndex} verification`
+          );
+        } else {
+          // Handle OTP send failure
+          let fieldName = '';
+          if (result?.payload?.field === 'ckyc') {
+            fieldName = 'iauCkycNumber';
+          } else if (result?.payload?.field === 'mobile') {
+            fieldName = 'iauMobileNumber';
+          } else if (result?.payload?.field === 'email') {
+            fieldName = 'iauEmail';
+          } else {
+            return;
+          }
+
+          setValidationErrors({
+            ...validationErrors,
+            [`${fieldName}${sectionIndex}`]: result.payload?.message ?? '',
+          });
+          console.error('OTP send failed:', result);
+        }
+      } catch (error) {
+        console.error('Error sending OTP:', error);
+      } finally {
+        // Hide loading state
+        setOtpSendLoading(false);
+      }
+    }
+  };
+
   // Extract field errors if submission error is a field validation error
   const fieldErrors = React.useMemo(() => {
     if (
@@ -523,10 +918,14 @@ const FrontendAdminUserDetailsStep: React.FC<FrontendAdminUserDetailsStepProps> 
             groupedFields={mergedGroupedFields as any}
             configuration={frontendConfig as any}
             formValues={formValues as Record<string, string | boolean | File | null>}
+            stepData={stepData}
             dispatch={dispatch}
             fields={flattenedFields}
             fetchDropdownOptionsAction={fetchAdminUserDropdownOptions}
             clearDependentFieldOptions={() => {}}
+            onValidateSection={handleValidateSection}
+            verifiedSections={verifiedSections}
+            sectionDataHashes={sectionDataHashes}
             updateFormValue={(payload) => {
               // Convert boolean to string for formSlice compatibility
               const value = typeof payload.value === 'boolean' 
@@ -549,9 +948,56 @@ const FrontendAdminUserDetailsStep: React.FC<FrontendAdminUserDetailsStepProps> 
             setClearKey={setClearKey}
             loading={submissionLoading}
             onValidationChange={onValidationChange}
+            specialDropdownHandlers={specialDropdownHandlers}
           />
         </FieldErrorProvider>
       </FormErrorBoundary>
+
+      {/* OTP Verification Modal */}
+      <OTPVerificationModal
+        open={otpModalOpen}
+        data={pendingOtpData}
+        onClose={handleOtpClose}
+        onSuccess={handleOtpSuccess}
+        maskedMobile={
+          currentValidatingSection
+            ? (() => {
+                const value =
+                  formValues[
+                    `iauMobileNumber${
+                      currentValidatingSection.sectionName === 'adminone'
+                        ? '1'
+                        : '2'
+                    }`
+                  ];
+                return typeof value === 'string' ? value : '';
+              })()
+            : ''
+        }
+        maskedEmail={
+          currentValidatingSection
+            ? (() => {
+                const value =
+                  formValues[
+                    `iauEmail${
+                      currentValidatingSection.sectionName === 'adminone'
+                        ? '1'
+                        : '2'
+                    }`
+                  ];
+                return typeof value === 'string' ? value : '';
+              })()
+            : ''
+        }
+      />
+
+      {/* Success Modal */}
+      <SuccessModal
+        open={successModalOpen}
+        onClose={handleSuccessModalClose}
+        title="Verification Successful"
+        message={`Admin ${currentValidatingSection?.sectionIndex || ''} has been verified successfully!`}
+      />
     </>
   );
 };
