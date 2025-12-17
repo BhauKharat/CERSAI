@@ -197,14 +197,14 @@ export const API_ENDPOINTS = {
   get_form_fields: `${CMS_URL}/api/forms/RE_entityProfile/fields?is_group=true`,
 
   // Entity Profile Registration
-  submit_entity_profile: `${API_URL}/${BASE_ENV}/v1/registration/entityDetails/RE_entityProfile`,
+  submit_entity_profile: `${API_URL}/re/api/v1/registration/entityDetails/RE_entityProfile`,
   submit_address_details: `${API_URL}/${BASE_ENV}/v1/registration/addresses/RE_addressDetails`,
   submit_head_of_institution: `${API_URL}/${BASE_ENV}/v1/registration/hoi/RE_hoi`,
   submit_nodal_officer: `${API_URL}/${BASE_ENV}/v1/registration/nodalOfficer/RE_nodal`,
   submit_admin_user_details: `${API_URL}/${BASE_ENV}/v1/registration/institutionalAdminUser/RE_iau`,
-  get_step_data: `${API_URL}/${BASE_ENV}/v1/registration/step-data`,
+  get_step_data: `${API_URL}/re/api/v1/registration/step-data`,
   get_workflow_data: `${API_URL}/${BASE_ENV}/v1/registration`,
-  fetch_document: `${API_URL}/${BASE_ENV}/v1/registration/fetch-document`,
+  fetch_document: `${API_URL}/re/api/v1/registration/fetch-document`,
   delete_document: `${API_URL}/${BASE_ENV}/v1/registration/delete-document`,
   generate_registration_pdf: `${API_URL}/${BASE_ENV}/v1/registration/pdf`,
   esign_registration: `${API_URL}/${BASE_ENV}/v1/registration/esign`,
@@ -223,8 +223,8 @@ export const API_ENDPOINTS = {
   forgot_user_id_new: `${API_ADMIN_BASE_URL}/${BASE_ENV}/v1/auth/forgot-userId`,
   validate_otp_user_management: `${API_URL}/${BASE_ENV}/v1/otp/validate`,
 
-  REINITIALIZE: `${API_URL}/${BASE_ENV}/api/v2/registration/initialize`,
-  get_user_info: `${API_ADMIN_BASE_URL}/${BASE_ENV}/api/v2/user/info`,
+  REINITIALIZE: `${API_URL}/re/api/v1/registration/initialize`,
+  get_user_info: `${API_ADMIN_BASE_URL}/${BASE_ENV}/api/v1/user/info`,
   user_login: `${API_ADMIN_BASE_URL}/${BASE_ENV}/api/v2/auth/token`,
 
   post_password_dsc_setup: `${API_ADMIN_BASE_URL}/api/v1/auth/password-dsc-setup`,

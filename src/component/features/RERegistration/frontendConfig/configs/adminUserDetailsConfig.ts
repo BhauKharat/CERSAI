@@ -705,8 +705,8 @@ const createAdminFields = (adminNumber: 1 | 2) => {
         method: 'GET',
         urlData: `iauDistrict${suffix}`,
         responseMapping: {
-          label: 'name',
-          value: 'name',
+          label: 'pincode',
+          value: 'pincode',
         },
       },
     },

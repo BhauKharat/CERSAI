@@ -25,7 +25,7 @@ import {
   FrontendHeadOfInstitutionStep,
 } from './steps';
 import {
-  fetchRegistrationConfig,
+  initializeConfiguration,
   selectRegistrationSteps,
   selectRegistrationConfigLoading,
   selectRegistrationConfigError,
@@ -164,9 +164,9 @@ const RERegistrationContainer: React.FC = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
 
-  // Fetch configuration on component mount
+  // Initialize configuration from frontend config on component mount
   useEffect(() => {
-    dispatch(fetchRegistrationConfig());
+    dispatch(initializeConfiguration());
   }, [dispatch]);
 
   // Initialize completed steps from reinitialize response and localStorage

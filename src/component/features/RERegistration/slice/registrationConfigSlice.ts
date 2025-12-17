@@ -4,13 +4,15 @@ import { Secured } from '../../../../utils/HelperFunctions/api';
 import { RootState } from '../../../../redux/store';
 import {
   RegistrationConfigApiResponse,
-  //   RegistrationFormConfiguration,
-  //   MultiStepForm,
-  initialState,
+  RegistrationFormConfiguration,
+  RegistrationConfigState,
+  MultiStepForm,
 } from '../types/registrationConfigTypes';
+import { registrationStepperConfig } from '../frontendConfig/configs/registrationStepperConfig';
 import { API_ENDPOINTS } from '../../../../Constant';
 
-// Async thunk to fetch registration form configuration
+// Async thunk to fetch registration form configuration from API
+// Used by TrackStatusEditContainer
 export const fetchRegistrationConfig = createAsyncThunk<
   RegistrationConfigApiResponse,
   void,
@@ -31,6 +33,31 @@ export const fetchRegistrationConfig = createAsyncThunk<
   }
 );
 
+// Initialize state with frontend configuration
+const initializeState = (): RegistrationConfigState => {
+  const config = registrationStepperConfig;
+  
+  // Extract and sort multi-step forms
+  let steps: MultiStepForm[] = [];
+  if (
+    config.formSettings?.ismultisteps &&
+    config.formSettings?.multistepforms
+  ) {
+    steps = [...config.formSettings.multistepforms].sort(
+      (a, b) => a.formorder - b.formorder
+    );
+  }
+
+  return {
+    configuration: config,
+    steps,
+    loading: false,
+    error: null,
+  };
+};
+
+const initialState = initializeState();
+
 // Registration Config Slice
 const registrationConfigSlice = createSlice({
   name: 'registrationConfig',
@@ -48,10 +75,21 @@ const registrationConfigSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+
+    // Initialize configuration from frontend config (if needed to reset)
+    // Used by RERegistrationContainer
+    initializeConfiguration: (state) => {
+      const initialized = initializeState();
+      state.configuration = initialized.configuration;
+      state.steps = initialized.steps;
+      state.loading = false;
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
-      // Fetch registration configuration
+      // Fetch registration configuration from API
+      // Used by TrackStatusEditContainer
       .addCase(fetchRegistrationConfig.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -84,7 +122,7 @@ const registrationConfigSlice = createSlice({
 });
 
 // Export actions
-export const { clearConfiguration, setError } = registrationConfigSlice.actions;
+export const { clearConfiguration, setError, initializeConfiguration } = registrationConfigSlice.actions;
 
 // Selectors
 export const selectRegistrationConfigLoading = (state: RootState) =>

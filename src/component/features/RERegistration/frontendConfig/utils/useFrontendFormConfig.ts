@@ -32,7 +32,7 @@ interface UseFrontendFormConfigResult {
   configuration: FrontendFormConfig['configuration'] | null;
   loading: boolean;
   error: string | null;
-  groupedFields?: Record<string, { fields: FrontendFormField[] }>;
+  groupedFields?: Record<string, { label: string; fields: FrontendFormField[] }>;
 }
 
 /**

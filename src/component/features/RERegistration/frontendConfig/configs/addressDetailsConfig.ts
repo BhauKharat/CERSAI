@@ -148,7 +148,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
             method: 'GET',
             responseMapping: {
               label: 'name',
-              value: 'code',
+              value: 'name',
             },
           },
         },
@@ -201,7 +201,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
             method: 'GET',
             responseMapping: {
               label: 'name',
-              value: 'code',
+              value: 'name',
             },
           },
         },
@@ -305,8 +305,8 @@ export const addressDetailsConfig: FrontendFormConfig = {
             urlData: 'registerDistrict',
             method: 'GET',
             responseMapping: {
-              label: 'name',
-              value: 'code',
+              label: 'pincode',
+              value: 'pincode',
             },
           },
         },
@@ -579,7 +579,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
             method: 'GET',
             responseMapping: {
               label: 'name',
-              value: 'code',
+              value: 'name',
             },
           },
         },
@@ -632,7 +632,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
             method: 'GET',
             responseMapping: {
               label: 'name',
-              value: 'code',
+              value: 'name',
             },
           },
         },
@@ -738,8 +738,8 @@ export const addressDetailsConfig: FrontendFormConfig = {
             urlData: 'correspondenceDistrict',
             method: 'GET',
             responseMapping: {
-              label: 'name',
-              value: 'code',
+              label: 'pincode',
+              value: 'pincode',
             },
           },
         },

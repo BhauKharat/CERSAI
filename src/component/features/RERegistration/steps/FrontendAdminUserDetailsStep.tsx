@@ -37,6 +37,7 @@ import { FormField } from '../types/formTypes';
 import { processGeographicalFields } from '../utils/geographicalDataUtils';
 import {
   fetchAdminUserDropdownOptions,
+  selectAdminUserDetailsDropdownOptions,
 } from '../slice/adminUserDetailsSlice';
 
 // Simple Error Boundary for catching render errors
@@ -133,6 +134,9 @@ const FrontendAdminUserDetailsStep: React.FC<FrontendAdminUserDetailsStepProps> 
     (state: RootState) => state.dynamicForm.formValues
   );
 
+  // Get dynamically fetched dropdown options from Redux
+  const reduxDropdownOptions = useSelector(selectAdminUserDetailsDropdownOptions);
+
   // Local state for validation
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string>
@@ -150,25 +154,71 @@ const FrontendAdminUserDetailsStep: React.FC<FrontendAdminUserDetailsStepProps> 
       fields = frontendFields;
     }
     // Map fields to ensure compatibility with DynamicExpandCollapseForm
-    return fields.map((field) => ({
-      ...field,
-      fieldPlaceholder: field.fieldPlaceholder || '',
-      fieldOptions: (field.fieldOptions || []).map((opt: any) => ({
-        label: opt.name || opt.label || opt.code || '',
-        value: opt.code || opt.value || opt.name || '',
-      })),
-      validationRules: field.validationRules || null,
-      isRequired: field.isRequired ?? false,
-      defaultValue: field.defaultValue ?? null,
-      helpText: field.helpText ?? null,
-      fieldGroup: field.fieldGroup || '',
-      conditionalLogic: field.conditionalLogic || null,
-      cssClasses: field.cssClasses || null,
-      fieldAttributes: field.fieldAttributes || null,
-      createdAt: field.createdAt || '',
-      updatedAt: field.updatedAt || '',
-    }));
-  }, [frontendGroupedFields, frontendFields]);
+    // Also merge in any dropdown options fetched from Redux (for dependent dropdowns)
+    return fields.map((field) => {
+      // Check if there are fetched options for this field in Redux
+      const fetchedOptions = reduxDropdownOptions?.[field.id];
+      
+      // Use fetched options if available, otherwise use config options
+      let fieldOptions = field.fieldOptions || [];
+      if (fetchedOptions && fetchedOptions.length > 0) {
+        fieldOptions = fetchedOptions;
+      }
+      
+      return {
+        ...field,
+        fieldPlaceholder: field.fieldPlaceholder || '',
+        fieldOptions: fieldOptions.map((opt: any) => ({
+          label: opt.name || opt.label || opt.code || '',
+          value: opt.code || opt.value || opt.name || '',
+        })),
+        validationRules: field.validationRules || null,
+        isRequired: field.isRequired ?? false,
+        defaultValue: field.defaultValue ?? null,
+        helpText: field.helpText ?? null,
+        fieldGroup: field.fieldGroup || '',
+        conditionalLogic: field.conditionalLogic || null,
+        cssClasses: field.cssClasses || null,
+        fieldAttributes: field.fieldAttributes || null,
+        createdAt: field.createdAt || '',
+        updatedAt: field.updatedAt || '',
+      };
+    });
+  }, [frontendGroupedFields, frontendFields, reduxDropdownOptions]);
+
+  // Create merged grouped fields with fetched dropdown options
+  const mergedGroupedFields = useMemo(() => {
+    if (!frontendGroupedFields) return undefined;
+    
+    const merged: Record<string, { label: string; fields: any[] }> = {};
+    
+    Object.entries(frontendGroupedFields).forEach(([groupKey, group]) => {
+      merged[groupKey] = {
+        label: group.label,
+        fields: group.fields.map((field: any) => {
+          // Check if there are fetched options for this field in Redux
+          const fetchedOptions = reduxDropdownOptions?.[field.id];
+          
+          // Use fetched options if available, otherwise use config options
+          let fieldOptions = field.fieldOptions || [];
+          if (fetchedOptions && fetchedOptions.length > 0) {
+            fieldOptions = fetchedOptions;
+          }
+          
+          return {
+            ...field,
+            fieldPlaceholder: field.fieldPlaceholder || '',
+            fieldOptions: fieldOptions.map((opt: any) => ({
+              label: opt.name || opt.label || opt.code || '',
+              value: opt.code || opt.value || opt.name || '',
+            })),
+          };
+        }),
+      };
+    });
+    
+    return merged;
+  }, [frontendGroupedFields, reduxDropdownOptions]);
 
   // Create validation schema from fields
   const validationSchema = useMemo(() => {
@@ -430,7 +480,7 @@ const FrontendAdminUserDetailsStep: React.FC<FrontendAdminUserDetailsStepProps> 
           </Alert>
         )}
         <DynamicExpandCollapseForm
-          groupedFields={frontendGroupedFields as any}
+          groupedFields={mergedGroupedFields as any}
           configuration={frontendConfig as any}
           formValues={formValues as Record<string, string | boolean | File | null>}
           dispatch={dispatch}
