@@ -23,7 +23,7 @@ vite.svg
 *.tsbuildinfo
 
 # Env files
-# .env
+.env
 # .env.*
 # !.env.example
 

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-case-declarations */
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
@@ -121,6 +121,67 @@ const getPincodeOtherValidationRules = (field: FormField) => {
   return conditionalRules || field.validationRules;
 };
 
+// Helper function to get effective field type, placeholder, and required status based on conditional logic
+const getEffectiveFieldConfig = (
+  field: FormField,
+  formValues: Record<string, any>
+): { fieldType: string; fieldPlaceholder: string; isRequired: boolean } => {
+  // Default to original field type, placeholder, and required status
+  let effectiveFieldType: string = field.fieldType;
+  let effectivePlaceholder = field.fieldPlaceholder || '';
+  let effectiveRequired = field.validationRules?.required || false;
+
+  // Check if field has conditional logic with fieldType switching
+  if (!field.conditionalLogic?.[0]) {
+    return { fieldType: effectiveFieldType, fieldPlaceholder: effectivePlaceholder, isRequired: effectiveRequired };
+  }
+
+  const conditionalLogic = field.conditionalLogic[0];
+
+  if (!conditionalLogic?.when) {
+    return { fieldType: effectiveFieldType, fieldPlaceholder: effectivePlaceholder, isRequired: effectiveRequired };
+  }
+
+  const when = conditionalLogic.when;
+  const depVal = formValues[when.field];
+  const operator = when.operator || 'equals';
+  const values = Array.isArray(when.value) ? when.value : [when.value];
+
+  // Check if the condition matches
+  let conditionMatches = false;
+  const normalizedDepVal = String(depVal ?? '').toLowerCase();
+  const normalizedValues = values.map((v) => String(v).toLowerCase());
+
+  if (operator === 'equals' || operator === 'equal' || operator === 'in') {
+    conditionMatches = normalizedValues.includes(normalizedDepVal);
+  }
+
+  // Get effective field type and required status based on condition
+  if (conditionMatches) {
+    if (conditionalLogic.then?.fieldType) {
+      effectiveFieldType = conditionalLogic.then.fieldType;
+    }
+    if (conditionalLogic.then?.fieldPlaceholder) {
+      effectivePlaceholder = conditionalLogic.then.fieldPlaceholder;
+    }
+    if (conditionalLogic.then?.validationRules?.required !== undefined) {
+      effectiveRequired = conditionalLogic.then.validationRules.required;
+    }
+  } else {
+    if (conditionalLogic.else?.fieldType) {
+      effectiveFieldType = conditionalLogic.else.fieldType;
+    }
+    if (conditionalLogic.else?.fieldPlaceholder) {
+      effectivePlaceholder = conditionalLogic.else.fieldPlaceholder;
+    }
+    if (conditionalLogic.else?.validationRules?.required !== undefined) {
+      effectiveRequired = conditionalLogic.else.validationRules.required;
+    }
+  }
+
+  return { fieldType: effectiveFieldType, fieldPlaceholder: effectivePlaceholder, isRequired: effectiveRequired };
+};
+
 // Generic interfaces for reusable component
 export interface FormField {
   id: number;
@@ -177,6 +238,9 @@ export interface FormField {
     };
     then?: {
       validationRules?: any;
+      fieldType?: string; // Dynamic field type (e.g., 'dropdown' or 'textfield')
+      fieldPlaceholder?: string; // Dynamic placeholder text
+      clearFields?: string[]; // Fields to clear when this condition is met
       fieldAttributes?: {
         type: string;
         trigger: string;
@@ -195,6 +259,9 @@ export interface FormField {
     };
     else?: {
       validationRules?: any;
+      fieldType?: string; // Dynamic field type (e.g., 'dropdown' or 'textfield')
+      fieldPlaceholder?: string; // Dynamic placeholder text
+      clearFields?: string[]; // Fields to clear when this condition is met
       fieldAttributes?: {
         type: string;
         trigger: string;
@@ -1348,6 +1415,56 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
 
       handleBasicFieldChange(field.fieldName, value);
 
+      // Clear dependent fields when country changes
+      if (field.fieldName === 'registerCountry') {
+        // Clear all dependent register address fields
+        ['registerState', 'registerDistrict', 'registerCity', 'registerPincode'].forEach(fieldName => {
+          updateFormValue({ fieldName, value: '' });
+        });
+        // Clear dropdown options for dependent fields
+        if (clearDependentFieldOptions) {
+          clearDependentFieldOptions('registerState');
+          clearDependentFieldOptions('registerDistrict');
+          clearDependentFieldOptions('registerPincode');
+        }
+      }
+      
+      if (field.fieldName === 'correspondenceCountry') {
+        // Clear all dependent correspondence address fields
+        ['correspondenceState', 'correspondenceDistrict', 'correspondenceCity', 'correspondencePincode'].forEach(fieldName => {
+          updateFormValue({ fieldName, value: '' });
+        });
+        // Clear dropdown options for dependent fields
+        if (clearDependentFieldOptions) {
+          clearDependentFieldOptions('correspondenceState');
+          clearDependentFieldOptions('correspondenceDistrict');
+          clearDependentFieldOptions('correspondencePincode');
+        }
+      }
+
+      // Clear dependent fields for admin user country changes
+      if (field.fieldName === 'iauCountry1') {
+        ['iauState1', 'iauDistrict1', 'iauCity1', 'iauPincode1'].forEach(fieldName => {
+          updateFormValue({ fieldName, value: '' });
+        });
+        if (clearDependentFieldOptions) {
+          clearDependentFieldOptions('iauState1');
+          clearDependentFieldOptions('iauDistrict1');
+          clearDependentFieldOptions('iauPincode1');
+        }
+      }
+      
+      if (field.fieldName === 'iauCountry2') {
+        ['iauState2', 'iauDistrict2', 'iauCity2', 'iauPincode2'].forEach(fieldName => {
+          updateFormValue({ fieldName, value: '' });
+        });
+        if (clearDependentFieldOptions) {
+          clearDependentFieldOptions('iauState2');
+          clearDependentFieldOptions('iauDistrict2');
+          clearDependentFieldOptions('iauPincode2');
+        }
+      }
+
       if (
         field.fieldName === 'registerDistrict' ||
         field.fieldName === 'correspondenceDistrict'
@@ -2429,13 +2546,19 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
     }
 
     // console.log('values:-----', value);
-    switch (field.fieldType) {
+    // Get effective field type based on conditional logic (e.g., India vs non-India country)
+    const { fieldType: effectiveFieldType, fieldPlaceholder: effectivePlaceholder, isRequired: conditionalRequired } = getEffectiveFieldConfig(field, formValues);
+    
+    // Use conditional required status if available, otherwise fall back to base validation rules
+    const effectiveIsRequired = conditionalRequired !== undefined ? conditionalRequired : isRequired;
+    
+    switch (effectiveFieldType) {
       case 'textfield': {
         // Get appropriate placeholder and validation rules
         const fieldPlaceholder =
           isMobileField && mobileRules
             ? mobileRules.placeholder
-            : field.fieldPlaceholder || '';
+            : effectivePlaceholder || field.fieldPlaceholder || '';
 
         // Get error message based on validation rules
         const getErrorMessage = (error: string | undefined) => {
@@ -2638,7 +2761,7 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                     ? mobileRules.required
                     : mobileRules.required === 'true' ||
                     mobileRules.required === 'required'
-                  : isRequired
+                  : effectiveIsRequired
             }
             disabled={isFieldAutoPopulated(field.fieldName, groupName)}
             minLength={
@@ -2828,10 +2951,11 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
             }}
             options={dropdownOptions}
             placeholder={
+              effectivePlaceholder ||
               field.fieldPlaceholder ||
               `Please select ${field.fieldLabel.toLowerCase()}`
             }
-            required={isRequired}
+            required={effectiveIsRequired}
             // disabled={isDisabled}
             disabled={isFieldAutoPopulated(field.fieldName, groupName)}
             error={!!errorMessage}

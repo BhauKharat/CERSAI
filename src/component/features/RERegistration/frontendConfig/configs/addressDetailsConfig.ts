@@ -2,7 +2,7 @@
 // This replaces the API call to GET /api/forms/RE_addressDetails/fields?is_group=true
 
 import { FrontendFormConfig } from '../types/configTypes';
-import { API_DROPDOWN_URL } from '../../../../../Constant';
+import { CMS_URL } from '../../../../../Constant';
 
 export const addressDetailsConfig: FrontendFormConfig = {
   formType: 'RE_addressDetails',
@@ -124,6 +124,8 @@ export const addressDetailsConfig: FrontendFormConfig = {
                 value: 'India',
               },
               then: {
+                fieldType: 'dropdown',
+                fieldPlaceholder: 'Select state/ut',
                 validationRules: {
                   required: true,
                   requiredMessage: 'Select state',
@@ -132,6 +134,9 @@ export const addressDetailsConfig: FrontendFormConfig = {
                 },
               },
               else: {
+                fieldType: 'textfield',
+                fieldPlaceholder: 'Enter state/ut',
+                clearFields: ['registerState', 'registerDistrict', 'registerCity', 'registerPincode'],
                 validationRules: {
                   required: false,
                   requiredMessage: 'Enter state',
@@ -144,7 +149,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
           fieldAttributes: {
             type: 'external_api',
             trigger: 'blur',
-            url: `${API_DROPDOWN_URL}/api/masters/state/{registerCountry}/formatted`,
+            url: `${CMS_URL}/api/masters/state/{registerCountry}/formatted`,
             urlData: 'registerCountry',
             method: 'GET',
             responseMapping: {
@@ -177,6 +182,8 @@ export const addressDetailsConfig: FrontendFormConfig = {
                 value: 'India',
               },
               then: {
+                fieldType: 'dropdown',
+                fieldPlaceholder: 'Select district',
                 validationRules: {
                   required: true,
                   requiredMessage: 'Please select district',
@@ -185,6 +192,8 @@ export const addressDetailsConfig: FrontendFormConfig = {
                 },
               },
               else: {
+                fieldType: 'textfield',
+                fieldPlaceholder: 'Enter district',
                 validationRules: {
                   required: false,
                   requiredMessage: 'Enter district',
@@ -197,7 +206,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
           fieldAttributes: {
             type: 'external_api',
             trigger: 'blur',
-            url: `${API_DROPDOWN_URL}/api/masters/district/{registerState}/formatted`,
+            url: `${CMS_URL}/api/masters/district/{registerState}/formatted`,
             urlData: 'registerState',
             method: 'GET',
             responseMapping: {
@@ -230,6 +239,8 @@ export const addressDetailsConfig: FrontendFormConfig = {
                 value: 'India',
               },
               then: {
+                fieldType: 'textfield',
+                fieldPlaceholder: 'Enter city/town',
                 validationRules: {
                   required: true,
                   requiredMessage: 'Enter city',
@@ -241,6 +252,8 @@ export const addressDetailsConfig: FrontendFormConfig = {
                 },
               },
               else: {
+                fieldType: 'textfield',
+                fieldPlaceholder: 'Enter city/town',
                 validationRules: {
                   required: false,
                   requiredMessage: 'Enter city',
@@ -278,6 +291,8 @@ export const addressDetailsConfig: FrontendFormConfig = {
                 value: 'India',
               },
               then: {
+                fieldType: 'dropdown',
+                fieldPlaceholder: 'Select pin code',
                 validationRules: {
                   required: true,
                   requiredMessage: 'Select PIN CODE',
@@ -287,6 +302,8 @@ export const addressDetailsConfig: FrontendFormConfig = {
                 },
               },
               else: {
+                fieldType: 'textfield',
+                fieldPlaceholder: 'Enter pin code',
                 validationRules: {
                   required: false,
                   requiredMessage: 'Enter PIN CODE',
@@ -302,7 +319,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
           fieldAttributes: {
             type: 'external_api',
             trigger: 'blur',
-            url: `${API_DROPDOWN_URL}/api/masters/pincode/{registerDistrict}/formatted`,
+            url: `${CMS_URL}/api/masters/pincode/{registerDistrict}/formatted`,
             urlData: 'registerDistrict',
             method: 'GET',
             responseMapping: {
@@ -555,6 +572,8 @@ export const addressDetailsConfig: FrontendFormConfig = {
                 value: 'India',
               },
               then: {
+                fieldType: 'dropdown',
+                fieldPlaceholder: 'Select state/ut',
                 validationRules: {
                   required: true,
                   requiredMessage: 'Select state',
@@ -563,6 +582,9 @@ export const addressDetailsConfig: FrontendFormConfig = {
                 },
               },
               else: {
+                fieldType: 'textfield',
+                fieldPlaceholder: 'Enter state/ut',
+                clearFields: ['correspondenceState', 'correspondenceDistrict', 'correspondenceCity', 'correspondencePincode'],
                 validationRules: {
                   required: false,
                   requiredMessage: 'Enter state',
@@ -575,7 +597,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
           fieldAttributes: {
             type: 'external_api',
             trigger: 'blur',
-            url: `${API_DROPDOWN_URL}/api/masters/state/{correspondenceCountry}/formatted`,
+            url: `${CMS_URL}/api/masters/state/{correspondenceCountry}/formatted`,
             urlData: 'correspondenceCountry',
             method: 'GET',
             responseMapping: {
@@ -608,6 +630,8 @@ export const addressDetailsConfig: FrontendFormConfig = {
                 value: 'India',
               },
               then: {
+                fieldType: 'dropdown',
+                fieldPlaceholder: 'Select district',
                 validationRules: {
                   required: true,
                   requiredMessage: 'Select district',
@@ -616,6 +640,8 @@ export const addressDetailsConfig: FrontendFormConfig = {
                 },
               },
               else: {
+                fieldType: 'textfield',
+                fieldPlaceholder: 'Enter district',
                 validationRules: {
                   required: false,
                   requiredMessage: 'Enter district',
@@ -628,7 +654,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
           fieldAttributes: {
             type: 'external_api',
             trigger: 'blur',
-            url: `${API_DROPDOWN_URL}/api/masters/district/{correspondenceState}/formatted`,
+            url: `${CMS_URL}/api/masters/district/{correspondenceState}/formatted`,
             urlData: 'correspondenceState',
             method: 'GET',
             responseMapping: {
@@ -661,6 +687,8 @@ export const addressDetailsConfig: FrontendFormConfig = {
                 value: 'India',
               },
               then: {
+                fieldType: 'textfield',
+                fieldPlaceholder: 'Enter city/town',
                 validationRules: {
                   required: true,
                   requiredMessage: 'Enter city',
@@ -672,6 +700,8 @@ export const addressDetailsConfig: FrontendFormConfig = {
                 },
               },
               else: {
+                fieldType: 'textfield',
+                fieldPlaceholder: 'Enter city/town',
                 validationRules: {
                   required: false,
                   requiredMessage: 'Enter city',
@@ -709,6 +739,8 @@ export const addressDetailsConfig: FrontendFormConfig = {
                 value: 'India',
               },
               then: {
+                fieldType: 'dropdown',
+                fieldPlaceholder: 'Select pin code',
                 validationRules: {
                   required: true,
                   requiredMessage: 'Select PIN CODE',
@@ -720,6 +752,8 @@ export const addressDetailsConfig: FrontendFormConfig = {
                 },
               },
               else: {
+                fieldType: 'textfield',
+                fieldPlaceholder: 'Enter pin code',
                 validationRules: {
                   required: false,
                   requiredMessage: 'Enter PIN CODE',
@@ -735,7 +769,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
           fieldAttributes: {
             type: 'external_api',
             trigger: 'blur',
-            url: `${API_DROPDOWN_URL}/api/masters/pincode/{correspondenceDistrict}/formatted`,
+            url: `${CMS_URL}/api/masters/pincode/{correspondenceDistrict}/formatted`,
             urlData: 'correspondenceDistrict',
             method: 'GET',
             responseMapping: {

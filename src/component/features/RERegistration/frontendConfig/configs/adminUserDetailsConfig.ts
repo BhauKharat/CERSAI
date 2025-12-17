@@ -2,7 +2,7 @@
 // This replaces the API call to GET /api/forms/RE_iau/fields?is_group=true
 
 import { FrontendFormConfig } from '../types/configTypes';
-import { API_DROPDOWN_URL, API_URL_REINITILIZE } from '../../../../../Constant';
+import { CMS_URL, API_URL_REINITILIZE } from '../../../../../Constant';
 // Helper function to create admin fields (reusable for adminOne and adminTwo)
 const createAdminFields = (adminNumber: 1 | 2) => {
   const suffix = adminNumber.toString();
@@ -514,7 +514,7 @@ const createAdminFields = (adminNumber: 1 | 2) => {
       formType: 'RE_iau',
       fieldName: `iauState${suffix}`,
       fieldLabel: 'State / UT',
-      fieldType: 'textfield',
+      fieldType: 'dropdown',
       fieldPlaceholder: 'Select state',
       fieldOptions: [],
       validationRules: {},
@@ -533,6 +533,8 @@ const createAdminFields = (adminNumber: 1 | 2) => {
             value: 'India',
           },
           then: {
+            fieldType: 'dropdown',
+            fieldPlaceholder: 'Select state/ut',
             validationRules: {
               required: true,
               requiredMessage: 'Select state',
@@ -541,6 +543,9 @@ const createAdminFields = (adminNumber: 1 | 2) => {
             },
           },
           else: {
+            fieldType: 'textfield',
+            fieldPlaceholder: 'Enter state/ut',
+            clearFields: [`iauState${suffix}`, `iauDistrict${suffix}`, `iauCity${suffix}`, `iauPincode${suffix}`],
             validationRules: {
               required: false,
               requiredMessage: 'Enter state',
@@ -553,7 +558,7 @@ const createAdminFields = (adminNumber: 1 | 2) => {
       fieldAttributes: {
         type: 'external_api',
         trigger: 'blur',
-        url: `${API_DROPDOWN_URL}/api/masters/state/{iauCountry${suffix}}/formatted`,
+        url: `${CMS_URL}/api/masters/state/{iauCountry${suffix}}/formatted`,
         method: 'GET',
         urlData: `iauCountry${suffix}`,
         responseMapping: {
@@ -567,7 +572,7 @@ const createAdminFields = (adminNumber: 1 | 2) => {
       formType: 'RE_iau',
       fieldName: `iauDistrict${suffix}`,
       fieldLabel: 'District',
-      fieldType: 'textfield',
+      fieldType: 'dropdown',
       fieldPlaceholder: 'Select district',
       fieldOptions: [],
       validationRules: {},
@@ -586,6 +591,8 @@ const createAdminFields = (adminNumber: 1 | 2) => {
             value: 'India',
           },
           then: {
+            fieldType: 'dropdown',
+            fieldPlaceholder: 'Select district',
             validationRules: {
               required: true,
               requiredMessage: 'Select district',
@@ -594,6 +601,8 @@ const createAdminFields = (adminNumber: 1 | 2) => {
             },
           },
           else: {
+            fieldType: 'textfield',
+            fieldPlaceholder: 'Enter district',
             validationRules: {
               required: false,
               requiredMessage: 'Enter district',
@@ -606,7 +615,7 @@ const createAdminFields = (adminNumber: 1 | 2) => {
       fieldAttributes: {
         type: 'external_api',
         trigger: 'blur',
-        url: `${API_DROPDOWN_URL}/api/masters/district/{iauState${suffix}}/formatted`,
+        url: `${CMS_URL}/api/masters/district/{iauState${suffix}}/formatted`,
         method: 'GET',
         urlData: `iauState${suffix}`,
         responseMapping: {
@@ -639,19 +648,23 @@ const createAdminFields = (adminNumber: 1 | 2) => {
             value: 'India',
           },
           then: {
+            fieldType: 'textfield',
+            fieldPlaceholder: 'Enter city/town',
             validationRules: {
               required: true,
               requiredMessage: 'Enter city',
               maxLength: '60',
-              maxLengthMessage: 'Max length for district is 60',
+              maxLengthMessage: 'Max length for city is 60',
             },
           },
           else: {
+            fieldType: 'textfield',
+            fieldPlaceholder: 'Enter city/town',
             validationRules: {
               required: false,
-              requiredMessage: 'Select city',
+              requiredMessage: 'Enter city',
               maxLength: '60',
-              maxLengthMessage: 'Max length for district is 60',
+              maxLengthMessage: 'Max length for city is 60',
             },
           },
         },
@@ -662,8 +675,8 @@ const createAdminFields = (adminNumber: 1 | 2) => {
       formType: 'RE_iau',
       fieldName: `iauPincode${suffix}`,
       fieldLabel: 'Pin Code',
-      fieldType: 'textfield',
-      fieldPlaceholder: 'Enter pin code',
+      fieldType: 'dropdown',
+      fieldPlaceholder: 'Select pin code',
       fieldOptions: [],
       validationRules: {},
       fieldOrder: 23,
@@ -681,19 +694,25 @@ const createAdminFields = (adminNumber: 1 | 2) => {
             value: 'India',
           },
           then: {
+            fieldType: 'dropdown',
+            fieldPlaceholder: 'Select pin code',
             validationRules: {
               required: true,
               requiredMessage: 'Select pin code',
               maxLength: '6',
-              maxLengthMessage: 'Max length for district is 6',
+              maxLengthMessage: 'Max length for pincode is 6',
             },
           },
           else: {
+            fieldType: 'textfield',
+            fieldPlaceholder: 'Enter pin code',
             validationRules: {
               required: false,
               requiredMessage: 'Enter pin code',
-              maxLength: '6',
-              maxLengthMessage: 'Max length for district is 6',
+              maxLength: '50',
+              maxLengthMessage: 'Max length for pincode is 50',
+              regx: '^[A-Za-z0-9]+$',
+              regxMessage: 'PIN code can contain only letters and numbers.',
             },
           },
         },
@@ -701,7 +720,7 @@ const createAdminFields = (adminNumber: 1 | 2) => {
       fieldAttributes: {
         type: 'external_api',
         trigger: 'blur',
-        url: `${API_DROPDOWN_URL}/api/masters/pincode/{iauDistrict${suffix}}/formatted`,
+        url: `${CMS_URL}/api/masters/pincode/{iauDistrict${suffix}}/formatted`,
         method: 'GET',
         urlData: `iauDistrict${suffix}`,
         responseMapping: {

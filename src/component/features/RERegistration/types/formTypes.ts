@@ -67,6 +67,9 @@ export interface ConditionalLogic {
   };
   then?: {
     validationRules?: ValidationRules;
+    fieldType?: string; // Dynamic field type (e.g., 'dropdown' or 'textfield')
+    fieldPlaceholder?: string; // Dynamic placeholder text
+    clearFields?: string[]; // Fields to clear when this condition is met
     fieldAttributes?: {
       type?: string;
       trigger?: string;
@@ -87,6 +90,9 @@ export interface ConditionalLogic {
   };
   else?: {
     validationRules?: ValidationRules;
+    fieldType?: string; // Dynamic field type (e.g., 'dropdown' or 'textfield')
+    fieldPlaceholder?: string; // Dynamic placeholder text
+    clearFields?: string[]; // Fields to clear when this condition is met
     fieldAttributes?: {
       type?: string;
       trigger?: string;
