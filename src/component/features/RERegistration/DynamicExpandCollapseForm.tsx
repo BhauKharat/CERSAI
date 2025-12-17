@@ -3040,6 +3040,64 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
 
         const existingDoc = getExistingDocument();
 
+        // Helper function to validate file upload requirement
+        const validateFileUpload = (textValue: string) => {
+          const imageRequired =
+            fileValidationRules?.imageRequired === true ||
+            String(fileValidationRules?.imageRequired).toLowerCase() === 'true';
+
+          if (imageRequired) {
+            const fileValue = formValues[fileFieldName];
+            const hasFile =
+              fileValue instanceof File ||
+              (typeof fileValue === 'string' && fileValue.trim() !== '') ||
+              !!existingDoc;
+
+            // Check if text is valid according to validation rules
+            const rules = field.validationRules;
+            let isTextValid = false;
+
+            if (textValue && textValue.trim()) {
+              isTextValid = true;
+
+              // Check regex if defined
+              if (rules?.regx) {
+                try {
+                  const regexPattern = new RegExp(rules.regx);
+                  isTextValid = regexPattern.test(textValue);
+                } catch (e) {
+                  console.error(`Invalid regex pattern for ${field.fieldName}:`, rules.regx);
+                }
+              }
+
+              // Check min/max length
+              if (isTextValid && rules?.minLength) {
+                isTextValid = textValue.length >= parseInt(rules.minLength);
+              }
+              if (isTextValid && rules?.maxLength) {
+                isTextValid = textValue.length <= parseInt(rules.maxLength);
+              }
+            }
+
+            // If text is valid but file is missing, show error
+            if (isTextValid && !hasFile) {
+              setValidationErrors((prev) => ({
+                ...prev,
+                [fileFieldName]:
+                  fileValidationRules?.imageRequiredMessage ||
+                  'Please upload image',
+              }));
+            } else if (hasFile || !isTextValid) {
+              // Clear file error if file exists or text is invalid
+              setValidationErrors((prev) => {
+                const newErrors = { ...prev };
+                delete newErrors[fileFieldName];
+                return newErrors;
+              });
+            }
+          }
+        };
+
         console.log(
           `📤 Rendering textfield_with_image for ${field.fieldName}:`,
           {
@@ -3085,6 +3143,8 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
               console.log(
                 `📝 Text field changed: ${field.fieldName} = ${e.target.value}`
               );
+              const newValue = e.target.value;
+
               // For Aadhaar, store only digits (unmasked)
               if (shouldMaskAadhaarWithImage) {
                 handleAadhaarChange(e, handleFieldChange, field.fieldName);
@@ -3097,11 +3157,14 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                 // Auto-capitalize PAN and GSTIN input
                 handleFieldChange(
                   field.fieldName,
-                  e.target.value.toUpperCase()
+                  newValue.toUpperCase()
                 );
               } else {
-                handleFieldChange(field.fieldName, e.target.value);
+                handleFieldChange(field.fieldName, newValue);
               }
+
+              // Validate file upload requirement when text changes
+              validateFileUpload(newValue);
             }}
             onFocus={() => {
               if (shouldMaskAadhaarWithImage) {
@@ -3112,6 +3175,11 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
               if (shouldMaskAadhaarWithImage) {
                 handleAadhaarBlur();
               }
+              // Trigger validation on blur to catch when required fields are cleared
+              handleFieldChange(field.fieldName, value as string);
+
+              // Validate file upload requirement
+              validateFileUpload(value as string);
             }}
             onUpload={(file) => {
               console.log(`📤 File uploaded for ${fileFieldName}:`, {

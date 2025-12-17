@@ -54,13 +54,13 @@ interface LabeledTextFieldWithUploadProps {
   placeholder?: string;
   type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url';
   inputMode?:
-    | 'text'
-    | 'numeric'
-    | 'decimal'
-    | 'tel'
-    | 'search'
-    | 'email'
-    | 'url';
+  | 'text'
+  | 'numeric'
+  | 'decimal'
+  | 'tel'
+  | 'search'
+  | 'email'
+  | 'url';
   accept?: string;
   error?: boolean;
   helperText?: string;
@@ -167,20 +167,22 @@ const LabeledTextFieldWithUpload: React.FC<LabeledTextFieldWithUploadProps> = ({
       return;
     }
 
-    if (
-      valueChanged &&
-      (!value || value === '' || value === null || value === undefined)
-    ) {
-      setShowExisting(false);
-      setSelectedFile(null);
-      setPreviewUrl((prevUrl) => {
-        if (prevUrl) {
-          URL.revokeObjectURL(prevUrl);
-        }
-        return null;
-      });
-      onUploadRef.current(null);
-    }
+    // COMMENTED OUT: Don't auto-clear file when text field is cleared
+    // Files should only be deleted when user explicitly clicks delete button
+    // if (
+    //   valueChanged &&
+    //   (!value || value === '' || value === null || value === undefined)
+    // ) {
+    //   setShowExisting(false);
+    //   setSelectedFile(null);
+    //   setPreviewUrl((prevUrl) => {
+    //     if (prevUrl) {
+    //       URL.revokeObjectURL(prevUrl);
+    //     }
+    //     return null;
+    //   });
+    //   onUploadRef.current(null);
+    // }
   }, [value, dependentFieldValue]);
 
   // Document preview hook
