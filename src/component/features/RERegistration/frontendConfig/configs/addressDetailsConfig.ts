@@ -426,7 +426,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
           conditionalLogic: [
             {
               when: {
-                field: 'correspondenceAddress',
+                field: 'sameAsCorrespondenceAddress',
                 operator: 'is',
                 value: 'checked',
               },

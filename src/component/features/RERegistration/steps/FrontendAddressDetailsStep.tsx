@@ -455,6 +455,19 @@ const FrontendAddressDetailsStep: React.FC<FrontendAddressDetailsStepProps> = ({
         })
       );
 
+      const correspondenceFields = [
+        'correspondenceLine1',
+        'correspondenceLine2',
+        'correspondenceLine3',
+        'correspondenceCountry',
+        'correspondenceState',
+        'correspondenceDistrict',
+        'correspondenceCity',
+        'correspondencePincode',
+        'correspondencePincodeOther',
+        'correspondenceDigipin',
+      ];
+
       if (checked) {
         // Copy registered address fields to correspondence address
         const registeredFields = [
@@ -470,19 +483,6 @@ const FrontendAddressDetailsStep: React.FC<FrontendAddressDetailsStepProps> = ({
           'registerDigipin',
         ];
 
-        const correspondenceFields = [
-          'correspondenceLine1',
-          'correspondenceLine2',
-          'correspondenceLine3',
-          'correspondenceCountry',
-          'correspondenceState',
-          'correspondenceDistrict',
-          'correspondenceCity',
-          'correspondencePincode',
-          'correspondencePincodeOther',
-          'correspondenceDigipin',
-        ];
-
         registeredFields.forEach((regField, index) => {
           const corrField = correspondenceFields[index];
           const value = formValues[regField];
@@ -494,6 +494,17 @@ const FrontendAddressDetailsStep: React.FC<FrontendAddressDetailsStepProps> = ({
               })
             );
           }
+        });
+      } else {
+        // Clear/reset all correspondence address fields when unchecked
+        console.log('🧹 Clearing correspondence address fields');
+        correspondenceFields.forEach((corrField) => {
+          dispatch(
+            updateFormValue({
+              fieldName: corrField,
+              value: '',
+            })
+          );
         });
       }
     },
