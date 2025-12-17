@@ -440,6 +440,7 @@ const RERegistrationContainer: React.FC = () => {
           <FrontendEntityProfileStep
             onSave={handleStepSave}
             onNext={handleNext}
+            onPrevious={currentStep > 0 ? handlePrevious : undefined}
             url={'entity_profile'}
             onValidationChange={setIsCurrentStepValid}
           />
@@ -457,6 +458,7 @@ const RERegistrationContainer: React.FC = () => {
           <FrontendAddressDetailsStep
             onSave={handleStepSave}
             onNext={handleNext}
+            onPrevious={currentStep > 0 ? handlePrevious : undefined}
             url={'address_details'}
             onValidationChange={setIsCurrentStepValid}
           />
@@ -474,6 +476,7 @@ const RERegistrationContainer: React.FC = () => {
           <FrontendHeadOfInstitutionStep
             onSave={handleStepSave}
             onNext={handleNext}
+            onPrevious={currentStep > 0 ? handlePrevious : undefined}
             url={'head_of_institution'}
             onValidationChange={setIsCurrentStepValid}
           />
@@ -491,6 +494,7 @@ const RERegistrationContainer: React.FC = () => {
           <FrontendNodalOfficerStep
             onSave={handleStepSave}
             onNext={handleNext}
+            onPrevious={currentStep > 0 ? handlePrevious : undefined}
             url={'nodal_officer'}
             onValidationChange={setIsCurrentStepValid}
           />
@@ -508,6 +512,7 @@ const RERegistrationContainer: React.FC = () => {
           <FrontendAdminUserDetailsStep
             onSave={handleStepSave}
             onNext={handleNext}
+            onPrevious={currentStep > 0 ? handlePrevious : undefined}
             url={'admin_user_details'}
             onValidationChange={setIsCurrentStepValid}
           />

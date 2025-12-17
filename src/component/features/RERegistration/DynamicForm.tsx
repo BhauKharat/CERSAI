@@ -123,6 +123,7 @@ const getPincodeOtherValidationRules = (field: FormField) => {
 
 interface DynamicFormProps {
   onSave?: (formData: Record<string, unknown>) => void;
+  onPrevious?: () => void; // Callback to navigate to previous step
   urlDynamic?: string;
   existingDocuments?: Record<string, any>; // FetchedDocument from stepDataTypes
   documentFieldMapping?: Record<string, string>; // Maps field names to document IDs
@@ -136,6 +137,7 @@ interface DynamicFormProps {
 
 const DynamicForm: React.FC<DynamicFormProps> = ({
   onSave,
+  onPrevious,
   urlDynamic = '',
   existingDocuments = {},
   documentFieldMapping = {},
@@ -3934,13 +3936,16 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
       <FormActionButtons
         onClear={handleClear}
         onSave={handleSave}
+        onPrevious={onPrevious}
         onValidate={handleValidate}
         validateLabel={configuration?.submissionSettings?.validateButtonText}
         showValidate={configuration?.submissionSettings?.validateButton}
         showSave={configuration?.submissionSettings?.submitButton}
         showClear={configuration?.submissionSettings?.clearButton}
+        showPrevious={!!onPrevious}
         clearLabel={configuration?.submissionSettings?.clearButtonText}
         saveLabel={configuration?.submissionSettings?.submitButtonText}
+        previousLabel="Previous"
         loading={externalLoading !== undefined ? externalLoading : loading}
         saveDisabled={(() => {
           if (

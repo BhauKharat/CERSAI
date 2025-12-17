@@ -2,6 +2,7 @@
 // This replaces the API call to GET /api/forms/RE_hoi/fields?is_group=true
 
 import { FrontendFormConfig } from '../types/configTypes';
+import { API_URL_REINITILIZE } from '../../../../../Constant';
 
 export const headOfInstitutionConfig: FrontendFormConfig = {
   formType: 'RE_hoi',
@@ -59,7 +60,7 @@ export const headOfInstitutionConfig: FrontendFormConfig = {
             fieldAttributes: {
               type: 'external_api',
               trigger: 'blur',
-              url: 'https://dev.ckycindia.dev/re/api/v1/otp/ckyc-verify',
+              url: `${API_URL_REINITILIZE}/api/v1/otp/ckyc-verify`,
               method: 'POST',
               urlData: 'ckyc_number',
               responseMapping: {

@@ -2,7 +2,7 @@
 // This replaces the API call to GET /api/forms/RE_iau/fields?is_group=true
 
 import { FrontendFormConfig } from '../types/configTypes';
-
+import { API_DROPDOWN_URL, API_URL_REINITILIZE } from '../../../../../Constant';
 // Helper function to create admin fields (reusable for adminOne and adminTwo)
 const createAdminFields = (adminNumber: 1 | 2) => {
   const suffix = adminNumber.toString();
@@ -64,7 +64,7 @@ const createAdminFields = (adminNumber: 1 | 2) => {
             fieldAttributes: {
               type: 'external_api',
               trigger: 'blur',
-              url: 'https://dev.ckycindia.dev/re/api/v1/otp/ckyc-verify',
+              url: `${API_URL_REINITILIZE}/api/v1/otp/ckyc-verify`,
               method: 'POST',
               urlData: 'ckyc_number',
               responseMapping: {
@@ -553,7 +553,7 @@ const createAdminFields = (adminNumber: 1 | 2) => {
       fieldAttributes: {
         type: 'external_api',
         trigger: 'blur',
-        url: `https://dev.ckycindia.dev/cms/api/masters/state/{iauCountry${suffix}}/formatted`,
+        url: `${API_DROPDOWN_URL}/api/masters/state/{iauCountry${suffix}}/formatted`,
         method: 'GET',
         urlData: `iauCountry${suffix}`,
         responseMapping: {
@@ -606,7 +606,7 @@ const createAdminFields = (adminNumber: 1 | 2) => {
       fieldAttributes: {
         type: 'external_api',
         trigger: 'blur',
-        url: `https://dev.ckycindia.dev/cms/api/masters/district/{iauState${suffix}}/formatted`,
+        url: `${API_DROPDOWN_URL}/api/masters/district/{iauState${suffix}}/formatted`,
         method: 'GET',
         urlData: `iauState${suffix}`,
         responseMapping: {
@@ -701,7 +701,7 @@ const createAdminFields = (adminNumber: 1 | 2) => {
       fieldAttributes: {
         type: 'external_api',
         trigger: 'blur',
-        url: `https://dev.ckycindia.dev/cms/api/masters/pincode/{iauDistrict${suffix}}/formatted`,
+        url: `${API_DROPDOWN_URL}/api/masters/pincode/{iauDistrict${suffix}}/formatted`,
         method: 'GET',
         urlData: `iauDistrict${suffix}`,
         responseMapping: {

@@ -2,6 +2,7 @@
 // This replaces the API call to GET /api/forms/RE_addressDetails/fields?is_group=true
 
 import { FrontendFormConfig } from '../types/configTypes';
+import { API_DROPDOWN_URL } from '../../../../../Constant';
 
 export const addressDetailsConfig: FrontendFormConfig = {
   formType: 'RE_addressDetails',
@@ -143,7 +144,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
           fieldAttributes: {
             type: 'external_api',
             trigger: 'blur',
-            url: 'https://dev.ckycindia.dev/cms/api/masters/state/{registerCountry}/formatted',
+            url: `${API_DROPDOWN_URL}/api/masters/state/{registerCountry}/formatted`,
             urlData: 'registerCountry',
             method: 'GET',
             responseMapping: {
@@ -196,7 +197,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
           fieldAttributes: {
             type: 'external_api',
             trigger: 'blur',
-            url: 'https://dev.ckycindia.dev/cms/api/masters/district/{registerState}/formatted',
+            url: `${API_DROPDOWN_URL}/api/masters/district/{registerState}/formatted`,
             urlData: 'registerState',
             method: 'GET',
             responseMapping: {
@@ -301,7 +302,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
           fieldAttributes: {
             type: 'external_api',
             trigger: 'blur',
-            url: 'https://dev.ckycindia.dev/cms/api/masters/pincode/{registerDistrict}/formatted',
+            url: `${API_DROPDOWN_URL}/api/masters/pincode/{registerDistrict}/formatted`,
             urlData: 'registerDistrict',
             method: 'GET',
             responseMapping: {
@@ -574,7 +575,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
           fieldAttributes: {
             type: 'external_api',
             trigger: 'blur',
-            url: 'https://dev.ckycindia.dev/cms/api/masters/state/{correspondenceCountry}/formatted',
+            url: `${API_DROPDOWN_URL}/api/masters/state/{correspondenceCountry}/formatted`,
             urlData: 'correspondenceCountry',
             method: 'GET',
             responseMapping: {
@@ -627,7 +628,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
           fieldAttributes: {
             type: 'external_api',
             trigger: 'blur',
-            url: 'https://dev.ckycindia.dev/cms/api/masters/district/{correspondenceState}/formatted',
+            url: `${API_DROPDOWN_URL}/api/masters/district/{correspondenceState}/formatted`,
             urlData: 'correspondenceState',
             method: 'GET',
             responseMapping: {
@@ -734,7 +735,7 @@ export const addressDetailsConfig: FrontendFormConfig = {
           fieldAttributes: {
             type: 'external_api',
             trigger: 'blur',
-            url: 'https://dev.ckycindia.dev/cms/api/masters/pincode/{correspondenceDistrict}/formatted',
+            url: `${API_DROPDOWN_URL}/api/masters/pincode/{correspondenceDistrict}/formatted`,
             urlData: 'correspondenceDistrict',
             method: 'GET',
             responseMapping: {

@@ -2,6 +2,7 @@ import React, { useCallback, Component, ErrorInfo, useEffect, useRef, useMemo } 
 import { useSelector } from 'react-redux';
 import { Alert, CircularProgress } from '@mui/material';
 import DynamicForm from '../DynamicForm';
+import PageLoader from '../CommonComponent/PageLoader';
 import {
   submitHeadOfInstitution,
   selectHOISubmissionLoading,
@@ -65,6 +66,7 @@ class FormErrorBoundary extends Component<
 interface FrontendHeadOfInstitutionStepProps {
   onSave?: (formData: Record<string, unknown>) => void;
   onNext?: () => void;
+  onPrevious?: () => void;
   url?: string;
   onValidationChange?: (isValid: boolean) => void;
 }
@@ -72,6 +74,7 @@ interface FrontendHeadOfInstitutionStepProps {
 const FrontendHeadOfInstitutionStep: React.FC<FrontendHeadOfInstitutionStepProps> = ({
   onSave,
   onNext,
+  onPrevious,
   url,
   onValidationChange,
 }) => {
@@ -315,26 +318,32 @@ const FrontendHeadOfInstitutionStep: React.FC<FrontendHeadOfInstitutionStepProps
   }
 
   return (
-    <FormErrorBoundary>
-      <FieldErrorProvider>
-        <DynamicForm
-          onSave={handleSave}
-          urlDynamic={url || 'head_of_institution'}
-          existingDocuments={fetchedDocuments}
-          documentFieldMapping={documentFieldMapping}
-          loading={submissionLoading}
-          hasStepData={
-            !!(
-              stepData &&
-              stepData.data &&
-              Object.keys(stepData.data).length > 0
-            )
-          }
-          onValidationChange={onValidationChange}
-          useFrontendConfig={true}
-        />
-      </FieldErrorProvider>
-    </FormErrorBoundary>
+    <>
+      {/* Page-level loader for form submission */}
+      <PageLoader open={submissionLoading} message="Submitting form, please wait..." />
+
+      <FormErrorBoundary>
+        <FieldErrorProvider>
+          <DynamicForm
+            onSave={handleSave}
+            onPrevious={onPrevious}
+            urlDynamic={url || 'head_of_institution'}
+            existingDocuments={fetchedDocuments}
+            documentFieldMapping={documentFieldMapping}
+            loading={submissionLoading}
+            hasStepData={
+              !!(
+                stepData &&
+                stepData.data &&
+                Object.keys(stepData.data).length > 0
+              )
+            }
+            onValidationChange={onValidationChange}
+            useFrontendConfig={true}
+          />
+        </FieldErrorProvider>
+      </FormErrorBoundary>
+    </>
   );
 };
 

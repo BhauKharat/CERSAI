@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowBack, Logout } from '@mui/icons-material';
+import { Logout } from '@mui/icons-material';
 import CKYCRRLogo from '../../../../assets/ckycrr_sign_up_logo.svg';
 import {
   HeaderBox,
@@ -8,7 +8,6 @@ import {
   FullWidthRegistrationSection,
   RegistrationTitle,
 } from '../RERegistrationContainer.style';
-import { useLocation } from 'react-router-dom';
 
 interface RegistrationHeaderProps {
   onHomeClick?: () => void;
@@ -19,14 +18,11 @@ const RegistrationHeader: React.FC<RegistrationHeaderProps> = ({
   onHomeClick,
   onLogoutClick,
 }) => {
-  const location = useLocation();
-  const isEntityProfile = location.pathname === '/entity-profile';
-
   return (
     <>
       <HeaderBox>
         {/* Left side - Home button */}
-        <HeaderButton
+        {/* <HeaderButton
           startIcon={<ArrowBack />}
           onClick={onHomeClick}
           sx={{
@@ -47,8 +43,8 @@ const RegistrationHeader: React.FC<RegistrationHeaderProps> = ({
             },
           }}
         >
-          {isEntityProfile ? 'Home' : 'Back'}
-        </HeaderButton>
+          Home
+        </HeaderButton> */}
 
         {/* Center - Logo */}
         <LogoSection
@@ -87,6 +83,7 @@ const RegistrationHeader: React.FC<RegistrationHeaderProps> = ({
           startIcon={<Logout />}
           onClick={onLogoutClick}
           sx={{
+            marginLeft: 'auto',
             justifySelf: 'flex-end',
             minWidth: '100px',
             '@media (max-width: 768px)': {

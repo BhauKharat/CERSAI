@@ -2,6 +2,7 @@ import React, { useCallback, Component, ErrorInfo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Alert, CircularProgress } from '@mui/material';
 import DynamicForm from '../DynamicForm';
+import PageLoader from '../CommonComponent/PageLoader';
 import {
   submitEntityProfile,
   selectSubmissionLoading,
@@ -64,6 +65,7 @@ class FormErrorBoundary extends Component<
 interface FrontendEntityProfileStepProps {
   onSave?: (formData: Record<string, unknown>) => void;
   onNext?: () => void;
+  onPrevious?: () => void;
   url?: string;
   onValidationChange?: (isValid: boolean) => void;
 }
@@ -71,6 +73,7 @@ interface FrontendEntityProfileStepProps {
 const FrontendEntityProfileStep: React.FC<FrontendEntityProfileStepProps> = ({
   onSave,
   onNext,
+  onPrevious,
   url,
   onValidationChange,
 }) => {
@@ -516,6 +519,9 @@ const FrontendEntityProfileStep: React.FC<FrontendEntityProfileStepProps> = ({
 
   return (
     <>
+      {/* Page-level loader for form submission */}
+      <PageLoader open={submissionLoading} message="Submitting form, please wait..." />
+
       {/* Show general error if submission failed (not field-specific) */}
       {generalErrorMessage && (
         <Alert severity="error" sx={{ mb: 2 }}>
@@ -528,6 +534,7 @@ const FrontendEntityProfileStep: React.FC<FrontendEntityProfileStepProps> = ({
         <FieldErrorProvider fieldErrors={fieldErrors}>
           <DynamicForm
             onSave={handleSave}
+            onPrevious={onPrevious}
             urlDynamic={url}
             existingDocuments={fetchedDocuments}
             documentFieldMapping={documentFieldMapping}

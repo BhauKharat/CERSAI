@@ -11,6 +11,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Alert, CircularProgress } from '@mui/material';
 import type { AppDispatch, RootState } from '../../../../redux/store';
 import DynamicExpandCollapseForm from '../DynamicExpandCollapseForm';
+import PageLoader from '../CommonComponent/PageLoader';
 import {
   submitAddressDetails,
   selectAddressSubmissionLoading,
@@ -78,6 +79,7 @@ class FormErrorBoundary extends Component<
 interface FrontendAddressDetailsStepProps {
   onSave?: (formData: Record<string, unknown>) => void;
   onNext?: () => void;
+  onPrevious?: () => void;
   url?: string;
   onValidationChange?: (isValid: boolean) => void;
 }
@@ -85,6 +87,7 @@ interface FrontendAddressDetailsStepProps {
 const FrontendAddressDetailsStep: React.FC<FrontendAddressDetailsStepProps> = ({
   onSave,
   onNext,
+  onPrevious,
   onValidationChange,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -541,47 +544,53 @@ const FrontendAddressDetailsStep: React.FC<FrontendAddressDetailsStepProps> = ({
   }
 
   return (
-    <FormErrorBoundary>
-      <FieldErrorProvider fieldErrors={fieldErrors}>
-        {generalErrorMessage && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {generalErrorMessage}
-          </Alert>
-        )}
-        <DynamicExpandCollapseForm
-          groupedFields={mergedGroupedFields as any}
-          configuration={frontendConfig as any}
-          formValues={formValues as Record<string, string | boolean | File | null>}
-          dispatch={dispatch}
-          fields={flattenedFields}
-          fetchDropdownOptionsAction={fetchDependentDropdownOptions}
-          clearDependentFieldOptions={clearDependentFieldOptions}
-          updateFormValue={(payload) => {
-            // Convert boolean to string for formSlice compatibility
-            const value = typeof payload.value === 'boolean' 
-              ? payload.value.toString() 
-              : payload.value;
-            dispatch(updateFormValue({ ...payload, value: value as string | File | null }));
-          }}
-          setFieldError={() => {}}
-          clearFieldError={() => {}}
-          clearForm={() => {}}
-          copySectionValues={() => {}}
-          clearSectionValues={() => {}}
-          validationSchema={validationSchema}
-          validationErrors={validationErrors}
-          setValidationErrors={setValidationErrors}
-          onSave={handleSave}
-          onNext={onNext}
-          specialCheckboxHandlers={specialCheckboxHandlers}
-          getFieldDisabled={getFieldDisabled}
-          clearKey={clearKey}
-          setClearKey={setClearKey}
-          loading={submissionLoading}
-          onValidationChange={onValidationChange}
-        />
-      </FieldErrorProvider>
-    </FormErrorBoundary>
+    <>
+      {/* Page-level loader for form submission */}
+      <PageLoader open={submissionLoading} message="Submitting form, please wait..." />
+
+      <FormErrorBoundary>
+        <FieldErrorProvider fieldErrors={fieldErrors}>
+          {generalErrorMessage && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {generalErrorMessage}
+            </Alert>
+          )}
+          <DynamicExpandCollapseForm
+            groupedFields={mergedGroupedFields as any}
+            configuration={frontendConfig as any}
+            formValues={formValues as Record<string, string | boolean | File | null>}
+            dispatch={dispatch}
+            fields={flattenedFields}
+            fetchDropdownOptionsAction={fetchDependentDropdownOptions}
+            clearDependentFieldOptions={clearDependentFieldOptions}
+            updateFormValue={(payload) => {
+              // Convert boolean to string for formSlice compatibility
+              const value = typeof payload.value === 'boolean' 
+                ? payload.value.toString() 
+                : payload.value;
+              dispatch(updateFormValue({ ...payload, value: value as string | File | null }));
+            }}
+            setFieldError={() => {}}
+            clearFieldError={() => {}}
+            clearForm={() => {}}
+            copySectionValues={() => {}}
+            clearSectionValues={() => {}}
+            validationSchema={validationSchema}
+            validationErrors={validationErrors}
+            setValidationErrors={setValidationErrors}
+            onSave={handleSave}
+            onNext={onNext}
+            onPrevious={onPrevious}
+            specialCheckboxHandlers={specialCheckboxHandlers}
+            getFieldDisabled={getFieldDisabled}
+            clearKey={clearKey}
+            setClearKey={setClearKey}
+            loading={submissionLoading}
+            onValidationChange={onValidationChange}
+          />
+        </FieldErrorProvider>
+      </FormErrorBoundary>
+    </>
   );
 };
 
