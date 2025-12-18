@@ -6,8 +6,9 @@ import { CircularProgress, Box, Alert } from '@mui/material';
 import { resetAuth } from '../Authenticate/slice/authSlice';
 import { resetForm } from './slice/formSlice';
 import { clearConfiguration } from './slice/registrationConfigSlice';
-import { API_ENDPOINTS } from '../../../Constant';
+import { API_ENDPOINTS, API_ADMIN_BASE_URL } from '../../../Constant';
 import { postFormData } from '../../../utils/HelperFunctions/api/index';
+import axios from 'axios';
 import SuccessModal from '../../ui/Modal/SuccessModal';
 import SignUpBg from '../../../assets/sign_up_bg.svg';
 import { RegistrationHeader, Footer } from './CommonComponent';
@@ -88,7 +89,7 @@ const RERegistrationContainer: React.FC = () => {
   // const isMultiStepEnabled = useSelector(selectIsMultiStepEnabled);
 
   // Auth selectors for final submission
-  const { workflowId, userDetails, reinitializeDataResponse } = useSelector(
+  const { workflowId, userDetails, reinitializeDataResponse, authToken } = useSelector(
     (state: RootState) => state.auth
   );
 
@@ -380,7 +381,27 @@ const RERegistrationContainer: React.FC = () => {
   };
 
   // Logout handler
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      console.log('🔄 Logging out user...');
+      
+      // Call logout API using admin API base URL
+      // Construct full URL: https://dev.ckycindia.dev/admin/api/v2/auth/logout
+      const logoutUrl = `${API_ADMIN_BASE_URL}/api/v2/auth/logout`;
+      
+      // Make API call with auth token
+      await axios.get(logoutUrl, {
+        headers: {
+          'Authorization': authToken ? `Bearer ${authToken}` : '',
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log('✅ Logout API called successfully');
+    } catch (error) {
+      console.error('❌ Error calling logout API:', error);
+      // Continue with logout even if API call fails
+    }
+
     // Clear all Redux state except address details to preserve user progress
     dispatch(resetAuth()); // Clear authentication state
     dispatch(resetForm()); // Clear form state (entity profile, etc.)
