@@ -512,7 +512,7 @@ const FrontendAdminUserDetailsStep: React.FC<FrontendAdminUserDetailsStepProps> 
       console.log(
         '✅ Frontend Admin User form fields loaded, now fetching step data for admin users:',
         {
-          stepKey: 'admin_users',
+          stepKey: 'institutionalAdminUser',
           workflowId: testWorkflowId,
           userId: testUserId,
           formFieldsCount: flattenedFields.length,
@@ -522,7 +522,7 @@ const FrontendAdminUserDetailsStep: React.FC<FrontendAdminUserDetailsStepProps> 
       stepDataFetched.current = true;
       dispatch(
         fetchStepData({
-          stepKey: 'admin_users',
+          stepKey: 'institutionalAdminUser',
           workflowId: testWorkflowId,
           userId: testUserId,
         })
@@ -605,34 +605,22 @@ const FrontendAdminUserDetailsStep: React.FC<FrontendAdminUserDetailsStepProps> 
     return mapping;
   }, [stepDocuments]);
 
-  // Auto-mark admin sections as verified if CKYC is present and auto-populated
-  React.useEffect(() => {
-    const updated = new Set<string>(Array.from(verifiedSections));
-
-    const ckyc1 = String(formValues['iauCkycNumber1'] || '');
-    const ckyc1Auto =
-      formValues['iauCkycNumber1_autoPopulated'] === 'true' ||
-      formValues['iauCkycNumber1_autoPopulated'] === true;
-    if (ckyc1Auto && ckyc1.length === 14) {
-      updated.add('admin_one');
-      updated.add('adminone');
-      updated.add('admin1');
-    }
-
-    const ckyc2 = String(formValues['iauCkycNumber2'] || '');
-    const ckyc2Auto =
-      formValues['iauCkycNumber2_autoPopulated'] === 'true' ||
-      formValues['iauCkycNumber2_autoPopulated'] === true;
-    if (ckyc2Auto && ckyc2.length === 14) {
-      updated.add('admin_two');
-      updated.add('admintwo');
-      updated.add('admin2');
-    }
-
-    // Persist to Redux
-    dispatch(setVerifiedSections(Array.from(updated)));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formValues, dispatch]);
+  // NOTE:
+  // Previously, admin sections were auto-marked as "verified" when CKYC
+  // data was auto-populated. This caused the "Verified" label and the
+  // Save & Submit button to become enabled without completing OTP
+  // verification via the "Validate Admin" actions.
+  //
+  // Requirement:
+  // - "Verified" label should appear only after successful OTP
+  //   verification (Validate Admin 1 / 2).
+  // - Save & Submit should be enabled only after both admins are
+  //   successfully validated via OTP.
+  //
+  // To meet this requirement, we no longer auto-mark sections as
+  // verified based on CKYC data here. Verification state is now
+  // driven exclusively by the OTP flow (handleOtpSuccess), which
+  // dispatches addVerifiedSection/updateSectionDataHash.
 
   // OTP Modal Handlers
   const handleOtpSuccess = () => {
@@ -643,18 +631,38 @@ const FrontendAdminUserDetailsStep: React.FC<FrontendAdminUserDetailsStepProps> 
       dispatch(addVerifiedSection(sectionName));
 
       // Store current section data hash for change detection
+      // Only hash OTP-sensitive fields (email, mobile, country code) so that
+      // changes to other fields (CKYC auto-population, address, etc.) don't
+      // trigger "data changed" state
       const sectionGroup = mergedGroupedFields[sectionName];
       if (sectionGroup) {
-        const sectionData = sectionGroup.fields.reduce(
-          (acc: Record<string, string | boolean | null>, field: any) => {
-            const value = formValues[field.fieldName];
+        // Map section names to their OTP-sensitive fields
+        const otpSensitiveFieldsMap: Record<string, string[]> = {
+          adminone: ['iauEmail1', 'iauMobileNumber1', 'iauCountryCode1'],
+          admintwo: ['iauEmail2', 'iauMobileNumber2', 'iauCountryCode2'],
+        };
+
+        // Get the OTP-sensitive fields for this section
+        const otpFields =
+          otpSensitiveFieldsMap[sectionName] ??
+          otpSensitiveFieldsMap[`admin${sectionIndex === 1 ? 'one' : 'two'}`] ??
+          [];
+
+        // Build hash using only OTP-sensitive fields
+        const sectionData = otpFields.reduce(
+          (acc: Record<string, string | boolean | null>, fieldName: string) => {
+            const value = formValues[fieldName];
             // Type cast to handle the unknown type from formValues
             if (value instanceof File) {
-              acc[field.fieldName] = value.name;
-            } else if (typeof value === 'string' || typeof value === 'boolean' || value === null) {
-              acc[field.fieldName] = value;
+              acc[fieldName] = value.name;
+            } else if (
+              typeof value === 'string' ||
+              typeof value === 'boolean' ||
+              value === null
+            ) {
+              acc[fieldName] = value;
             } else {
-              acc[field.fieldName] = value ? String(value) : null;
+              acc[fieldName] = value ? String(value) : null;
             }
             return acc;
           },

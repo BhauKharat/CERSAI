@@ -165,7 +165,7 @@ export default function SuccessModal({
               '&:hover': { backgroundColor: '#001a8a' },
             }}
           >
-            {okText}
+            {okText || 'OK'}
           </Button>
         </Box>
       </Box>

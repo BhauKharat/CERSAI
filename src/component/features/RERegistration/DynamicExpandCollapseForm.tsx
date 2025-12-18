@@ -815,12 +815,48 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
 
   // ===== UTILITY FUNCTIONS =====
   // Generate hash of section data to detect changes
+  // For admin sections, only track OTP-sensitive fields (email, mobile, country code)
+  // to prevent other field changes (CKYC auto-population, address fields, etc.)
+  // from triggering "data changed" state
   const generateSectionDataHash = useCallback(
-    (sectionFields: FormField[]) => {
-      const sectionData = sectionFields.reduce(
-        (acc, field) => {
-          const value = formValues[field.fieldName];
-          acc[field.fieldName] = value instanceof File ? value.name : value;
+    (sectionName: string, sectionFields: FormField[]) => {
+      // Map section names to their OTP-sensitive fields
+      // This matches the logic in FrontendAdminUserDetailsStep.handleOtpSuccess
+      const otpSensitiveFieldsMap: Record<string, string[]> = {
+        adminone: ['iauEmail1', 'iauMobileNumber1', 'iauCountryCode1'],
+        admintwo: ['iauEmail2', 'iauMobileNumber2', 'iauCountryCode2'],
+      };
+
+      // Get OTP-sensitive fields for this section
+      const otpFields = otpSensitiveFieldsMap[sectionName] || [];
+
+      // If not an admin section, fall back to hashing all fields
+      if (otpFields.length === 0) {
+        const sectionData = sectionFields.reduce(
+          (acc, field) => {
+            const value = formValues[field.fieldName];
+            acc[field.fieldName] = value instanceof File ? value.name : value;
+            return acc;
+          },
+          {} as Record<string, any>
+        );
+        return JSON.stringify(sectionData);
+      }
+
+      // Build hash using only OTP-sensitive fields, with consistent value normalization
+      const sectionData = otpFields.reduce(
+        (acc, fieldName) => {
+          const value = formValues[fieldName];
+          // Normalize values consistently (same logic as handleOtpSuccess)
+          if (value instanceof File) {
+            acc[fieldName] = value.name;
+          } else if (typeof value === 'string' || typeof value === 'boolean' || value === null) {
+            acc[fieldName] = value;
+          } else if (value === undefined) {
+            acc[fieldName] = null; // Normalize undefined to null for consistent hashing
+          } else {
+            acc[fieldName] = value ? String(value) : null;
+          }
           return acc;
         },
         {} as Record<string, any>
@@ -833,9 +869,13 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
   // Check if section data has changed since verification
   const hasSectionDataChanged = useCallback(
     (sectionName: string, sectionFields: FormField[]) => {
-      const currentHash = generateSectionDataHash(sectionFields);
+      const currentHash = generateSectionDataHash(sectionName, sectionFields);
       const originalHash = sectionDataHashes[sectionName];
-      return originalHash && currentHash !== originalHash;
+      // If no original hash exists, data hasn't changed (not verified yet)
+      if (!originalHash) {
+        return false;
+      }
+      return currentHash !== originalHash;
     },
     [generateSectionDataHash, sectionDataHashes]
   );
@@ -2117,15 +2157,18 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
         groupName.toLowerCase().includes('admin')
       );
 
-      // Check if all admin sections are verified
+       // Check if all admin sections are verified
       adminSectionsVerified = adminGroups.every((groupName) => {
         const isVerified = verifiedSections.has(groupName);
+        const hasDataChanged = hasSectionDataChanged(
+          groupName,
+          groupedFields[groupName].fields
+        );
         const isSectionStillValid = isSectionValid(
           groupedFields[groupName].fields
         );
-        // Section must be verified and all fields must still be valid
-        // Allow submission even if data changed, as long as section is verified and valid
-        return isVerified && isSectionStillValid;
+        // Section must be verified, data should not have changed, and all fields must still be valid
+        return isVerified && !hasDataChanged && isSectionStillValid;
       });
     }
 
