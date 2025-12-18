@@ -1511,6 +1511,31 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
         }
       }
 
+      // Clear dependent fields when state changes
+      if (field.fieldName === 'registerState') {
+        // Clear district and pincode when state changes
+        ['registerDistrict', 'registerCity', 'registerPincode'].forEach(fieldName => {
+          updateFormValue({ fieldName, value: '' });
+        });
+        // Clear dropdown options for dependent fields
+        if (clearDependentFieldOptions) {
+          clearDependentFieldOptions('registerDistrict');
+          clearDependentFieldOptions('registerPincode');
+        }
+      }
+      
+      if (field.fieldName === 'correspondenceState') {
+        // Clear district and pincode when state changes
+        ['correspondenceDistrict', 'correspondenceCity', 'correspondencePincode'].forEach(fieldName => {
+          updateFormValue({ fieldName, value: '' });
+        });
+        // Clear dropdown options for dependent fields
+        if (clearDependentFieldOptions) {
+          clearDependentFieldOptions('correspondenceDistrict');
+          clearDependentFieldOptions('correspondencePincode');
+        }
+      }
+
       if (
         field.fieldName === 'registerDistrict' ||
         field.fieldName === 'correspondenceDistrict'

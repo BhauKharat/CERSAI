@@ -433,6 +433,24 @@ const FrontendNodalOfficerStep: React.FC<FrontendNodalOfficerStepProps> = ({
     }
   }, [dispatch, stepData]);
 
+  // Fetch documents when step documents are available
+  React.useEffect(() => {
+    if (stepDocuments && stepDocuments.length > 0) {
+      console.log('Fetching documents for Nodal Officer step data:', stepDocuments);
+      console.log('Current fetched documents:', fetchedDocuments);
+
+      stepDocuments.forEach((doc) => {
+        // Only fetch if not already fetched (handle undefined fetchedDocuments)
+        if (!fetchedDocuments || !fetchedDocuments[doc.id]) {
+          console.log(`🔄 Fetching document: ${doc.id} (${doc.type})`);
+          dispatch(fetchDocument(doc.id));
+        } else {
+          console.log(`✅ Document already fetched: ${doc.id}`);
+        }
+      });
+    }
+  }, [dispatch, stepDocuments, fetchedDocuments]);
+
   // Document field mapping
   const documentFieldMapping = React.useMemo(() => {
     const mapping: Record<string, string> = {};

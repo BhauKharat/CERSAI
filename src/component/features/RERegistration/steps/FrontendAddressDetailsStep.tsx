@@ -35,12 +35,13 @@ import { buildValidationSchema } from '../../../../utils/formValidation';
 import { useFrontendFormConfig } from '../frontendConfig/utils/useFrontendFormConfig';
 import { addressDetailsConfig } from '../frontendConfig/configs/addressDetailsConfig';
 import { FormField } from '../types/formTypes';
-import { processGeographicalFields } from '../utils/geographicalDataUtils';
+import { processGeographicalFields, replaceUrlParameters } from '../utils/geographicalDataUtils';
 import {
   fetchDependentDropdownOptions,
   clearDependentFieldOptions,
   selectAddressDetailsDropdownOptions,
 } from '../slice/addressDetailsSlice';
+import { CMS_URL } from '../../../../Constant';
 
 // Simple Error Boundary for catching render errors
 class FormErrorBoundary extends Component<
@@ -483,18 +484,303 @@ const FrontendAddressDetailsStep: React.FC<FrontendAddressDetailsStepProps> = ({
           'registerDigipin',
         ];
 
-        registeredFields.forEach((regField, index) => {
-          const corrField = correspondenceFields[index];
-          const value = formValues[regField];
+        // First, copy non-dropdown fields (text fields)
+        const textFieldMappings = [
+          { from: 'registerLine1', to: 'correspondenceLine1' },
+          { from: 'registerLine2', to: 'correspondenceLine2' },
+          { from: 'registerLine3', to: 'correspondenceLine3' },
+          { from: 'registerCity', to: 'correspondenceCity' },
+          { from: 'registerDigipin', to: 'correspondenceDigipin' },
+          { from: 'registerPincodeOther', to: 'correspondencePincodeOther' },
+        ];
+
+        textFieldMappings.forEach(({ from, to }) => {
+          const value = formValues[from];
           if (value !== null && value !== undefined && value !== '') {
             dispatch(
               updateFormValue({
-                fieldName: corrField,
+                fieldName: to,
                 value: String(value),
               })
             );
           }
         });
+
+        // Copy country first
+        const registerCountry = formValues['registerCountry'];
+        if (registerCountry !== null && registerCountry !== undefined && registerCountry !== '') {
+          dispatch(
+            updateFormValue({
+              fieldName: 'correspondenceCountry',
+              value: String(registerCountry),
+            })
+          );
+        }
+
+        // Copy state and then fetch dependent options
+        const registerState = formValues['registerState'];
+        const registerDistrict = formValues['registerDistrict'];
+        const registerPincode = formValues['registerPincode'];
+        
+        if (registerState !== null && registerState !== undefined && registerState !== '') {
+          // Copy state first
+          dispatch(
+            updateFormValue({
+              fieldName: 'correspondenceState',
+              value: String(registerState),
+            })
+          );
+
+          // Find correspondence district and pincode fields to fetch their options
+          const correspondenceDistrictField = baseFields.find(
+            (f) => f.fieldName === 'correspondenceDistrict'
+          );
+          const correspondencePincodeField = baseFields.find(
+            (f) => f.fieldName === 'correspondencePincode'
+          );
+
+          // Create updated form values with copied state for URL processing
+          const updatedFormValues = {
+            ...formValues,
+            correspondenceState: registerState,
+            correspondenceCountry: registerCountry || formValues['correspondenceCountry'],
+          };
+
+          // Fetch district options if field has URL
+          if (correspondenceDistrictField?.fieldAttributes?.url) {
+            const processedUrl = replaceUrlParameters(
+              correspondenceDistrictField.fieldAttributes.url,
+              updatedFormValues
+            );
+
+            if (!processedUrl.includes('{')) {
+              const fullUrl = processedUrl.startsWith('http')
+                ? processedUrl
+                : `${CMS_URL}${processedUrl}`;
+
+              dispatch(
+                fetchDependentDropdownOptions({
+                  url: fullUrl,
+                  fieldId: correspondenceDistrictField.id,
+                  fieldName: 'correspondenceDistrict',
+                  responseMapping:
+                    correspondenceDistrictField.fieldAttributes.responseMapping || {
+                      label: 'label',
+                      value: 'value',
+                    },
+                })
+              ).then(() => {
+                // After district options are fetched, copy district and fetch pincode options
+                if (
+                  registerDistrict !== null &&
+                  registerDistrict !== undefined &&
+                  registerDistrict !== ''
+                ) {
+                  dispatch(
+                    updateFormValue({
+                      fieldName: 'correspondenceDistrict',
+                      value: String(registerDistrict),
+                    })
+                  );
+
+                  // Fetch pincode options
+                  if (correspondencePincodeField?.fieldAttributes?.url) {
+                    const updatedFormValuesForPincode = {
+                      ...updatedFormValues,
+                      correspondenceDistrict: registerDistrict,
+                    };
+
+                    const processedPincodeUrl = replaceUrlParameters(
+                      correspondencePincodeField.fieldAttributes.url,
+                      updatedFormValuesForPincode
+                    );
+
+                    if (!processedPincodeUrl.includes('{')) {
+                      const fullPincodeUrl = processedPincodeUrl.startsWith('http')
+                        ? processedPincodeUrl
+                        : `${CMS_URL}${processedPincodeUrl}`;
+
+                      dispatch(
+                        fetchDependentDropdownOptions({
+                          url: fullPincodeUrl,
+                          fieldId: correspondencePincodeField.id,
+                          fieldName: 'correspondencePincode',
+                          responseMapping:
+                            correspondencePincodeField.fieldAttributes.responseMapping || {
+                              label: 'label',
+                              value: 'value',
+                            },
+                        })
+                      ).then(() => {
+                        // Finally, copy pincode after options are fetched
+                        if (
+                          registerPincode !== null &&
+                          registerPincode !== undefined &&
+                          registerPincode !== ''
+                        ) {
+                          dispatch(
+                            updateFormValue({
+                              fieldName: 'correspondencePincode',
+                              value: String(registerPincode),
+                            })
+                          );
+                        }
+                      }).catch(() => {
+                        // If fetching fails, still try to copy the value
+                        if (
+                          registerPincode !== null &&
+                          registerPincode !== undefined &&
+                          registerPincode !== ''
+                        ) {
+                          dispatch(
+                            updateFormValue({
+                              fieldName: 'correspondencePincode',
+                              value: String(registerPincode),
+                            })
+                          );
+                        }
+                      });
+                    } else {
+                      // If URL processing fails, just copy the value
+                      if (
+                        registerPincode !== null &&
+                        registerPincode !== undefined &&
+                        registerPincode !== ''
+                      ) {
+                        dispatch(
+                          updateFormValue({
+                            fieldName: 'correspondencePincode',
+                            value: String(registerPincode),
+                          })
+                        );
+                      }
+                    }
+                  } else {
+                    // If no URL for pincode, just copy the value
+                    if (
+                      registerPincode !== null &&
+                      registerPincode !== undefined &&
+                      registerPincode !== ''
+                    ) {
+                      dispatch(
+                        updateFormValue({
+                          fieldName: 'correspondencePincode',
+                          value: String(registerPincode),
+                        })
+                      );
+                    }
+                  }
+                }
+              }).catch(() => {
+                // If fetching district options fails, still try to copy the values
+                if (
+                  registerDistrict !== null &&
+                  registerDistrict !== undefined &&
+                  registerDistrict !== ''
+                ) {
+                  dispatch(
+                    updateFormValue({
+                      fieldName: 'correspondenceDistrict',
+                      value: String(registerDistrict),
+                    })
+                  );
+                }
+                if (
+                  registerPincode !== null &&
+                  registerPincode !== undefined &&
+                  registerPincode !== ''
+                ) {
+                  dispatch(
+                    updateFormValue({
+                      fieldName: 'correspondencePincode',
+                      value: String(registerPincode),
+                    })
+                  );
+                }
+              });
+            } else {
+              // If URL processing fails, still copy the values
+              if (
+                registerDistrict !== null &&
+                registerDistrict !== undefined &&
+                registerDistrict !== ''
+              ) {
+                dispatch(
+                  updateFormValue({
+                    fieldName: 'correspondenceDistrict',
+                    value: String(registerDistrict),
+                  })
+                );
+              }
+              if (
+                registerPincode !== null &&
+                registerPincode !== undefined &&
+                registerPincode !== ''
+              ) {
+                dispatch(
+                  updateFormValue({
+                    fieldName: 'correspondencePincode',
+                    value: String(registerPincode),
+                  })
+                );
+              }
+            }
+          } else {
+            // If no URL for district field, just copy values directly
+            if (
+              registerDistrict !== null &&
+              registerDistrict !== undefined &&
+              registerDistrict !== ''
+            ) {
+              dispatch(
+                updateFormValue({
+                  fieldName: 'correspondenceDistrict',
+                  value: String(registerDistrict),
+                })
+              );
+            }
+
+            if (
+              registerPincode !== null &&
+              registerPincode !== undefined &&
+              registerPincode !== ''
+            ) {
+              dispatch(
+                updateFormValue({
+                  fieldName: 'correspondencePincode',
+                  value: String(registerPincode),
+                })
+              );
+            }
+          }
+        } else {
+          // If no state, just copy remaining dropdown values directly
+          if (
+            registerDistrict !== null &&
+            registerDistrict !== undefined &&
+            registerDistrict !== ''
+          ) {
+            dispatch(
+              updateFormValue({
+                fieldName: 'correspondenceDistrict',
+                value: String(registerDistrict),
+              })
+            );
+          }
+
+          if (
+            registerPincode !== null &&
+            registerPincode !== undefined &&
+            registerPincode !== ''
+          ) {
+            dispatch(
+              updateFormValue({
+                fieldName: 'correspondencePincode',
+                value: String(registerPincode),
+              })
+            );
+          }
+        }
       } else {
         // Clear/reset all correspondence address fields when unchecked
         console.log('🧹 Clearing correspondence address fields');
