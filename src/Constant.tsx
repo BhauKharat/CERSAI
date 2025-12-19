@@ -6,6 +6,9 @@ export const API_URL_REINITILIZE = process.env.REACT_APP_API_BASE_URL;
 export const BASE_ENV = process.env.REACT_APP_BACKEND_ENV;
 export const API_DROPDOWN_URL = process.env.REACT_APP_API_BASE_DROPDOWN_URL;
 export const API_ADMIN_BASE_URL = process.env.REACT_APP_API_BASE_URL_ADMIN;
+// Flag to switch between Frontend config and Backend CMS config components
+// Set to 'true' to use Frontend config components, 'false' or undefined to use Backend CMS config components
+export const USE_FRONTEND_CONFIG = process.env.REACT_APP_USE_FRONTEND_CONFIG === 'true';
 
 // ✅ Use API_ADMIN_BASE_URL instead of undefined
 export const ADMIN_API_URLS = API_ADMIN_BASE_URL;

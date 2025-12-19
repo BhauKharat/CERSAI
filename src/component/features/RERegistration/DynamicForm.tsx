@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, {
   useEffect,
@@ -123,7 +123,6 @@ const getPincodeOtherValidationRules = (field: FormField) => {
 
 interface DynamicFormProps {
   onSave?: (formData: Record<string, unknown>) => void;
-  onPrevious?: () => void; // Callback to navigate to previous step
   urlDynamic?: string;
   existingDocuments?: Record<string, any>; // FetchedDocument from stepDataTypes
   documentFieldMapping?: Record<string, string>; // Maps field names to document IDs
@@ -131,14 +130,11 @@ interface DynamicFormProps {
   hasStepData?: boolean; // Indicates if fetchStepData API returned data
   prefilledDisablesValidate?: boolean; // If true, when hasStepData, keep Validate disabled until contact change
   onValidationChange?: (isValid: boolean) => void; // Callback to notify parent of validation state changes
-  useFrontendConfig?: boolean; // If true, skip API fetch for form fields (fields already set from frontend config)
-  specialDropdownHandlers?: Record<string, (value: string) => void>; // Custom handlers for special dropdown fields
   // getFieldDisabled?: (fieldName: string) => boolean; // Function to determine if a field should be disabled
 }
 
 const DynamicForm: React.FC<DynamicFormProps> = ({
   onSave,
-  onPrevious,
   urlDynamic = '',
   existingDocuments = {},
   documentFieldMapping = {},
@@ -146,8 +142,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   hasStepData = false,
   prefilledDisablesValidate = false,
   onValidationChange,
-  useFrontendConfig = false, // Default to false for backward compatibility
-  specialDropdownHandlers = {}, // Default to empty object
   // getFieldDisabled,
 }) => {
   const dispatch = useAppDispatch();
@@ -262,8 +256,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         const updatedStepDocuments =
           stepDocuments && Array.isArray(stepDocuments)
             ? stepDocuments.filter(
-              (doc) => !uniqueDocumentsToRemove.includes(doc.id)
-            )
+                (doc) => !uniqueDocumentsToRemove.includes(doc.id)
+              )
             : [];
         console.log(
           `📋 Updated stepDocuments after removal:`,
@@ -804,19 +798,10 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     }
   }, [fields, formValues, validationSchemaBuilder, evaluateConditionalLogic]);
 
-  // Fetch form fields on component mount (skip if using frontend config)
+  // Fetch form fields on component mount
   useEffect(() => {
-    // Skip API fetch if frontend config is being used (fields already set via setFieldsFromConfig)
-    if (useFrontendConfig) {
-      console.log('⏭️ Skipping API fetch - using frontend configuration');
-      return;
-    }
-
-    // Only fetch from API if not using frontend config
-    if (urlDynamic) {
-      dispatch(fetchFormFields({ url: urlDynamic }));
-    }
-  }, [dispatch, urlDynamic, useFrontendConfig]);
+    dispatch(fetchFormFields({ url: urlDynamic }));
+  }, [dispatch, urlDynamic]);
 
   // Clear any existing field errors on component mount to prevent old errors from showing
   useEffect(() => {
@@ -1328,14 +1313,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           }
         }
       }
-
-      // Call special dropdown handlers if defined for this field
-      if (specialDropdownHandlers && specialDropdownHandlers[fieldName]) {
-        console.log(`🔄 Calling special handler for ${fieldName} with value: ${value}`);
-        specialDropdownHandlers[fieldName](value);
-      }
     },
-    [dispatch, fields, getFilteredInstitutionTypeOptions, setValidationErrors, specialDropdownHandlers]
+    [dispatch, fields, getFilteredInstitutionTypeOptions, setValidationErrors]
   );
 
   // Validate all fields
@@ -1615,11 +1594,11 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         // Determine citizenship dynamically
         const citizenshipValue = String(
           formValues[
-          isHoiPage
-            ? 'hoiCitizenship'
-            : isNodalOfficerPage
-              ? 'noCitizenship'
-              : 'citizenship'
+            isHoiPage
+              ? 'hoiCitizenship'
+              : isNodalOfficerPage
+                ? 'noCitizenship'
+                : 'citizenship'
           ] || ''
         )
           .trim()
@@ -2046,39 +2025,22 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           return value && String(value).trim() !== '';
 
         case 'textfield_with_image': {
-          const textValue = value;
-          const fileFieldName = field.fieldFileName || `${field.fieldName}_file`;
+          // For textfield_with_image, BOTH text field and file must be filled
+          const textFieldValue = value;
+          const fileFieldName =
+            field.fieldFileName || `${field.fieldName}_file`;
           const fileValue = formValues[fileFieldName];
 
-          const hasText =
-            textValue && String(textValue).trim() !== '';
+          // Check if text field is filled
+          const hasTextValue =
+            textFieldValue && String(textFieldValue).trim() !== '';
 
-          const effectiveRules = evaluateConditionalLogic(field);
-          const fileRules = effectiveRules?.validationFile;
+          // Check if file is uploaded
+          const hasFileValue = hasValidAttachment(field, fileValue);
 
-          const hasFile = hasValidAttachment(field, fileValue);
-
-          if (
-            hasText &&
-            fileRules?.imageRequired === true &&
-            !hasFile
-          ) {
-            dispatch(
-              setFieldError({
-                field: fileFieldName,
-                message:
-                  fileRules.imageRequiredMessage || 'Document is required',
-              })
-            );
-            return false;
-          }
-
-          if (hasText && hasFile) {
-            dispatch(clearFieldError(fileFieldName));
-          }
-          return fileRules?.imageRequired ? hasText && hasFile : true;
+          // Both must be present for the field to be valid
+          return hasTextValue && hasFileValue;
         }
-
 
         case 'file': {
           // For regular file fields, the file is stored directly in field.fieldName
@@ -2550,16 +2512,16 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               label:
                 typeof option === 'object' && option !== null
                   ? (option.label as string) ||
-                  (option.name as string) ||
-                  (option.text as string) ||
-                  String(option)
+                    (option.name as string) ||
+                    (option.text as string) ||
+                    String(option)
                   : String(option),
               value:
                 typeof option === 'object' && option !== null
                   ? (option.value as string) ||
-                  (option.id as string) ||
-                  (option.code as string) ||
-                  String(option)
+                    (option.id as string) ||
+                    (option.code as string) ||
+                    String(option)
                   : String(option),
             })
           );
@@ -2929,7 +2891,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             ? typeof mobileRules.required === 'boolean'
               ? mobileRules.required
               : mobileRules.required === 'true' ||
-              mobileRules.required === 'required'
+                mobileRules.required === 'required'
             : validationRules?.required || false;
 
         // Override required status for pincode "other" field if conditional rules apply
@@ -2938,7 +2900,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             typeof pincodeOtherRules.required === 'boolean'
               ? pincodeOtherRules.required
               : pincodeOtherRules.required === 'true' ||
-              pincodeOtherRules.required === 'required';
+                pincodeOtherRules.required === 'required';
         }
 
         // Compute pattern for validation
@@ -3094,8 +3056,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               option?.value ||
               String(
                 optionWithExtras.id ||
-                optionWithExtras.code ||
-                `option_${index}`
+                  optionWithExtras.code ||
+                  `option_${index}`
               ),
             // Pass through regulator and types for nested structure
             regulator: (optionWithExtras.regulator as string) || '',
@@ -3349,14 +3311,14 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             }
             maxLength={
               field.validationRules?.maxLength ||
-                field?.conditionalLogic?.[0]?.then?.validationRules?.maxLength
+              field?.conditionalLogic?.[0]?.then?.validationRules?.maxLength
                 ? parseInt(
-                  String(
-                    field?.validationRules?.maxLength ||
-                    field?.conditionalLogic?.[0]?.then?.validationRules
-                      ?.maxLength
+                    String(
+                      field?.validationRules?.maxLength ||
+                        field?.conditionalLogic?.[0]?.then?.validationRules
+                          ?.maxLength
+                    )
                   )
-                )
                 : undefined
             }
             error={!!displayError}
@@ -3386,12 +3348,12 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               });
               const fa = matched?.then?.fieldAttributes as
                 | {
-                  url?: string;
-                  method?: string;
-                  headers?: Record<string, string>;
-                  urlData?: string;
-                  payloadTemplate?: Record<string, unknown>;
-                }
+                    url?: string;
+                    method?: string;
+                    headers?: Record<string, string>;
+                    urlData?: string;
+                    payloadTemplate?: Record<string, unknown>;
+                  }
                 | undefined;
               if (!fa?.url) return;
 
@@ -3510,12 +3472,12 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               // const fa = matched?.fieldAttributes as
               const fa = matched?.fieldAttributes as
                 | {
-                  url?: string;
-                  method?: string;
-                  headers?: Record<string, string>;
-                  urlData?: string;
-                  payloadTemplate?: Record<string, unknown>;
-                }
+                    url?: string;
+                    method?: string;
+                    headers?: Record<string, string>;
+                    urlData?: string;
+                    payloadTemplate?: Record<string, unknown>;
+                  }
                 | undefined;
               if (!fa?.url) return false;
 
@@ -3557,9 +3519,9 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
               const fa = matched?.then?.fieldAttributes as
                 | {
-                  autoPopulate?: string[];
-                  responseMapping?: { label?: string; value?: string };
-                }
+                    autoPopulate?: string[];
+                    responseMapping?: { label?: string; value?: string };
+                  }
                 | undefined;
 
               if (
@@ -3708,13 +3670,13 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
               // const fa = matched.fieldAttributes as
               const fa = matched?.fieldAttributes as
                 | {
-                  url?: string;
-                  method?: string;
-                  headers?: Record<string, string>;
-                  urlData?: string;
-                  payloadTemplate?: Record<string, unknown>;
-                  autoPopulate?: string[];
-                }
+                    url?: string;
+                    method?: string;
+                    headers?: Record<string, string>;
+                    urlData?: string;
+                    payloadTemplate?: Record<string, unknown>;
+                    autoPopulate?: string[];
+                  }
                 | undefined;
 
               if (!fa?.url) return;
@@ -3927,8 +3889,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             const fieldKey =
               field.conditionalLogic && field.conditionalLogic.length > 0
                 ? `${field.id}-${field.conditionalLogic
-                  .map((logic: any) => formValues[logic.when?.field] || '')
-                  .join('-')}`
+                    .map((logic: any) => formValues[logic.when?.field] || '')
+                    .join('-')}`
                 : field.id;
 
             return (
@@ -3944,16 +3906,13 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
       <FormActionButtons
         onClear={handleClear}
         onSave={handleSave}
-        onPrevious={onPrevious}
         onValidate={handleValidate}
         validateLabel={configuration?.submissionSettings?.validateButtonText}
         showValidate={configuration?.submissionSettings?.validateButton}
         showSave={configuration?.submissionSettings?.submitButton}
         showClear={configuration?.submissionSettings?.clearButton}
-        showPrevious={!!onPrevious}
         clearLabel={configuration?.submissionSettings?.clearButtonText}
         saveLabel={configuration?.submissionSettings?.submitButtonText}
-        previousLabel="Previous"
         loading={externalLoading !== undefined ? externalLoading : loading}
         saveDisabled={(() => {
           if (

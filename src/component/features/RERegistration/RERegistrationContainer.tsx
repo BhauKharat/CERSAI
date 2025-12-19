@@ -5,7 +5,7 @@ import type { RootState } from '../../../redux/store';
 import { CircularProgress, Box, Alert } from '@mui/material';
 import { resetAuth } from '../Authenticate/slice/authSlice';
 import { resetForm } from './slice/formSlice';
-import { clearConfiguration } from './slice/registrationConfigSlice';
+import { clearConfiguration, fetchRegistrationConfig } from './slice/registrationConfigSlice';
 import { API_ENDPOINTS, API_ADMIN_BASE_URL } from '../../../Constant';
 import { postFormData } from '../../../utils/HelperFunctions/api/index';
 import axios from 'axios';
@@ -18,27 +18,25 @@ import {
   EntityProfileStep,
   AddressDetailsStep,
   HeadOfInstitutionStep,
-  // NodalOfficerStep,
   AdminUserDetailsStep,
   FormPreviewStep,
   NodalOfficerStep,
-  FrontendNodalOfficerStep,
-  FrontendHeadOfInstitutionStep,
 } from './steps';
 import {
   initializeConfiguration,
   selectRegistrationSteps,
   selectRegistrationConfigLoading,
   selectRegistrationConfigError,
-  // selectIsMultiStepEnabled,
 } from './slice/registrationConfigSlice';
 import type { AppDispatch } from '../../../redux/store';
 import { getCompletedStepsFromData } from './utils/stepCompletionUtils';
 import { selectAckNo } from './slice/pdfGenerationSlice';
-import FrontendEntityProfileStep from './steps/FrontendEntityProfileStep';
-import FrontendAddressDetailsStep from './steps/FrontendAddressDetailsStep';
-import FrontendAdminUserDetailsStep from './steps/FrontendAdminUserDetailsStep';
-// import { MultiStepForm } from './types/registrationConfigTypes';
+import { USE_FRONTEND_CONFIG } from '../../../Constant';
+import FrontendEntityProfileStep from './frontendConfig/components/FrontendEntityProfileStep';
+import FrontendAddressDetailsStep from './frontendConfig/components/FrontendAddressDetailsStep';
+import FrontendHeadOfInstitutionStep from './frontendConfig/components/FrontendHeadOfInstitutionStep';
+import FrontendNodalOfficerStep from './frontendConfig/components/FrontendNodalOfficerStep';
+import FrontendAdminUserDetailsStep from './frontendConfig/components/FrontendAdminUserDetailsStep';
 
 // Default fallback configuration
 const DEFAULT_STEPS = [
@@ -167,7 +165,7 @@ const RERegistrationContainer: React.FC = () => {
 
   // Initialize configuration from frontend config on component mount
   useEffect(() => {
-    dispatch(initializeConfiguration());
+    dispatch(USE_FRONTEND_CONFIG ? initializeConfiguration() : fetchRegistrationConfig());
   }, [dispatch]);
 
   // Initialize completed steps from reinitialize response and localStorage
@@ -447,17 +445,10 @@ const RERegistrationContainer: React.FC = () => {
     if (!currentStepConfig) return null;
 
     // Map form types to components
+    // Use environment flag to switch between Frontend config and Backend API config components
     switch (currentStepConfig.formtype) {
       case 'RE_entity_profile':
-        // return (
-        //   <EntityProfileStep
-        //     onSave={handleStepSave}
-        //     onNext={handleNext}
-        //     url={'entity_profile'}
-        //     onValidationChange={setIsCurrentStepValid}
-        //   />
-        // );
-        return (
+        return USE_FRONTEND_CONFIG ? (
           <FrontendEntityProfileStep
             onSave={handleStepSave}
             onNext={handleNext}
@@ -465,17 +456,16 @@ const RERegistrationContainer: React.FC = () => {
             url={'entity_profile'}
             onValidationChange={setIsCurrentStepValid}
           />
+        ) : (
+          <EntityProfileStep
+            onSave={handleStepSave}
+            onNext={handleNext}
+            url={'entity_profile'}
+            onValidationChange={setIsCurrentStepValid}
+          />
         );
       case 'RE_addressDetails':
-        // return (
-        //   <AddressDetailsStep
-        //     onSave={handleStepSave}
-        //     onNext={handleNext}
-        //     url={'address_details'}
-        //     onValidationChange={setIsCurrentStepValid}
-        //   />
-        // );
-        return (
+        return USE_FRONTEND_CONFIG ? (
           <FrontendAddressDetailsStep
             onSave={handleStepSave}
             onNext={handleNext}
@@ -483,17 +473,16 @@ const RERegistrationContainer: React.FC = () => {
             url={'address_details'}
             onValidationChange={setIsCurrentStepValid}
           />
+        ) : (
+          <AddressDetailsStep
+            onSave={handleStepSave}
+            onNext={handleNext}
+            url={'address_details'}
+            onValidationChange={setIsCurrentStepValid}
+          />
         );
       case 'RE_hoi':
-        // return (
-        //   <HeadOfInstitutionStep
-        //     onSave={handleStepSave}
-        //     onNext={handleNext}
-        //     url={'head_of_institution'}
-        //     onValidationChange={setIsCurrentStepValid}
-        //   />
-        // );
-        return (
+        return USE_FRONTEND_CONFIG ? (
           <FrontendHeadOfInstitutionStep
             onSave={handleStepSave}
             onNext={handleNext}
@@ -501,17 +490,16 @@ const RERegistrationContainer: React.FC = () => {
             url={'head_of_institution'}
             onValidationChange={setIsCurrentStepValid}
           />
+        ) : (
+          <HeadOfInstitutionStep
+            onSave={handleStepSave}
+            onNext={handleNext}
+            url={'head_of_institution'}
+            onValidationChange={setIsCurrentStepValid}
+          />
         );
       case 'RE_nodal':
-        // return (
-        //   <NodalOfficerStep
-        //     onSave={handleStepSave}
-        //     onNext={handleNext}
-        //     url={'nodal_officer'}
-        //     onValidationChange={setIsCurrentStepValid}
-        //   />
-        // );
-        return (
+        return USE_FRONTEND_CONFIG ? (
           <FrontendNodalOfficerStep
             onSave={handleStepSave}
             onNext={handleNext}
@@ -519,21 +507,27 @@ const RERegistrationContainer: React.FC = () => {
             url={'nodal_officer'}
             onValidationChange={setIsCurrentStepValid}
           />
+        ) : (
+          <NodalOfficerStep
+            onSave={handleStepSave}
+            onNext={handleNext}
+            url={'nodal_officer'}
+            onValidationChange={setIsCurrentStepValid}
+          />
         );
       case 'RE_iau':
-        // return (
-        //   <AdminUserDetailsStep
-        //     onSave={handleStepSave}
-        //     onNext={handleNext}
-        //     url={'admin_user_details'}
-        //     onValidationChange={setIsCurrentStepValid}
-        //   />
-        // );
-        return (
+        return USE_FRONTEND_CONFIG ? (
           <FrontendAdminUserDetailsStep
             onSave={handleStepSave}
             onNext={handleNext}
             onPrevious={currentStep > 0 ? handlePrevious : undefined}
+            url={'admin_user_details'}
+            onValidationChange={setIsCurrentStepValid}
+          />
+        ) : (
+          <AdminUserDetailsStep
+            onSave={handleStepSave}
+            onNext={handleNext}
             url={'admin_user_details'}
             onValidationChange={setIsCurrentStepValid}
           />

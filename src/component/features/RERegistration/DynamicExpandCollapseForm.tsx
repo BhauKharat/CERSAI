@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-case-declarations */
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
@@ -121,67 +121,6 @@ const getPincodeOtherValidationRules = (field: FormField) => {
   return conditionalRules || field.validationRules;
 };
 
-// Helper function to get effective field type, placeholder, and required status based on conditional logic
-const getEffectiveFieldConfig = (
-  field: FormField,
-  formValues: Record<string, any>
-): { fieldType: string; fieldPlaceholder: string; isRequired: boolean } => {
-  // Default to original field type, placeholder, and required status
-  let effectiveFieldType: string = field.fieldType;
-  let effectivePlaceholder = field.fieldPlaceholder || '';
-  let effectiveRequired = field.validationRules?.required || false;
-
-  // Check if field has conditional logic with fieldType switching
-  if (!field.conditionalLogic?.[0]) {
-    return { fieldType: effectiveFieldType, fieldPlaceholder: effectivePlaceholder, isRequired: effectiveRequired };
-  }
-
-  const conditionalLogic = field.conditionalLogic[0];
-
-  if (!conditionalLogic?.when) {
-    return { fieldType: effectiveFieldType, fieldPlaceholder: effectivePlaceholder, isRequired: effectiveRequired };
-  }
-
-  const when = conditionalLogic.when;
-  const depVal = formValues[when.field];
-  const operator = when.operator || 'equals';
-  const values = Array.isArray(when.value) ? when.value : [when.value];
-
-  // Check if the condition matches
-  let conditionMatches = false;
-  const normalizedDepVal = String(depVal ?? '').toLowerCase();
-  const normalizedValues = values.map((v) => String(v).toLowerCase());
-
-  if (operator === 'equals' || operator === 'equal' || operator === 'in') {
-    conditionMatches = normalizedValues.includes(normalizedDepVal);
-  }
-
-  // Get effective field type and required status based on condition
-  if (conditionMatches) {
-    if (conditionalLogic.then?.fieldType) {
-      effectiveFieldType = conditionalLogic.then.fieldType;
-    }
-    if (conditionalLogic.then?.fieldPlaceholder) {
-      effectivePlaceholder = conditionalLogic.then.fieldPlaceholder;
-    }
-    if (conditionalLogic.then?.validationRules?.required !== undefined) {
-      effectiveRequired = conditionalLogic.then.validationRules.required;
-    }
-  } else {
-    if (conditionalLogic.else?.fieldType) {
-      effectiveFieldType = conditionalLogic.else.fieldType;
-    }
-    if (conditionalLogic.else?.fieldPlaceholder) {
-      effectivePlaceholder = conditionalLogic.else.fieldPlaceholder;
-    }
-    if (conditionalLogic.else?.validationRules?.required !== undefined) {
-      effectiveRequired = conditionalLogic.else.validationRules.required;
-    }
-  }
-
-  return { fieldType: effectiveFieldType, fieldPlaceholder: effectivePlaceholder, isRequired: effectiveRequired };
-};
-
 // Generic interfaces for reusable component
 export interface FormField {
   id: number;
@@ -190,13 +129,13 @@ export interface FormField {
   fieldLabel: string;
   fieldFileName?: string;
   fieldType:
-  | 'textfield'
-  | 'dropdown'
-  | 'checkbox'
-  | 'date'
-  | 'textfield_with_image'
-  | 'textfield_with_verify'
-  | 'file';
+    | 'textfield'
+    | 'dropdown'
+    | 'checkbox'
+    | 'date'
+    | 'textfield_with_image'
+    | 'textfield_with_verify'
+    | 'file';
   fieldPlaceholder: string;
   fieldOptions: Array<{ label: string; value: string }>;
   validationRules: {
@@ -238,9 +177,6 @@ export interface FormField {
     };
     then?: {
       validationRules?: any;
-      fieldType?: string; // Dynamic field type (e.g., 'dropdown' or 'textfield')
-      fieldPlaceholder?: string; // Dynamic placeholder text
-      clearFields?: string[]; // Fields to clear when this condition is met
       fieldAttributes?: {
         type: string;
         trigger: string;
@@ -259,9 +195,6 @@ export interface FormField {
     };
     else?: {
       validationRules?: any;
-      fieldType?: string; // Dynamic field type (e.g., 'dropdown' or 'textfield')
-      fieldPlaceholder?: string; // Dynamic placeholder text
-      clearFields?: string[]; // Fields to clear when this condition is met
       fieldAttributes?: {
         type: string;
         trigger: string;
@@ -404,11 +337,6 @@ interface DynamicExpandCollapseFormProps {
     [fieldName: string]: (checked: boolean) => void;
   };
 
-  // Special dropdown handlers for fields like office address
-  specialDropdownHandlers?: {
-    [fieldName: string]: (value: string) => void;
-  };
-
   // Custom field disabled logic
   getFieldDisabled?: (field: FormField) => boolean;
 
@@ -455,7 +383,6 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
   onNext,
   onPrevious,
   specialCheckboxHandlers,
-  specialDropdownHandlers,
   getFieldDisabled,
   clearKey,
   setClearKey,
@@ -667,8 +594,8 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
       const isIndianCitizen =
         adminIndex === 1
           ? ['indian', 'india', 'in', '+91'].some((v) =>
-            rawCitizenship.includes(v)
-          )
+              rawCitizenship.includes(v)
+            )
           : ['indian', 'india', 'in'].some((v) => rawCitizenship.includes(v)); // admin two can have different logic if needed
 
       // --- Admin-specific CKYC ---
@@ -815,48 +742,12 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
 
   // ===== UTILITY FUNCTIONS =====
   // Generate hash of section data to detect changes
-  // For admin sections, only track OTP-sensitive fields (email, mobile, country code)
-  // to prevent other field changes (CKYC auto-population, address fields, etc.)
-  // from triggering "data changed" state
   const generateSectionDataHash = useCallback(
-    (sectionName: string, sectionFields: FormField[]) => {
-      // Map section names to their OTP-sensitive fields
-      // This matches the logic in FrontendAdminUserDetailsStep.handleOtpSuccess
-      const otpSensitiveFieldsMap: Record<string, string[]> = {
-        adminone: ['iauEmail1', 'iauMobileNumber1', 'iauCountryCode1'],
-        admintwo: ['iauEmail2', 'iauMobileNumber2', 'iauCountryCode2'],
-      };
-
-      // Get OTP-sensitive fields for this section
-      const otpFields = otpSensitiveFieldsMap[sectionName] || [];
-
-      // If not an admin section, fall back to hashing all fields
-      if (otpFields.length === 0) {
-        const sectionData = sectionFields.reduce(
-          (acc, field) => {
-            const value = formValues[field.fieldName];
-            acc[field.fieldName] = value instanceof File ? value.name : value;
-            return acc;
-          },
-          {} as Record<string, any>
-        );
-        return JSON.stringify(sectionData);
-      }
-
-      // Build hash using only OTP-sensitive fields, with consistent value normalization
-      const sectionData = otpFields.reduce(
-        (acc, fieldName) => {
-          const value = formValues[fieldName];
-          // Normalize values consistently (same logic as handleOtpSuccess)
-          if (value instanceof File) {
-            acc[fieldName] = value.name;
-          } else if (typeof value === 'string' || typeof value === 'boolean' || value === null) {
-            acc[fieldName] = value;
-          } else if (value === undefined) {
-            acc[fieldName] = null; // Normalize undefined to null for consistent hashing
-          } else {
-            acc[fieldName] = value ? String(value) : null;
-          }
+    (sectionFields: FormField[]) => {
+      const sectionData = sectionFields.reduce(
+        (acc, field) => {
+          const value = formValues[field.fieldName];
+          acc[field.fieldName] = value instanceof File ? value.name : value;
           return acc;
         },
         {} as Record<string, any>
@@ -869,13 +760,9 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
   // Check if section data has changed since verification
   const hasSectionDataChanged = useCallback(
     (sectionName: string, sectionFields: FormField[]) => {
-      const currentHash = generateSectionDataHash(sectionName, sectionFields);
+      const currentHash = generateSectionDataHash(sectionFields);
       const originalHash = sectionDataHashes[sectionName];
-      // If no original hash exists, data hasn't changed (not verified yet)
-      if (!originalHash) {
-        return false;
-      }
-      return currentHash !== originalHash;
+      return originalHash && currentHash !== originalHash;
     },
     [generateSectionDataHash, sectionDataHashes]
   );
@@ -1053,7 +940,7 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
 
             // Clear their values in Redux immediately
             dependentFields.forEach((fieldName) => {
-              updateFormValue({ fieldName, value: '' });
+              dispatch(updateFormValue({ fieldName, value: '' }));
             });
 
             // Remove them from autoPopulatedFields so they become editable
@@ -1461,81 +1348,6 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
 
       handleBasicFieldChange(field.fieldName, value);
 
-      // Clear dependent fields when country changes
-      if (field.fieldName === 'registerCountry') {
-        // Clear all dependent register address fields
-        ['registerState', 'registerDistrict', 'registerCity', 'registerPincode'].forEach(fieldName => {
-          updateFormValue({ fieldName, value: '' });
-        });
-        // Clear dropdown options for dependent fields
-        if (clearDependentFieldOptions) {
-          clearDependentFieldOptions('registerState');
-          clearDependentFieldOptions('registerDistrict');
-          clearDependentFieldOptions('registerPincode');
-        }
-      }
-      
-      if (field.fieldName === 'correspondenceCountry') {
-        // Clear all dependent correspondence address fields
-        ['correspondenceState', 'correspondenceDistrict', 'correspondenceCity', 'correspondencePincode'].forEach(fieldName => {
-          updateFormValue({ fieldName, value: '' });
-        });
-        // Clear dropdown options for dependent fields
-        if (clearDependentFieldOptions) {
-          clearDependentFieldOptions('correspondenceState');
-          clearDependentFieldOptions('correspondenceDistrict');
-          clearDependentFieldOptions('correspondencePincode');
-        }
-      }
-
-      // Clear dependent fields for admin user country changes
-      if (field.fieldName === 'iauCountry1') {
-        ['iauState1', 'iauDistrict1', 'iauCity1', 'iauPincode1'].forEach(fieldName => {
-          updateFormValue({ fieldName, value: '' });
-        });
-        if (clearDependentFieldOptions) {
-          clearDependentFieldOptions('iauState1');
-          clearDependentFieldOptions('iauDistrict1');
-          clearDependentFieldOptions('iauPincode1');
-        }
-      }
-      
-      if (field.fieldName === 'iauCountry2') {
-        ['iauState2', 'iauDistrict2', 'iauCity2', 'iauPincode2'].forEach(fieldName => {
-          updateFormValue({ fieldName, value: '' });
-        });
-        if (clearDependentFieldOptions) {
-          clearDependentFieldOptions('iauState2');
-          clearDependentFieldOptions('iauDistrict2');
-          clearDependentFieldOptions('iauPincode2');
-        }
-      }
-
-      // Clear dependent fields when state changes
-      if (field.fieldName === 'registerState') {
-        // Clear district and pincode when state changes
-        ['registerDistrict', 'registerCity', 'registerPincode'].forEach(fieldName => {
-          updateFormValue({ fieldName, value: '' });
-        });
-        // Clear dropdown options for dependent fields
-        if (clearDependentFieldOptions) {
-          clearDependentFieldOptions('registerDistrict');
-          clearDependentFieldOptions('registerPincode');
-        }
-      }
-      
-      if (field.fieldName === 'correspondenceState') {
-        // Clear district and pincode when state changes
-        ['correspondenceDistrict', 'correspondenceCity', 'correspondencePincode'].forEach(fieldName => {
-          updateFormValue({ fieldName, value: '' });
-        });
-        // Clear dropdown options for dependent fields
-        if (clearDependentFieldOptions) {
-          clearDependentFieldOptions('correspondenceDistrict');
-          clearDependentFieldOptions('correspondencePincode');
-        }
-      }
-
       if (
         field.fieldName === 'registerDistrict' ||
         field.fieldName === 'correspondenceDistrict'
@@ -1583,14 +1395,6 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
         console.log(
           '🏢 IAU office address condition MET - processing autofill'
         );
-        
-        // Check if there's a special handler for this dropdown
-        if (specialDropdownHandlers && specialDropdownHandlers[field.fieldName]) {
-          console.log('🏢 Using specialDropdownHandler for', field.fieldName);
-          specialDropdownHandlers[field.fieldName](value);
-          return; // Let the special handler handle the population
-        }
-        
         const trimmedValue = value.trim().toLowerCase();
         let sourcePrefix = '';
 
@@ -1619,6 +1423,7 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
 
                 if (addressData) {
                   // Field mappings - only copy text fields, not dropdowns
+                  const adminText = adminIndex === 1 ? 'One' : 'Two';
                   const textFieldMappings = [
                     {
                       source: `${sourcePrefix}Line1`,
@@ -1665,7 +1470,7 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                     },
                   ];
 
-                  // Copy TEXT fields and clear if API missing - use prop function directly
+                  // Copy TEXT fields and clear if API missing
                   textFieldMappings.forEach(({ source, target }) => {
                     const hasKey = Object.prototype.hasOwnProperty.call(
                       addressData,
@@ -1675,10 +1480,12 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                       ? (addressData[source] ?? '')
                       : '';
 
-                    updateFormValue({
-                      fieldName: target,
-                      value: String(valueToSet),
-                    });
+                    dispatch(
+                      updateFormValue({
+                        fieldName: target,
+                        value: String(valueToSet),
+                      })
+                    );
                   });
 
                   // Copy DROPDOWN fields with delay & clear if missing
@@ -1906,7 +1713,6 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
       updateFormValue,
       userId,
       workflowId,
-      specialDropdownHandlers,
     ]
   );
 
@@ -2182,7 +1988,7 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
         groupName.toLowerCase().includes('admin')
       );
 
-       // Check if all admin sections are verified
+      // Check if all admin sections are verified
       adminSectionsVerified = adminGroups.every((groupName) => {
         const isVerified = verifiedSections.has(groupName);
         const hasDataChanged = hasSectionDataChanged(
@@ -2623,19 +2429,13 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
     }
 
     // console.log('values:-----', value);
-    // Get effective field type based on conditional logic (e.g., India vs non-India country)
-    const { fieldType: effectiveFieldType, fieldPlaceholder: effectivePlaceholder, isRequired: conditionalRequired } = getEffectiveFieldConfig(field, formValues);
-    
-    // Use conditional required status if available, otherwise fall back to base validation rules
-    const effectiveIsRequired = conditionalRequired !== undefined ? conditionalRequired : isRequired;
-    
-    switch (effectiveFieldType) {
+    switch (field.fieldType) {
       case 'textfield': {
         // Get appropriate placeholder and validation rules
         const fieldPlaceholder =
           isMobileField && mobileRules
             ? mobileRules.placeholder
-            : effectivePlaceholder || field.fieldPlaceholder || '';
+            : field.fieldPlaceholder || '';
 
         // Get error message based on validation rules
         const getErrorMessage = (error: string | undefined) => {
@@ -2832,13 +2632,13 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                 ? typeof pincodeOtherRules.required === 'boolean'
                   ? pincodeOtherRules.required
                   : pincodeOtherRules.required === 'true' ||
-                  pincodeOtherRules.required === 'required'
+                    pincodeOtherRules.required === 'required'
                 : isMobileField && mobileRules
                   ? typeof mobileRules.required === 'boolean'
                     ? mobileRules.required
                     : mobileRules.required === 'true' ||
-                    mobileRules.required === 'required'
-                  : effectiveIsRequired
+                      mobileRules.required === 'required'
+                  : isRequired
             }
             disabled={isFieldAutoPopulated(field.fieldName, groupName)}
             minLength={
@@ -2853,27 +2653,29 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
             maxLength={
               // For main pincode fields with India selected, enforce 6 digits
               (isRegisterPincodeField && isRegisterCountryIndia) ||
-                (isCorrespondencePincodeField && isCorrespondenceCountryIndia)
+              (isCorrespondencePincodeField && isCorrespondenceCountryIndia)
                 ? 6
-                : isPincodeOtherSelected && pincodeOtherRules?.maxLength
-                  ? parseInt(pincodeOtherRules.maxLength)
-                  : isMobileField && mobileRules?.maxLength
-                    ? parseInt(mobileRules.maxLength)
-                    : isProofOfIdentityNumberField && proofMaxLength
-                      ? proofMaxLength
-                      : field.validationRules?.maxLength
-                        ? parseInt(field.validationRules.maxLength)
-                        : undefined
+                : isLimitedField
+                  ? 50
+                  : isPincodeOtherSelected && pincodeOtherRules?.maxLength
+                    ? parseInt(pincodeOtherRules.maxLength)
+                    : isMobileField && mobileRules?.maxLength
+                      ? parseInt(mobileRules.maxLength)
+                      : isProofOfIdentityNumberField && proofMaxLength
+                        ? proofMaxLength
+                        : field.validationRules?.maxLength
+                          ? parseInt(field.validationRules.maxLength)
+                          : undefined
             }
             pattern={
               isLimitedField
                 ? // For main pincode fields, check country
-                isRegisterPincodeField ||
+                  isRegisterPincodeField ||
                   isCorrespondencePincodeField ||
                   isIauPincodeField1 ||
                   isIauPincodeField2
                   ? // India: digits only, Other countries: alphanumeric
-                  (isRegisterPincodeField && isRegisterCountryIndia) ||
+                    (isRegisterPincodeField && isRegisterCountryIndia) ||
                     (isCorrespondencePincodeField &&
                       isCorrespondenceCountryIndia) ||
                     (isIauPincodeField1 && isIauCountry1India) ||
@@ -2963,8 +2765,8 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                 option?.value ||
                 String(
                   optionWithExtras.id ||
-                  optionWithExtras.code ||
-                  `option_${index}`
+                    optionWithExtras.code ||
+                    `option_${index}`
                 ),
               // Pass through regulator and types for nested structure
               regulator: (optionWithExtras.regulator as string) || '',
@@ -3028,11 +2830,10 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
             }}
             options={dropdownOptions}
             placeholder={
-              effectivePlaceholder ||
               field.fieldPlaceholder ||
               `Please select ${field.fieldLabel.toLowerCase()}`
             }
-            required={effectiveIsRequired}
+            required={isRequired}
             // disabled={isDisabled}
             disabled={isFieldAutoPopulated(field.fieldName, groupName)}
             error={!!errorMessage}
@@ -3117,64 +2918,6 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
 
         const existingDoc = getExistingDocument();
 
-        // Helper function to validate file upload requirement
-        const validateFileUpload = (textValue: string) => {
-          const imageRequired =
-            fileValidationRules?.imageRequired === true ||
-            String(fileValidationRules?.imageRequired).toLowerCase() === 'true';
-
-          if (imageRequired) {
-            const fileValue = formValues[fileFieldName];
-            const hasFile =
-              fileValue instanceof File ||
-              (typeof fileValue === 'string' && fileValue.trim() !== '') ||
-              !!existingDoc;
-
-            // Check if text is valid according to validation rules
-            const rules = field.validationRules;
-            let isTextValid = false;
-
-            if (textValue && textValue.trim()) {
-              isTextValid = true;
-
-              // Check regex if defined
-              if (rules?.regx) {
-                try {
-                  const regexPattern = new RegExp(rules.regx);
-                  isTextValid = regexPattern.test(textValue);
-                } catch (e) {
-                  console.error(`Invalid regex pattern for ${field.fieldName}:`, rules.regx);
-                }
-              }
-
-              // Check min/max length
-              if (isTextValid && rules?.minLength) {
-                isTextValid = textValue.length >= parseInt(rules.minLength);
-              }
-              if (isTextValid && rules?.maxLength) {
-                isTextValid = textValue.length <= parseInt(rules.maxLength);
-              }
-            }
-
-            // If text is valid but file is missing, show error
-            if (isTextValid && !hasFile) {
-              setValidationErrors((prev) => ({
-                ...prev,
-                [fileFieldName]:
-                  fileValidationRules?.imageRequiredMessage ||
-                  'Please upload image',
-              }));
-            } else if (hasFile || !isTextValid) {
-              // Clear file error if file exists or text is invalid
-              setValidationErrors((prev) => {
-                const newErrors = { ...prev };
-                delete newErrors[fileFieldName];
-                return newErrors;
-              });
-            }
-          }
-        };
-
         console.log(
           `📤 Rendering textfield_with_image for ${field.fieldName}:`,
           {
@@ -3220,8 +2963,6 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
               console.log(
                 `📝 Text field changed: ${field.fieldName} = ${e.target.value}`
               );
-              const newValue = e.target.value;
-
               // For Aadhaar, store only digits (unmasked)
               if (shouldMaskAadhaarWithImage) {
                 handleAadhaarChange(e, handleFieldChange, field.fieldName);
@@ -3234,14 +2975,11 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                 // Auto-capitalize PAN and GSTIN input
                 handleFieldChange(
                   field.fieldName,
-                  newValue.toUpperCase()
+                  e.target.value.toUpperCase()
                 );
               } else {
-                handleFieldChange(field.fieldName, newValue);
+                handleFieldChange(field.fieldName, e.target.value);
               }
-
-              // Validate file upload requirement when text changes
-              validateFileUpload(newValue);
             }}
             onFocus={() => {
               if (shouldMaskAadhaarWithImage) {
@@ -3252,11 +2990,6 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
               if (shouldMaskAadhaarWithImage) {
                 handleAadhaarBlur();
               }
-              // Trigger validation on blur to catch when required fields are cleared
-              handleFieldChange(field.fieldName, value as string);
-
-              // Validate file upload requirement
-              validateFileUpload(value as string);
             }}
             onUpload={(file) => {
               console.log(`📤 File uploaded for ${fileFieldName}:`, {
@@ -3403,11 +3136,11 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
               required={field.validationRules?.required || false}
               verifyIcon={Boolean(
                 formValues[`${field.fieldName}_autoPopulated`] === 'true' ||
-                formValues[`${field.fieldName}_autoPopulated`] === true
+                  formValues[`${field.fieldName}_autoPopulated`] === true
               )}
               hasData={Boolean(
                 formValues[`${field.fieldName}_autoPopulated`] === 'true' ||
-                formValues[`${field.fieldName}_autoPopulated`] === true
+                  formValues[`${field.fieldName}_autoPopulated`] === true
               )}
               minLength={
                 field.validationRules?.minLength
@@ -3451,12 +3184,12 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                 });
                 const fa = matched?.then?.fieldAttributes as
                   | {
-                    url?: string;
-                    method?: string;
-                    headers?: Record<string, string>;
-                    urlData?: string;
-                    payloadTemplate?: Record<string, unknown>;
-                  }
+                      url?: string;
+                      method?: string;
+                      headers?: Record<string, string>;
+                      urlData?: string;
+                      payloadTemplate?: Record<string, unknown>;
+                    }
                   | undefined;
                 if (!fa?.url) return;
 
@@ -3576,12 +3309,12 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                 });
                 const fa = matched?.then?.fieldAttributes as
                   | {
-                    url?: string;
-                    method?: string;
-                    headers?: Record<string, string>;
-                    urlData?: string;
-                    payloadTemplate?: Record<string, unknown>;
-                  }
+                      url?: string;
+                      method?: string;
+                      headers?: Record<string, string>;
+                      urlData?: string;
+                      payloadTemplate?: Record<string, unknown>;
+                    }
                   | undefined;
                 if (!fa?.url) return false;
 
@@ -3605,7 +3338,6 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                 return resp?.data ?? true;
               }}
               onOtpVerified={(data?: unknown) => {
-                try {
                 console.log(
                   '🎯 CKYC OTP Verified - Auto-population starting:',
                   data
@@ -3630,9 +3362,9 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
 
                 const fa = matched?.then?.fieldAttributes as
                   | {
-                    autoPopulate?: string[];
-                    responseMapping?: { label?: string; value?: string };
-                  }
+                      autoPopulate?: string[];
+                      responseMapping?: { label?: string; value?: string };
+                    }
                   | undefined;
 
                 console.log('🔍 Field attributes found:', fa, matched);
@@ -3770,30 +3502,19 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                     }
                   }
 
-                  // Update form value - use prop function directly, not dispatch
-                  updateFormValue({
-                    fieldName: target,
-                    value: String(value || ''),
-                  });
-
-                  // Also set the _autoPopulated flag for the field
-                  updateFormValue({
-                    fieldName: `${target}_autoPopulated`,
-                    value: 'true',
-                  });
+                  // Update form value
+                  dispatch(
+                    updateFormValue({
+                      fieldName: target,
+                      value: String(value || ''),
+                    })
+                  );
 
                   // Track this field as auto-populated with admin prefix
                   populatedFields.add(`admin${adminIndex}_${target}`);
                 });
                 // Add CKYC field with admin prefix
                 populatedFields.add(`admin${adminIndex}_${ckycField}`);
-                
-                // Mark CKYC field as auto-populated/verified
-                updateFormValue({
-                  fieldName: `${ckycField}_autoPopulated`,
-                  value: 'true',
-                });
-                
                 // Update state with populated fields and verified values
                 // First, remove old auto-populated fields for this admin, then add new ones
                 setAutoPopulatedFields((prev) => {
@@ -3830,9 +3551,6 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                   });
                   return newErrors;
                 });
-                } catch (error) {
-                  console.error('Error in CKYC auto-population:', error);
-                }
               }}
               onVerify={async (currentValue: string) => {
                 // Find matching conditional logic (if any)
@@ -3855,13 +3573,13 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
 
                 const fa = matched.then?.fieldAttributes as
                   | {
-                    url?: string;
-                    method?: string;
-                    headers?: Record<string, string>;
-                    urlData?: string;
-                    payloadTemplate?: Record<string, unknown>;
-                    autoPopulate?: string[];
-                  }
+                      url?: string;
+                      method?: string;
+                      headers?: Record<string, string>;
+                      urlData?: string;
+                      payloadTemplate?: Record<string, unknown>;
+                      autoPopulate?: string[];
+                    }
                   | undefined;
 
                 if (!fa?.url) return;
@@ -3884,11 +3602,12 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                           data &&
                           Object.prototype.hasOwnProperty.call(data, target)
                         ) {
-                          // updateFormValue is a prop function, call it directly without dispatch
-                          updateFormValue({
-                            fieldName: target,
-                            value: data[target] as string,
-                          });
+                          dispatch(
+                            updateFormValue({
+                              fieldName: target,
+                              value: data[target] as string,
+                            })
+                          );
                         }
                       });
                     }
@@ -3905,22 +3624,24 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                           data &&
                           Object.prototype.hasOwnProperty.call(data, target)
                         ) {
-                          // updateFormValue is a prop function, call it directly without dispatch
-                          updateFormValue({
-                            fieldName: target,
-                            value: data[target] as string,
-                          });
+                          dispatch(
+                            updateFormValue({
+                              fieldName: target,
+                              value: data[target] as string,
+                            })
+                          );
                         }
                       });
                     }
                   }
                 } catch {
-                  // setFieldError is a prop function, call it directly without dispatch
-                  setFieldError({
-                    field: field.fieldName,
-                    message:
-                      'Verification failed. Please check the value and try again.',
-                  });
+                  dispatch(
+                    setFieldError({
+                      field: field.fieldName,
+                      message:
+                        'Verification failed. Please check the value and try again.',
+                    })
+                  );
                 }
               }}
             />
@@ -4092,7 +3813,7 @@ const DynamicExpandCollapseForm: React.FC<DynamicExpandCollapseFormProps> = ({
                   // </Grid>
                   <>
                     {field.fieldLabel == 'Date of Authorization' ? (
-                      <Grid size={gridSize} key={`${field.id}-spacer`}></Grid>
+                      <Grid size={gridSize} key={field.id}></Grid>
                     ) : (
                       ''
                     )}
