@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable */
 import React, { useEffect } from 'react';
 import {
   Stepper,
@@ -71,7 +71,6 @@ const CustomStepIcon = styled('div')<{
     fontSize: '11px',
   },
 }));
-
 // Mobile stepper styles
 
 const StepIcon = ({ icon, active, completed, onClick }: any) => (
@@ -80,15 +79,7 @@ const StepIcon = ({ icon, active, completed, onClick }: any) => (
   </CustomStepIcon>
 );
 
-const RERegistrationStepper = ({
-  STEPS,
-  completedSteps,
-  currentStep,
-  setCurrentStep,
-  setCompletedSteps,
-  storageKey,
-  isCurrentStepValid = true,
-}: {
+type RERegistrationStepperProps = {
   STEPS: string[];
   currentStep: number;
   setCurrentStep: (index: number) => void;
@@ -96,6 +87,16 @@ const RERegistrationStepper = ({
   setCompletedSteps: (steps: number[]) => void;
   storageKey?: string;
   isCurrentStepValid?: boolean;
+};
+
+const RERegistrationStepper: React.FC<RERegistrationStepperProps> = ({
+  STEPS,
+  completedSteps,
+  currentStep,
+  setCurrentStep,
+  setCompletedSteps,
+  storageKey,
+  isCurrentStepValid = true,
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
@@ -120,7 +121,6 @@ const RERegistrationStepper = ({
         completedSteps?: number[];
       };
 
-      // guard against outdated STEPS
       const maxIdx = STEPS.length - 1;
 
       if (Array.isArray(parsed?.completedSteps)) {
@@ -156,30 +156,10 @@ const RERegistrationStepper = ({
 
   const handleStepClick = (index: number) => {
     // If clicking on the same step, do nothing
-    if (index === currentStep) {
-      return;
-    }
+    if (index === currentStep) return;
 
-    // Prevent ALL navigation if current step is invalid
-    // User must fix validation errors and save before navigating anywhere
-    if (!isCurrentStepValid) {
-      console.log(
-        `⚠️ Cannot navigate to step ${index + 1}. Please fix validation errors and save the current step first.`
-      );
-      return;
-    }
-
-    // Only allow navigation to completed steps
-    // Do not allow jumping to future incomplete steps
-    if (completedSteps.includes(index)) {
-      setCurrentStep(index);
-      return;
-    }
-
-    // Prevent navigation to incomplete future steps
-    console.log(
-      `⚠️ Cannot navigate to step ${index + 1}. Please complete the current step first.`
-    );
+    // Allow navigation to any step so users can fill data in any order
+    setCurrentStep(index);
   };
 
   const currentStepData = STEPS[currentStep];
@@ -205,8 +185,9 @@ const RERegistrationStepper = ({
         }}
       >
         {STEPS.map((label, index) => {
-          const isCompleted = completedSteps.includes(index);
           const isActive = currentStep === index;
+
+          const isCompleted = completedSteps.includes(index) && !isActive;
 
           return (
             <Step key={label} completed={isCompleted}>
@@ -370,8 +351,9 @@ const RERegistrationStepper = ({
           }}
         >
           {STEPS.map((label, index) => {
-            const isCompleted = completedSteps.includes(index);
             const isActive = currentStep === index;
+
+            const isCompleted = completedSteps.includes(index) && !isActive;
 
             return (
               <Box

@@ -26,7 +26,7 @@ import {
   selectFetchedDocuments,
   clearStepData,
 } from '../../slice/stepDataSlice';
-import { updateFormValue, setFieldsFromConfig } from '../../slice/formSlice';
+import { updateFormValue, setFieldsFromConfig, clearForm } from '../../slice/formSlice';
 import { FieldErrorProvider } from '../../context/FieldErrorContext';
 import { AddressDetailsSubmissionError } from '../../types/addressDetailsSubmissionTypes';
 import { buildValidationSchema } from '../../../../../utils/formValidation';
@@ -126,6 +126,8 @@ const FrontendAddressDetailsStep: React.FC<FrontendAddressDetailsStepProps> = ({
   const stepDataFetched = React.useRef(false);
   // Add a ref to track if geographical fields have been processed
   const geoFieldsProcessed = React.useRef(false);
+  // Add a ref to track if form was manually cleared (to prevent auto-fetch after clear)
+  const formManuallyCleared = React.useRef(false);
 
   // Get user details from auth state
   const userDetails = useSelector((state: RootState) => state.auth.userDetails);
@@ -247,6 +249,56 @@ const FrontendAddressDetailsStep: React.FC<FrontendAddressDetailsStepProps> = ({
     return buildValidationSchema(flattenedFields as FormField[]);
   }, [flattenedFields]);
 
+  // Handle form clear
+  const handleClearForm = useCallback(() => {
+    console.log('🧹 Clearing Address Details form');
+    
+    // Mark that form was manually cleared to prevent auto-fetch
+    formManuallyCleared.current = true;
+    
+    // Clear form values
+    dispatch(clearForm());
+    
+    // Clear step data
+    dispatch(clearStepData());
+    
+    // Clear dependent field options - clear all dropdown options
+    // Get all field IDs that have dependent dropdown options
+    const dependentFieldIds: number[] = [];
+    baseFields.forEach((field) => {
+      if (field.fieldAttributes?.url && field.id) {
+        dependentFieldIds.push(field.id);
+      }
+    });
+    
+    // Clear each dependent field's options
+    dependentFieldIds.forEach((fieldId) => {
+      const field = baseFields.find((f) => f.id === fieldId);
+      if (field) {
+        dispatch(
+          clearDependentFieldOptions({
+            parentFieldName: field.fieldName,
+            dependentFieldIds: [fieldId],
+          })
+        );
+      }
+    });
+    
+    // Clear validation errors
+    setValidationErrors({});
+    
+    // Increment clear key to reset form components
+    setClearKey((prev) => prev + 1);
+    
+    // Reset geo fields processed flag
+    geoFieldsProcessed.current = false;
+    
+    // Reset step data fetched flag
+    stepDataFetched.current = false;
+    
+    console.log('✅ Address Details form cleared');
+  }, [dispatch, baseFields]);
+
   // Set frontend config fields in Redux when loaded
   React.useEffect(() => {
     if (
@@ -343,7 +395,8 @@ const FrontendAddressDetailsStep: React.FC<FrontendAddressDetailsStepProps> = ({
       (frontendGroupedFields || frontendFields) &&
       !configLoading &&
       !stepDataFetched.current &&
-      !stepDataLoading
+      !stepDataLoading &&
+      !formManuallyCleared.current
     ) {
       console.log(
         '✅ Frontend Address form fields loaded, now fetching step data for addresses:',
@@ -386,6 +439,11 @@ const FrontendAddressDetailsStep: React.FC<FrontendAddressDetailsStepProps> = ({
 
   // Populate form fields when step data is loaded
   React.useEffect(() => {
+    // Don't populate if form was manually cleared
+    if (formManuallyCleared.current) {
+      return;
+    }
+    
     if (stepData && stepData.data && Object.keys(stepData.data).length > 0) {
       console.log('Populating Address form fields with step data:', stepData.data);
 
@@ -407,6 +465,11 @@ const FrontendAddressDetailsStep: React.FC<FrontendAddressDetailsStepProps> = ({
   // Use a ref to prevent infinite loops from repeated API calls
   // Use baseFields (stable) instead of flattenedFields (changes with dropdown options)
   React.useEffect(() => {
+    // Don't process if form was manually cleared
+    if (formManuallyCleared.current) {
+      return;
+    }
+    
     if (
       stepData &&
       stepData.data &&
@@ -902,7 +965,7 @@ const FrontendAddressDetailsStep: React.FC<FrontendAddressDetailsStepProps> = ({
             }}
             setFieldError={() => {}}
             clearFieldError={() => {}}
-            clearForm={() => {}}
+            clearForm={handleClearForm}
             copySectionValues={() => {}}
             clearSectionValues={() => {}}
             validationSchema={validationSchema}
